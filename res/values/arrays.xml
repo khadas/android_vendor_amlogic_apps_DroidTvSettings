@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- List entries for controlling surround sound passthrough setting [CHAR LIMIT=50] -->
+    <string-array name="surround_sound_entries">
+        <item>Auto</item>
+        <item>Always</item>
+        <item>Never</item>
+    </string-array>
+
+    <!-- Entry values for surround sound preference -->
+    <string-array name="surround_sound_entry_values" translatable="false">
+        <item>auto</item>
+        <item>always</item>
+        <item>never</item>
+    </string-array>
+
+    <string-array name="dolby_sounds_entries">
+        <item>OFF</item>
+        <item>LINE</item>
+        <item>RF</item>
+    </string-array>
+
+    <string-array name="dolby_sounds_entry_values" translatable="false">
+        <item>off</item>
+        <item>line</item>
+        <item>rf</item>
+    </string-array>
+
+    <string-array name="digital_sounds_entries">
+        <item>Auto</item>
+        <item>PCM</item>
+        <item>HDMI</item>
+        <item>SPDIF</item>
+    </string-array>
+
+    <string-array name="digital_sounds_entry_values" translatable="false">
+        <item>auto</item>
+        <item>pcm</item>
+        <item>hdmi</item>
+        <item>spdif</item>
+    </string-array>
+
+    <string-array name="dts_sounds_entries">
+        <item>0</item>
+        <item>10%</item>
+        <item>20%</item>
+        <item>30%</item>
+        <item>40%</item>
+        <item>50%</item>
+        <item>60%</item>
+        <item>70%</item>
+        <item>80%</item>
+        <item>90%</item>
+        <item>100%</item>
+    </string-array>
+
+    <string-array name="dts_sounds_entry_values" translatable="false">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="dts_custom_sounds_entries">
+        <item>0</item>
+        <item>100%</item>
+    </string-array>
+
+    <string-array name="dts_custom_sounds_entry_values" translatable="false">
+        <item>0</item>
+        <item>100</item>
+    </string-array>
+</resources>

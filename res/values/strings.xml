@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Main app title [CHAR LIMIT=40] -->
+    <string name="settings_app_name">Droid Settings</string>
+
+    <!-- Leanback Launcher App Title for main Settings app [CHAR LIMIT=40] -->
+    <string name="launcher_settings_app_name">Droid Settings</string>
+
+    <!-- Preference which manages more settings. [CHAR LIMIT=50] -->
+    <string name="system_more_setting">More settings</string>
+    <string name="upgrade_bluetooth_remote">Upgrade bluetoothremote</string>
+    <string name="device_display">Display</string>
+    <string name="device_outputmode">Screen resolution</string>
+    <string name="device_outputmode_auto">Auto switch to best resolution</string>
+    <string name="device_outputmode_deepcolor">deep color mode</string>
+    <string name="device_outputmode_confirm_mode">Confirm turn off deep color mode</string>
+    <string name="device_outputmode_confirm_deepcolor">Confirm turn on deep color mode</string>
+    <string name="device_outputmode_change">Confirm change to mode:</string>
+    <string name="device_outputmode_countdown"> seconds later restore old mode</string>
+    <string name="device_position">Screen position</string>
+    <string name="device_position_zoomout">Zoom out screen</string>
+    <string name="device_position_zoomin">Zoom in screen</string>
+    <string name="device_position_description">current scaling is</string>
+
+    <!-- Preference which manages play back settings. -->
+    <string name="playback_settings">Playback settings</string>
+    <!-- Hdmi self-adaption switch -->
+    <string name="playback_hdmi_selfadaption">HDMI self-adaption</string>
+    <string name="power_key_action">Power</string>
+    <string name="system_powerkeyaction">Powerkey definition</string>
+
+    <!-- Preference which manages power key definition. -->
+    <string name="power_key_definition">Power key definition</string>
+    <string name="power_key_shutdown">shutdown</string>
+    <string name="power_key_suspend">suspend and resume</string>
+
+    <!-- Title for OK [CHAR LIMIT=50] -->
+    <string name="title_ok">OK</string>
+    <!-- Title for DNS 2 [CHAR LIMIT=50] -->
+    <string name="title_cancel">Cancel</string>
+    <string name="action_on_title">On</string>
+    <!-- Title for an action which turns a feature off [CHAR LIMIT=30] -->
+    <string name="action_off_title">Off</string>
+    <!-- Title for a status description saying that a feature is on [CHAR LIMIT=30] -->
+    <string name="action_on_description">On</string>
+    <!-- Title for a status description saying that a feature is off [CHAR LIMIT=30] -->
+    <string name="action_off_description">Off</string>
+    <string name="device_hdr">HDR to SDR</string>
+    <string name="device_sdr">SDR to HDR</string>
+    <string name="captions_display_on">On</string>
+    <!-- Subtext used under the captions_display string to denote that captions will NOT be shown. [CHAR LIMIT=50] -->
+    <string name="captions_display_off">Off</string>
+    <string name="on">On</string>
+    <!-- [CHAR LIMIT=20] Title for status off for location services -->
+    <string name="off">Off</string>
+    <!-- Title for preference screen controlling sound settings [CHAR LIMIT=50] -->
+    <string name="device_sound">Sound</string>
+    <!-- Title for preference which controls surround sound passthrough function [CHAR LIMIT=50] -->
+    <string name="device_surround_sound">Surround sound</string>
+    <string name="device_sound_effects">System sounds</string>
+    <string name="device_sound_digital">Digital sounds</string>
+    <string name="device_sound_digital_auto">Auto detection</string>
+    <string name="device_sound_digital_auto_off">OFF</string>
+    <string name="device_sound_digital_pcm">PCM</string>
+    <string name="device_sound_digital_hdmi">HDMI</string>
+    <string name="device_sound_digital_spdif">SPDIF</string>
+    <string name="device_sound_dts">DTS Sounds</string>
+    <string name="device_sound_dts_downmix">DTS Downmix</string>
+    <string name="device_sound_dts_downmix_o">Lo/Ro</string>
+    <string name="device_sound_dts_downmix_t">Lt/Rt</string>
+    <string name="device_sound_dts_drcscale">DTS Drcscale</string>
+    <string name="device_sound_dts_sound">Dts sounds</string>
+    <string name="device_sound_dts_dialnorm">DTS Dialnorm</string>
+    <string name="device_sound_dts_trans">DTS Transcoder</string>
+    <string name="device_sound_dts_trans_auto">Auto</string>
+    <string name="device_sound_dts_trans_51pcm">5.1 PCM Transcoder</string>
+    <string name="device_sound_dts_trans_71pcm">7.1 PCM Transcoder</string>
+    <string name="device_sound_dts_mulasset">DTS Mulasset</string>
+    <string name="device_sound_dolby">Dolby sounds</string>
+    <string name="device_sound_dolby_drcmode">DRC mode</string>
+    <string name="device_sound_dolby_drcoff">OFF</string>
+    <string name="device_sound_dolby_drcline">LINE</string>
+    <string name="device_sound_dolby_drcrf">RF</string>
+
+    <!-- Image description for the sync failed icon. -->
+    <string name="sync_failed">Sync failed</string>
+    <!-- Animation description for the sync active icon. -->
+    <string name="sync_active">Sync active</string>
+    <string name="system_cec">HDMI CEC</string>
+    <string name="cec_control">CEC Control</string>
+    <string name="cec_switch">CEC Switch</string>
+    <string name="cec_one_key_play">One key play</string>
+    <string name="cec_one_key_power_off">One key power off</string>
+    <string name="cec_auto_change_language">Auto change language</string>
+    <string name="power_action_suspend">sleep now</string>
+    <string name="power_action_restart">restart</string>
+    <string name="power_action_shutdown">shutdown</string>
+    <string name="netflix_esn">Netflix ESN</string>
+
+</resources>
