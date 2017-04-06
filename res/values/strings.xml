@@ -12,6 +12,9 @@
     <string name="upgrade_bluetooth_remote">Upgrade bluetoothremote</string>
     <string name="device_display">Display</string>
     <string name="device_outputmode">Screen resolution</string>
+    <string name="device_color">Color</string>
+    <string name="device_colorattribute">Format and Depth</string>
+    <string name="device_outputmode_moresetting">More setting</string>
     <string name="device_outputmode_auto">Auto switch to best resolution</string>
     <string name="device_outputmode_deepcolor">deep color mode</string>
     <string name="device_outputmode_confirm_mode">Confirm turn off deep color mode</string>

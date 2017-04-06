@@ -1,5 +1,6 @@
 package com.droidlogic.tv.settings.display.outputmode;
 
+
 import com.droidlogic.tv.settings.R;
 import com.droidlogic.tv.settings.dialog.old.Action;
 import com.droidlogic.tv.settings.dialog.old.ActionAdapter;
@@ -35,245 +36,256 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class OutputmodeActivity extends DialogActivity
-		implements ActionAdapter.Listener, OnClickListener, OnFocusChangeListener {
-	private final static String BEST_RESOLUTION = "best resolution";
-	private final static String DEEP_COLOR = "deep_color";
-	private ContentFragment mContentFragment;
-	private ActionFragment mActionFragment;
-	private OutputUiManager mOutputUiManager;
-	private IntentFilter mIntentFilter;
-	private static final int MSG_FRESH_UI = 0;
-	private static final int MSG_COUNT_DOWN = 1;
-	private static boolean saveDeepColor = false;
-	private static String saveMode;
-	private View view_dialog;
-	private TextView tx_title;
-	private TextView tx_content;
-	private Timer timer;
-	private TimerTask task;
-	private AlertDialog mAlertDialog = null;
-	private int countdown = 15;
-	private static String mode = null;
+public class OutputmodeActivity extends DialogActivity implements ActionAdapter.Listener, OnClickListener, OnFocusChangeListener{
+    private final static String BEST_RESOLUTION = "best resolution";
+    private final static String DEEP_COLOR = "deep_color";
+    private final static String MORE_SETTING= "more setting";
+    private ContentFragment mContentFragment;
+    private ActionFragment mActionFragment;
+    private OutputUiManager mOutputUiManager;
+    private IntentFilter mIntentFilter;
+    private static final int MSG_FRESH_UI = 0;
+    private static final int MSG_COUNT_DOWN = 1;
+    private static boolean saveDeepColor = false;
+    private static String saveMode;
+    private View view_dialog;
+    private TextView tx_title;
+    private TextView tx_content;
+    private Timer timer;
+    private TimerTask task;
+    private AlertDialog mAlertDialog = null;
+    private int countdown = 15;
+    private static String mode = null;
 
-	private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, 1000);
-		}
-	};
+    private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, 1000);
+        }
+    };
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		mOutputUiManager = new OutputUiManager(this);
-		mContentFragment = createMainMenuContentFragment();
-		mActionFragment = ActionFragment.newInstance(getMainActions());
-		setContentAndActionFragments(mContentFragment, mActionFragment);
+        mOutputUiManager = new OutputUiManager(this);
+        mContentFragment = createMainMenuContentFragment();
+        mActionFragment = ActionFragment.newInstance(getMainActions());
+        setContentAndActionFragments(mContentFragment, mActionFragment);
 
-		mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
-		mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
-	}
+        mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+        mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		registerReceiver(mIntentReceiver, mIntentFilter);
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mIntentReceiver, mIntentFilter);
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(mIntentReceiver);
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mIntentReceiver);
+    }
 
-	@Override
-	public void onActionClicked(Action action) {
-		mode = action.getKey();
+    @Override
+    public void onActionClicked(Action action) {
+        mode = action.getKey();
 
-		saveDeepColor = mOutputUiManager.isDeepColor();
-		saveMode = mOutputUiManager.getCurrentMode();
+        saveDeepColor = mOutputUiManager.isDeepColor();
+        saveMode = mOutputUiManager.getCurrentMode();
 
-		if (mode.equals(BEST_RESOLUTION)) {
-			mOutputUiManager.change2BestMode();
-		} else if (mode.equals(DEEP_COLOR)) {
-			mOutputUiManager.change2DeepColorMode();
-		} else {
-			mOutputUiManager.change2NewMode(mode);
-		}
-		updateMainScreen();
+        if (mode.equals(BEST_RESOLUTION)) {
+            mOutputUiManager.change2BestMode();
+        }else if (mode.equals(MORE_SETTING)) {
+            Intent intent = new Intent(OutputmodeActivity.this,ColorAttributeActivity.class);
+            startActivity(intent);
+            return;
+            //mOutputUiManager.change2DeepColorMode();
+        }else {
+            mOutputUiManager.change2NewMode(mode);
+        }
+        updateMainScreen();
 
-		if (saveDeepColor != mOutputUiManager.isDeepColor() || !saveMode.equals(mOutputUiManager.getCurrentMode())) {
-			showDialog();
-		}
-	}
+        if (saveDeepColor != mOutputUiManager.isDeepColor()
+                || !saveMode.equals(mOutputUiManager.getCurrentMode())) {
+            showDialog();
+        }
+    }
 
-	private void goToMainScreen() {
-		updateMainScreen();
-		getFragmentManager().popBackStack(null, 0);
-	}
+    private void goToMainScreen() {
+        updateMainScreen();
+        getFragmentManager().popBackStack(null, 0);
+    }
 
-	private void updateMainScreen() {
-		mOutputUiManager.updateUiMode();
-		((ActionAdapter) mActionFragment.getAdapter()).setActions(getMainActions());
-	}
+    private void updateMainScreen() {
+        mOutputUiManager.updateUiMode();
+        ((ActionAdapter) mActionFragment.getAdapter()).setActions(getMainActions());
+    }
 
-	private ContentFragment createMainMenuContentFragment() {
-		return ContentFragment.newInstance(getString(R.string.device_outputmode), getString(R.string.device_display),
-				null, R.drawable.ic_settings_display, getResources().getColor(R.color.icon_background));
-	}
+    private ContentFragment createMainMenuContentFragment() {
+        return ContentFragment.newInstance(
+                getString(R.string.device_outputmode), getString(R.string.device_display),
+                null, R.drawable.ic_settings_display,
+                getResources().getColor(R.color.icon_background));
+    }
 
-	private ArrayList<Action> getMainActions() {
-		ArrayList<Action> actions = new ArrayList<Action>();
-		ArrayList<String> outputmodeTitleList = mOutputUiManager.getOutputmodeTitleList();
-		ArrayList<String> outputmodeValueList = mOutputUiManager.getOutputmodeValueList();
+    private ArrayList<Action> getMainActions() {
+        ArrayList<Action> actions = new ArrayList<Action>();
+        ArrayList<String> outputmodeTitleList = mOutputUiManager.getOutputmodeTitleList();
+        ArrayList<String> outputmodeValueList = mOutputUiManager.getOutputmodeValueList();
 
-		if (mOutputUiManager.getUiMode().equals(mOutputUiManager.HDMI_MODE)) {
-			String best_resolution_description;
-			if (mOutputUiManager.isBestOutputmode()) {
-				best_resolution_description = getString(R.string.captions_display_on);
-			} else {
-				best_resolution_description = getString(R.string.captions_display_off);
-			}
-			actions.add(new Action.Builder().key(BEST_RESOLUTION)
-					.title("        " + getString(R.string.device_outputmode_auto))
-					.description("                " + best_resolution_description).build());
-		}
+        if (mOutputUiManager.getUiMode().equals(mOutputUiManager.HDMI_MODE)) {
+            String best_resolution_description;
+            if (mOutputUiManager.isBestOutputmode()) {
+                best_resolution_description = getString(R.string.captions_display_on);
+            } else{
+                best_resolution_description = getString(R.string.captions_display_off);
+            }
+            actions.add(new Action.Builder().key(BEST_RESOLUTION)
+                    .title("        " + getString(R.string.device_outputmode_auto))
+                    .description("                " + best_resolution_description).build());
+        }
+        /*
+        String isDeepColor;
+        if (mOutputUiManager.isDeepColor()) {
+            isDeepColor = getString(R.string.captions_display_on);
+        } else{
+            isDeepColor = getString(R.string.captions_display_off);
+        }
+        actions.add(new Action.Builder().key(DEEP_COLOR)
+                .title("        " + getString(R.string.device_outputmode_deepcolor))
+                .description("                " + isDeepColor).build());
+        */
+        actions.add(new Action.Builder().key(MORE_SETTING)
+                .title("        " + getString(R.string.device_outputmode_moresetting))
+                .description("").build());
 
-		String isDeepColor;
-		if (mOutputUiManager.isDeepColor()) {
-			isDeepColor = getString(R.string.captions_display_on);
-		} else {
-			isDeepColor = getString(R.string.captions_display_off);
-		}
-		actions.add(
-				new Action.Builder().key(DEEP_COLOR).title("        " + getString(R.string.device_outputmode_deepcolor))
-						.description("                " + isDeepColor).build());
+        int currentModeIndex = mOutputUiManager.getCurrentModeIndex();
+        for (int i = 0; i < outputmodeTitleList.size(); i++) {
+            if (i == currentModeIndex) {
+                actions.add(new Action.Builder().key(outputmodeValueList.get(i))
+                        .title("        " + outputmodeTitleList.get(i))
+                        .checked(true).build());
+            }else {
+                actions.add(new Action.Builder().key(outputmodeValueList.get(i))
+                        .title("        " + outputmodeTitleList.get(i))
+                        .description("").build());
+            }
+        }
+        return actions;
+    }
 
-		int currentModeIndex = mOutputUiManager.getCurrentModeIndex();
-		for (int i = 0; i < outputmodeTitleList.size(); i++) {
-			if (i == currentModeIndex) {
-				actions.add(new Action.Builder().key(outputmodeValueList.get(i))
-						.title("        " + outputmodeTitleList.get(i)).checked(true).build());
-			} else {
-				actions.add(new Action.Builder().key(outputmodeValueList.get(i))
-						.title("        " + outputmodeTitleList.get(i)).description("").build());
-			}
-		}
-		return actions;
-	}
+    private void showDialog () {
+        if (mAlertDialog == null) {
+            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view_dialog = inflater.inflate(R.layout.dialog_outputmode, null);
 
-	private void showDialog() {
-		if (mAlertDialog == null) {
-			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			view_dialog = inflater.inflate(R.layout.dialog_outputmode, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            mAlertDialog = builder.create();
+            mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			mAlertDialog = builder.create();
-			mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            tx_title = (TextView)view_dialog.findViewById(R.id.dialog_title);
+            tx_content = (TextView)view_dialog.findViewById(R.id.dialog_content);
 
-			tx_title = (TextView) view_dialog.findViewById(R.id.dialog_title);
-			tx_content = (TextView) view_dialog.findViewById(R.id.dialog_content);
+            TextView button_cancel = (TextView)view_dialog.findViewById(R.id.dialog_cancel);
+            button_cancel.setOnClickListener(this);
+            button_cancel.setOnFocusChangeListener(this);
 
-			TextView button_cancel = (TextView) view_dialog.findViewById(R.id.dialog_cancel);
-			button_cancel.setOnClickListener(this);
-			button_cancel.setOnFocusChangeListener(this);
+            TextView button_ok = (TextView)view_dialog.findViewById(R.id.dialog_ok);
+            button_ok.setOnClickListener(this);
+            button_ok.setOnFocusChangeListener(this);
+        }
+        mAlertDialog.show();
+        mAlertDialog.getWindow().setContentView(view_dialog);
 
-			TextView button_ok = (TextView) view_dialog.findViewById(R.id.dialog_ok);
-			button_ok.setOnClickListener(this);
-			button_ok.setOnFocusChangeListener(this);
-		}
-		mAlertDialog.show();
-		mAlertDialog.getWindow().setContentView(view_dialog);
+        if (mode.equals(DEEP_COLOR)) {
+            if (saveDeepColor != mOutputUiManager.isDeepColor() && mOutputUiManager.isDeepColor()) {
+                tx_content.setText(getResources().getString(R.string.device_outputmode_confirm_deepcolor));
+            } else {
+                tx_content.setText(getResources().getString(R.string.device_outputmode_confirm_mode));
+            }
+        } else {
+            if (mOutputUiManager.getOutputmodeTitleList().size() <= 0) {
+                tx_content.setText("Get outputmode empty!");
+            } else if (mOutputUiManager.getCurrentModeIndex() < mOutputUiManager.getOutputmodeTitleList().size()) {
+                tx_content.setText(getResources().getString(R.string.device_outputmode_change)
+                    + " " +mOutputUiManager.getOutputmodeTitleList().get(mOutputUiManager.getCurrentModeIndex()));
+            }
+        }
 
-		if (mode.equals(DEEP_COLOR)) {
-			if (saveDeepColor != mOutputUiManager.isDeepColor() && mOutputUiManager.isDeepColor()) {
-				tx_content.setText(getResources().getString(R.string.device_outputmode_confirm_deepcolor));
-			} else {
-				tx_content.setText(getResources().getString(R.string.device_outputmode_confirm_mode));
-			}
-		} else {
-			if (mOutputUiManager.getOutputmodeTitleList().size() <= 0) {
-				tx_content.setText("Get outputmode empty!");
-			} else if (mOutputUiManager.getCurrentModeIndex() < mOutputUiManager.getOutputmodeTitleList().size()) {
-				tx_content.setText(getResources().getString(R.string.device_outputmode_change) + " "
-						+ mOutputUiManager.getOutputmodeTitleList().get(mOutputUiManager.getCurrentModeIndex()));
-			}
-		}
+        countdown = 15;
+        if (timer == null)
+            timer = new Timer();
+        if (task != null)
+            task.cancel();
+        task = new DialogTimerTask();
+        timer.schedule(task, 0, 1000);
+    }
 
-		countdown = 15;
-		if (timer == null)
-			timer = new Timer();
-		if (task != null)
-			task.cancel();
-		task = new DialogTimerTask();
-		timer.schedule(task, 0, 1000);
-	}
+    private void recoverOutputMode() {
+        if (saveDeepColor == mOutputUiManager.isDeepColor()) {
+            mOutputUiManager.change2NewMode(saveMode);
+        } else {
+            mOutputUiManager.change2DeepColorMode();
+        }
+        mHandler.sendEmptyMessage(MSG_FRESH_UI);
+    }
 
-	private void recoverOutputMode() {
-		if (saveDeepColor == mOutputUiManager.isDeepColor()) {
-			mOutputUiManager.change2NewMode(saveMode);
-		} else {
-			mOutputUiManager.change2DeepColorMode();
-		}
-		mHandler.sendEmptyMessage(MSG_FRESH_UI);
-	}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.dialog_cancel:
+                if (mAlertDialog != null) {
+                    mAlertDialog.dismiss();
+                }
+                recoverOutputMode();
+                break;
+            case R.id.dialog_ok:
+                if (mAlertDialog != null) {
+                    mAlertDialog.dismiss();
+                }
+                break;
+        }
+        task.cancel();
+    }
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.dialog_cancel:
-			if (mAlertDialog != null) {
-				mAlertDialog.dismiss();
-			}
-			recoverOutputMode();
-			break;
-		case R.id.dialog_ok:
-			if (mAlertDialog != null) {
-				mAlertDialog.dismiss();
-			}
-			break;
-		}
-		task.cancel();
-	}
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (v instanceof TextView) {
+            if (hasFocus) {
+            } else {
+            }
+        }
+    }
 
-	@Override
-	public void onFocusChange(View v, boolean hasFocus) {
-		if (v instanceof TextView) {
-			if (hasFocus) {
-			} else {
-			}
-		}
-	}
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_FRESH_UI:
+                    updateMainScreen();
+                    break;
+                case MSG_COUNT_DOWN:
+                    tx_title.setText(Integer.toString(countdown) + " " + getResources().getString(R.string.device_outputmode_countdown));
+                    if (countdown == 0) {
+                        if (mAlertDialog != null) {
+                            mAlertDialog.dismiss();
+                        }
+                        recoverOutputMode();
+                        task.cancel();
+                    }
+                    countdown--;
+                    break;
+            }
+        }
+    };
 
-	private Handler mHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MSG_FRESH_UI:
-				updateMainScreen();
-				break;
-			case MSG_COUNT_DOWN:
-				tx_title.setText(Integer.toString(countdown) + " "
-						+ getResources().getString(R.string.device_outputmode_countdown));
-				if (countdown == 0) {
-					if (mAlertDialog != null) {
-						mAlertDialog.dismiss();
-					}
-					recoverOutputMode();
-					task.cancel();
-				}
-				countdown--;
-				break;
-			}
-		}
-	};
-
-	private class DialogTimerTask extends TimerTask {
-		@Override
-		public void run() {
-			mHandler.sendEmptyMessage(MSG_COUNT_DOWN);
-		}
-	};
+    private class DialogTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            mHandler.sendEmptyMessage(MSG_COUNT_DOWN);
+        }
+    };
 }
