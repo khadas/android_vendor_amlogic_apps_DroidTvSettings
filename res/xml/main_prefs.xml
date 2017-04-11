@@ -52,6 +52,10 @@
             android:targetPackage="com.droidlogic.BluetoothRemote" />
     </Preference>
     <Preference
+        android:icon="@drawable/ic_info_outline"
+        android:key="netflix_esn"
+        android:title="@string/netflix_esn"/>
+    <Preference
         android:icon="@drawable/ic_settings_more"
         android:key="more"
         android:title="@string/system_more_setting" >
