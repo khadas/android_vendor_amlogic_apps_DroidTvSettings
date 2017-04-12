@@ -26,9 +26,7 @@
     <string name="device_position_zoomin">"放大屏幕"</string>
     <string name="device_position_description">"當前縮放比例是"</string>
     <string name="device_sound">"聲音"</string>
-    <string name="device_surround_sound">"環繞聲"</string>
     <string name="device_rotation_land">"橫屏拉伸"</string>
-    <string name="device_sound_effects">"系統聲音"</string>
     <string name="device_sound_digital">"數字音頻"</string>
     <string name="device_sound_digital_auto">"自動檢測"</string>
     <string name="device_sound_digital_auto_off">"關閉"</string>

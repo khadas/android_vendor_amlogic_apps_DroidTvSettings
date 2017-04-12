@@ -18,19 +18,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/device_sound">
 
-    <SwitchPreference
-        android:key="sound_effects"
-        android:persistent="false"
-        android:title="@string/device_sound_effects"/>
-
-    <ListPreference
-        android:key="surround_passthrough"
-        android:persistent="false"
-        android:entries="@array/surround_sound_entries"
-        android:entryValues="@array/surround_sound_entry_values"
-        android:title="@string/device_surround_sound"
-        android:summary="%s" />
-
     <ListPreference
         android:key="drc_mode"
         android:persistent="false"

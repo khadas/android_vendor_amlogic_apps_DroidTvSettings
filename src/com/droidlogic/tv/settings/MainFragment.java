@@ -50,106 +50,120 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class MainFragment extends LeanbackPreferenceFragment {
-	private static final String TAG = "MainFragment";
+    private static final String TAG = "MainFragment";
 
-	private static final String KEY_UPGRADE_BLUTOOTH_REMOTE = "upgrade_bluetooth_remote";
-	private static final String KEY_HDMICEC = "hdmicec";
-	private static final String KEY_PLAYBACK_SETTINGS = "playback_settings";
-	private static final String KEY_NETFLIX_ESN = "netflix_esn";
-	private boolean mTvUiMode;
+    private static final String KEY_UPGRADE_BLUTOOTH_REMOTE = "upgrade_bluetooth_remote";
+    private static final String KEY_HDMICEC = "hdmicec";
+    private static final String KEY_PLAYBACK_SETTINGS = "playback_settings";
+    private static final String KEY_SOUNDS = "sound_effects";
+    private static final String KEY_NETFLIX_ESN = "netflix_esn";
+    private boolean mTvUiMode;
 
-	private Preference mUpgradeBluetoothRemote;
+    private Preference mUpgradeBluetoothRemote;
+    private Preference mSoundsPref;
 
-	private String mEsnText;
+    private String mEsnText;
 
-	private BroadcastReceiver esnReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			mEsnText = intent.getStringExtra("ESNValue");
-			findPreference(KEY_NETFLIX_ESN).setSummary(mEsnText);
-		}
-	};
+    private BroadcastReceiver esnReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mEsnText = intent.getStringExtra("ESNValue");
+            findPreference(KEY_NETFLIX_ESN).setSummary(mEsnText);
+        }
+    };
 
-	public static MainFragment newInstance() {
-		return new MainFragment();
-	}
+    public static MainFragment newInstance() {
+        return new MainFragment();
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
-	@Override
-	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-		setPreferencesFromResource(R.xml.main_prefs, null);
-		mTvUiMode = DroidUtils.hasTvUiMode();
-		mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
-		DroidUtils.invisiblePreference(mUpgradeBluetoothRemote, mTvUiMode);
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.main_prefs, null);
+        mTvUiMode = DroidUtils.hasTvUiMode();
+        mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
+        DroidUtils.invisiblePreference(mUpgradeBluetoothRemote, mTvUiMode);
 
-		final Preference hdmicecPref = findPreference(KEY_HDMICEC);
-		if (hdmicecPref != null) {
-			if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC) && !mTvUiMode) {
-				hdmicecPref.setVisible(true);
-			} else {
-				hdmicecPref.setVisible(false);
-			}
-		}
+        final Preference hdmicecPref = findPreference(KEY_HDMICEC);
+        if (hdmicecPref != null) {
+            if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC) && !mTvUiMode) {
+                hdmicecPref.setVisible(true);
+            } else {
+                hdmicecPref.setVisible(false);
+            }
+        }
 
-		final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
-		DroidUtils.invisiblePreference(playbackPref, mTvUiMode);
+        final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
+        DroidUtils.invisiblePreference(playbackPref, mTvUiMode);
 
-		final Preference netflixesnPref = findPreference(KEY_NETFLIX_ESN);
-		if (netflixesnPref != null) {
-			if (getContext().getPackageManager().hasSystemFeature("droidlogic.software.netflix")) {
-				netflixesnPref.setVisible(true);
-				netflixesnPref.setSummary(mEsnText);
-			} else {
-				netflixesnPref.setVisible(false);
-			}
-		}
-	}
+        mSoundsPref = findPreference(KEY_SOUNDS);
 
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
+        final Preference netflixesnPref = findPreference(KEY_NETFLIX_ESN);
+        if (netflixesnPref != null) {
+            if (getContext().getPackageManager().hasSystemFeature("droidlogic.software.netflix")) {
+                netflixesnPref.setVisible(true);
+                netflixesnPref.setSummary(mEsnText);
+            } else {
+                netflixesnPref.setVisible(false);
+            }
+        }
+    }
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		IntentFilter esnIntentFilter = new IntentFilter("com.netflix.ninja.intent.action.ESN_RESPONSE");
-		getActivity().getApplicationContext().registerReceiver(esnReceiver, esnIntentFilter,
-				"com.netflix.ninja.permission.ESN", null);
-		Intent esnQueryIntent = new Intent("com.netflix.ninja.intent.action.ESN");
-		esnQueryIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-		getActivity().getApplicationContext().sendBroadcast(esnQueryIntent);
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
-	@Override
-	public void onStop() {
-		super.onStop();
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateSounds();
+        IntentFilter esnIntentFilter = new IntentFilter("com.netflix.ninja.intent.action.ESN_RESPONSE");
+        getActivity().getApplicationContext().registerReceiver(esnReceiver, esnIntentFilter,
+                "com.netflix.ninja.permission.ESN", null);
+        Intent esnQueryIntent = new Intent("com.netflix.ninja.intent.action.ESN");
+        esnQueryIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        getActivity().getApplicationContext().sendBroadcast(esnQueryIntent);
+    }
 
-	private void hideIfIntentUnhandled(Preference preference) {
-		if (preference == null) {
-			return;
-		}
-		preference.setVisible(systemIntentIsHandled(preference.getIntent()) != null);
-	}
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
-	private ResolveInfo systemIntentIsHandled(Intent intent) {
-		if (intent == null) {
-			return null;
-		}
+    private void updateSounds() {
+        if (mSoundsPref == null) {
+            return;
+        }
 
-		final PackageManager pm = getContext().getPackageManager();
+        mSoundsPref.setIcon(SoundFragment.getSoundEffectsEnabled(getContext().getContentResolver())
+                ? R.drawable.ic_volume_up : R.drawable.ic_volume_off);
+    }
 
-		for (ResolveInfo info : pm.queryIntentActivities(intent, 0)) {
-			if (info.activityInfo != null && info.activityInfo.enabled && (info.activityInfo.applicationInfo.flags
-					& ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM) {
-				return info;
-			}
-		}
-		return null;
-	}
+    private void hideIfIntentUnhandled(Preference preference) {
+        if (preference == null) {
+            return;
+        }
+        preference.setVisible(systemIntentIsHandled(preference.getIntent()) != null);
+    }
+
+    private ResolveInfo systemIntentIsHandled(Intent intent) {
+        if (intent == null) {
+            return null;
+        }
+
+        final PackageManager pm = getContext().getPackageManager();
+
+        for (ResolveInfo info : pm.queryIntentActivities(intent, 0)) {
+            if (info.activityInfo != null && info.activityInfo.enabled && (info.activityInfo.applicationInfo.flags
+                    & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM) {
+                return info;
+            }
+        }
+        return null;
+    }
 }
