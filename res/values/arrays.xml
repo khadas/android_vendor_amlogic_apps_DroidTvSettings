@@ -78,4 +78,15 @@
         <item>0</item>
         <item>100</item>
     </string-array>
+
+    <string-array name="dolby_vision_entries">
+        <item>Dolby Vision OFF</item>
+        <item>Dolby Vision Follow Sink</item>
+        <item>Dolby Vision Follow Source</item>
+    </string-array>
+    <string-array name="dolby_vision_entry_values" translatable="false">
+        <item>dolby_vision_off</item>
+        <item>dolby_vision_sink</item>
+        <item>dolby_vision_source</item>
+    </string-array>
 </resources>

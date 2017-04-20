@@ -22,6 +22,7 @@ import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 
+import android.os.SystemProperties;
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.R;
 
@@ -32,6 +33,7 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 	private static final String KEY_OUTPUTMODE = "outputmode";
 	private static final String KEY_HDR = "hdr";
 	private static final String KEY_SDR = "sdr";
+	private static final String KEY_DOLBY_VISION    = "dolby_vision";
 
 	private boolean mTvUiMode;
 
@@ -57,5 +59,10 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 
 		final Preference hdrPref = findPreference(KEY_HDR);
 		DroidUtils.invisiblePreference(hdrPref, mTvUiMode);
+
+		final Preference dvPref =(Preference) findPreference(KEY_DOLBY_VISION);
+		if (SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == false) {
+			dvPref.setVisible(false);
+		}
 	}
 }

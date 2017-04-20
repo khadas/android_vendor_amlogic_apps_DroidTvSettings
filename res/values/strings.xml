@@ -51,6 +51,8 @@
     <string name="action_off_description">Off</string>
     <string name="device_hdr">HDR to SDR</string>
     <string name="device_sdr">SDR to HDR</string>
+    <string name="dolby_vision">Dolby Vision</string>
+    <string name="dolby_vision_set">Dolby Vision Set</string>
     <string name="captions_display_on">On</string>
     <!-- Subtext used under the captions_display string to denote that captions will NOT be shown. [CHAR LIMIT=50] -->
     <string name="captions_display_off">Off</string>
