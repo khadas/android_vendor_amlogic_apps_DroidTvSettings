@@ -15,6 +15,13 @@
 -->
 <!-- Layout container for the 2 pane dialog fragment. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/dialog_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    android:id="@+id/border_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_border"
+    android:visibility="gone">
+    <FrameLayout
+        android:id="@+id/dialog_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>
