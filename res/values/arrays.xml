@@ -28,17 +28,15 @@
     </string-array>
 
     <string-array name="digital_sounds_entries">
-        <item>Auto</item>
         <item>PCM</item>
-        <item>HDMI</item>
-        <item>SPDIF</item>
+        <item>SPDIF RAW</item>
+        <item>HDMI RAW</item>
     </string-array>
 
     <string-array name="digital_sounds_entry_values" translatable="false">
-        <item>auto</item>
         <item>pcm</item>
-        <item>hdmi</item>
         <item>spdif</item>
+        <item>hdmi</item>
     </string-array>
 
     <string-array name="dts_sounds_entries">
