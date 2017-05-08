@@ -89,7 +89,8 @@
         <activity
             android:name=".display.position.DisplayPositionActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.Settings.Display" />
         <activity
             android:name=".display.outputmode.ColorAttributeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
