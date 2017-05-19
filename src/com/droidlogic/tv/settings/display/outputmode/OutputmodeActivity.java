@@ -146,6 +146,9 @@ public class OutputmodeActivity extends DialogActivity implements ActionAdapter.
             actions.add(new Action.Builder().key(BEST_RESOLUTION)
                     .title("        " + getString(R.string.device_outputmode_auto))
                     .description("                " + best_resolution_description).build());
+            actions.add(new Action.Builder().key(MORE_SETTING)
+                    .title("        " + getString(R.string.device_outputmode_moresetting))
+                    .description("").build());
         }
         /*
         String isDeepColor;
@@ -158,9 +161,6 @@ public class OutputmodeActivity extends DialogActivity implements ActionAdapter.
                 .title("        " + getString(R.string.device_outputmode_deepcolor))
                 .description("                " + isDeepColor).build());
         */
-        actions.add(new Action.Builder().key(MORE_SETTING)
-                .title("        " + getString(R.string.device_outputmode_moresetting))
-                .description("").build());
 
         int currentModeIndex = mOutputUiManager.getCurrentModeIndex();
         for (int i = 0; i < outputmodeTitleList.size(); i++) {

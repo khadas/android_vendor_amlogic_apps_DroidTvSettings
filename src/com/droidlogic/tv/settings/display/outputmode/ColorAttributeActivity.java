@@ -124,6 +124,11 @@ public class ColorAttributeActivity extends DialogActivity implements ActionAdap
 
         for (int i = 0; i < colorTitleList.size(); i++) {
             value = colorValueList.get(i).trim();
+            curMode = mOutputUiManager.getCurrentMode().trim();
+            if (!isModeSupportColor(curMode, value)) {
+                continue;
+            }
+
             if (curColorValue.equals(value)) {
                 actions.add(new Action.Builder().key(value)
                         .title("        " + colorTitleList.get(i))

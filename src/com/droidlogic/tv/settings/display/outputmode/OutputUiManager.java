@@ -138,9 +138,6 @@ public class OutputUiManager {
 
     private static String mUiMode;
 
-    private final static String HDMI4K60HZ = "2160p60hz";
-    private final static String HDMI4K50HZ = "2160p50hz";
-
     public OutputUiManager(Context context){
         mContext = context;
         mOutputModeManager = new OutputModeManager(mContext);
@@ -239,9 +236,6 @@ public class OutputUiManager {
 
     public int getCurrentModeIndex(){
          String currentMode = mOutputModeManager.getCurrentOutputMode();
-         if (currentMode.equals(HDMI4K60HZ) || currentMode.equals(HDMI4K50HZ)) {
-              currentMode = currentMode +"420";
-         }
          for (int i=0 ; i < mValueList.size();i++) {
              if (currentMode.equals(mValueList.get(i))) {
                 return i ;
