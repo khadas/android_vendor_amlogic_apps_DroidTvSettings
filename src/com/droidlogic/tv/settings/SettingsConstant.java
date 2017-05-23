@@ -38,10 +38,22 @@ public class SettingsConstant {
     public static boolean needDroidlogicHdrFeature(Context context){
         return context.getResources().getBoolean(R.bool.display_need_hdr_function);
     }
+    public static boolean needDroidlogicSdrFeature(Context context){
+        return context.getResources().getBoolean(R.bool.display_need_sdr_function);
+    }
     public static boolean needDroidlogicDigitalSounds(Context context){
         return context.getResources().getBoolean(R.bool.display_need_digital_sounds);
     }
     public static boolean needScreenResolutionFeture(Context context){
         return context.getResources().getBoolean(R.bool.display_need_screen_resolution);
+    }
+    public static boolean needDroidlogicHdmicecFeature(Context context){
+        return context.getResources().getBoolean(R.bool.display_need_hdmicec_function);
+    }
+    public static boolean needDroidlogicPlaybackSetFeature(Context context){
+        return context.getResources().getBoolean(R.bool.display_need_playback_set_function);
+    }
+    public static boolean needDroidlogicBluetoothRemoteFeature(Context context){
+        return context.getResources().getBoolean(R.bool.display_need_bluetooth_remote_function);
     }
 }

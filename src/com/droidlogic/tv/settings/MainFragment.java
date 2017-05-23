@@ -45,6 +45,7 @@ import android.util.ArraySet;
 import android.util.Log;
 
 import com.droidlogic.tv.settings.util.DroidUtils;
+import com.droidlogic.tv.settings.SettingsConstant;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -86,19 +87,14 @@ public class MainFragment extends LeanbackPreferenceFragment {
         setPreferencesFromResource(R.xml.main_prefs, null);
         mTvUiMode = DroidUtils.hasTvUiMode();
         mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
-        DroidUtils.invisiblePreference(mUpgradeBluetoothRemote, mTvUiMode);
+        mUpgradeBluetoothRemote.setVisible(SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()));
 
         final Preference hdmicecPref = findPreference(KEY_HDMICEC);
-        if (hdmicecPref != null) {
-            if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC) && !mTvUiMode) {
-                hdmicecPref.setVisible(true);
-            } else {
-                hdmicecPref.setVisible(false);
-            }
-        }
+        hdmicecPref.setVisible(getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC)
+                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext()));
 
         final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
-        DroidUtils.invisiblePreference(playbackPref, mTvUiMode);
+        playbackPref.setVisible(SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()));
 
         mSoundsPref = findPreference(KEY_SOUNDS);
 

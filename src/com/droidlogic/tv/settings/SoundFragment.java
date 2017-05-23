@@ -32,6 +32,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.droidlogic.app.OutputModeManager;
+import com.droidlogic.tv.settings.SettingsConstant;
 import com.droidlogic.tv.settings.R;
 
 public class SoundFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener {
@@ -75,7 +76,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         digitalsoundPref.setOnPreferenceChangeListener(this);
         dtsdrcmodePref.setValue(getDtsDrcModePassthroughSetting());
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
-        if (SystemProperties.getBoolean("ro.platform.has.tvuimode", false)) {
+        if (!SettingsConstant.needDroidlogicDigitalSounds(getContext())) {
             digitalsoundPref.setVisible(false);
             Log.d(TAG, "tv don't need digital sound switch!");
         }
