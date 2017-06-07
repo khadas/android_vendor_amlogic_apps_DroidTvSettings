@@ -335,6 +335,16 @@ public class OutputUiManager {
                 }
 
             }
+            if (strEdid.contains("2160p50hz") && (!strEdid.contains("2160p50hz420"))) {
+                listHdmiMode.add("2160p50hz");
+                listHdmiTitle.add("4k2k-50hz");
+            }
+
+            if (strEdid.contains("2160p60hz") && (!strEdid.contains("2160p60hz420"))) {
+                listHdmiMode.add("2160p60hz");
+                listHdmiTitle.add("4k2k-60hz");
+            }
+
             mHdmiValueList = listHdmiMode.toArray(new String[listValue.size()]);
             mHdmiTitleList = listHdmiTitle.toArray(new String[listTitle.size()]);
         } else {
