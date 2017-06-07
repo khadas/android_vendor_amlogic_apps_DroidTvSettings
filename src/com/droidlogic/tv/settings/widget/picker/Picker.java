@@ -404,7 +404,7 @@ public abstract class Picker extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = getLayoutInflater(null).inflate(R.layout.picker_item, parent, false);
+            final View view = getLayoutInflater().inflate(R.layout.picker_item, parent, false);
             return new ViewHolder(view);
         }
 
