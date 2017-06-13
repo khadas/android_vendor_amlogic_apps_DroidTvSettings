@@ -21,6 +21,11 @@ LOCAL_CERTIFICATE := platform
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
 
+
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26 && echo OK),OK)
+LOCAL_PROPRIETARY_MODULE := true
+endif
+
 LOCAL_PRIVILEGED_MODULE := true
 LOCAL_JAVA_LIBRARIES := droidlogic
 LOCAL_STATIC_JAVA_LIBRARIES := \
