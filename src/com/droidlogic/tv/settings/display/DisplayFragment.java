@@ -62,8 +62,6 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 		hdrPref.setVisible(SettingsConstant.needDroidlogicHdrFeature(getContext()));
 
 		final Preference dvPref =(Preference) findPreference(KEY_DOLBY_VISION);
-		if (SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == false) {
-			dvPref.setVisible(false);
-		}
+		dvPref.setVisible(SettingsConstant.needDroidlogicTvFeature(getContext()));
 	}
 }

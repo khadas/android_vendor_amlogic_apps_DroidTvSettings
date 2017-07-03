@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -37,9 +38,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class OutputmodeActivity extends DialogActivity implements ActionAdapter.Listener, OnClickListener, OnFocusChangeListener{
-    private final static String BEST_RESOLUTION = "best resolution";
-    private final static String DEEP_COLOR = "deep_color";
-    private final static String MORE_SETTING= "more setting";
+    private final static String BEST_RESOLUTION          = "best resolution";
+    private final static String DEEP_COLOR               = "deep_color";
+    private final static String COLOR_SPACE_DEEP_COLOR   = "color space deep color";
+    private final static String DOLBY_VISION             = "dolby_vision";
+
     private ContentFragment mContentFragment;
     private ActionFragment mActionFragment;
     private OutputUiManager mOutputUiManager;
@@ -98,11 +101,16 @@ public class OutputmodeActivity extends DialogActivity implements ActionAdapter.
 
         if (mode.equals(BEST_RESOLUTION)) {
             mOutputUiManager.change2BestMode();
-        }else if (mode.equals(MORE_SETTING)) {
+        } else if (mode.equals(COLOR_SPACE_DEEP_COLOR)) {
             Intent intent = new Intent(OutputmodeActivity.this,ColorAttributeActivity.class);
             startActivity(intent);
             return;
-            //mOutputUiManager.change2DeepColorMode();
+        } else if (mode.equals(DOLBY_VISION)) {
+            if (!mOutputUiManager.isDolbyVisionEnable()
+                && mOutputUiManager.isTvSupportDolbyVision()) {
+                mOutputUiManager.checkOutputmodeDeepcolor();
+            }
+            mOutputUiManager.switchDolbyVisionState();
         }else {
             mOutputUiManager.change2NewMode(mode);
         }
@@ -138,45 +146,55 @@ public class OutputmodeActivity extends DialogActivity implements ActionAdapter.
 
         if (mOutputUiManager.getUiMode().equals(mOutputUiManager.HDMI_MODE)) {
             String best_resolution_description;
-            if (mOutputUiManager.isBestOutputmode()) {
-                best_resolution_description = getString(R.string.captions_display_on);
-            } else{
-                best_resolution_description = getString(R.string.captions_display_off);
+            String deep_color_description;
+            String dolby_vision_description;
+            best_resolution_description = mOutputUiManager.isBestOutputmode() ?
+                getString(R.string.captions_display_on) : getString(R.string.captions_display_off);
+            deep_color_description = mOutputUiManager.getCurrentColorAttribute();
+            dolby_vision_description = mOutputUiManager.isDolbyVisionEnable() ?
+                getString(R.string.captions_display_on) : getString(R.string.captions_display_off);
+
+            boolean flag = mOutputUiManager.isDolbyVisionEnable()
+                            && mOutputUiManager.isTvSupportDolbyVision();
+            Action resolution = constructAction(BEST_RESOLUTION, getString(R.string.device_outputmode_auto),
+                                    "                " + best_resolution_description);
+
+            Action deep_color = constructAction(COLOR_SPACE_DEEP_COLOR,
+                                    getString(R.string.device_outputmode_deep_color),
+                                    "                " + deep_color_description);
+
+            Action dolby_vision = constructAction(DOLBY_VISION, getString(R.string.dolby_vision_set),
+                                    "                " + dolby_vision_description);
+
+            if (flag) {
+                resolution.setEnabled(false);
+                deep_color.setEnabled(false);
             }
-            actions.add(new Action.Builder().key(BEST_RESOLUTION)
-                    .title("        " + getString(R.string.device_outputmode_auto))
-                    .description("                " + best_resolution_description).build());
-            actions.add(new Action.Builder().key(MORE_SETTING)
-                    .title("        " + getString(R.string.device_outputmode_moresetting))
-                    .description("").build());
+            actions.add(resolution);
+            actions.add(deep_color);
+            if (SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == true) {
+                actions.add(dolby_vision);
+            }
         }
-        /*
-        String isDeepColor;
-        if (mOutputUiManager.isDeepColor()) {
-            isDeepColor = getString(R.string.captions_display_on);
-        } else{
-            isDeepColor = getString(R.string.captions_display_off);
-        }
-        actions.add(new Action.Builder().key(DEEP_COLOR)
-                .title("        " + getString(R.string.device_outputmode_deepcolor))
-                .description("                " + isDeepColor).build());
-        */
 
         int currentModeIndex = mOutputUiManager.getCurrentModeIndex();
         for (int i = 0; i < outputmodeTitleList.size(); i++) {
             if (i == currentModeIndex) {
-                actions.add(new Action.Builder().key(outputmodeValueList.get(i))
-                        .title("        " + outputmodeTitleList.get(i))
-                        .checked(true).build());
+                Action mode = constructAction(outputmodeValueList.get(i), outputmodeTitleList.get(i), "");
+                mode.setChecked(true);
+                actions.add(mode);
             }else {
-                actions.add(new Action.Builder().key(outputmodeValueList.get(i))
-                        .title("        " + outputmodeTitleList.get(i))
-                        .description("").build());
+                actions.add(constructAction(outputmodeValueList.get(i), outputmodeTitleList.get(i), ""));
             }
         }
         return actions;
     }
 
+    private Action constructAction(String key, String title, String description) {
+        return new Action.Builder().key(key)
+                        .title("        " + title)
+                        .description(description).build();
+    }
     private void showDialog () {
         if (mAlertDialog == null) {
             LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);

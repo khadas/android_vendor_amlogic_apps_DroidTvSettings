@@ -41,6 +41,6 @@
             android:fragment="com.droidlogic.tv.settings.display.sdr.SdrSettingFragment"/>
         <Preference
             android:key="dolby_vision"
-            android:title="@string/dolby_vision"
+            android:title="@string/dolby_vision_tv"
             android:fragment="com.droidlogic.tv.settings.display.dolbyvision.DolbyVisionSettingFragment"/>
 </PreferenceScreen>

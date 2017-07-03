@@ -14,7 +14,7 @@
     <string name="device_outputmode">"屏幕分辨率"</string>
     <string name="device_color">"色彩"</string>
     <string name="device_colorattribute">"格式和色深"</string>
-    <string name="device_outputmode_moresetting">"更多设置"</string>
+    <string name="device_outputmode_deep_color">"色彩空间 &amp; 深色设置"</string>
     <string name="device_position">"屏幕缩放"</string>
     <string name="device_outputmode_auto">"自动切换到最佳分辨率"</string>
     <string name="device_outputmode_deepcolor">"深色模式"</string>
