@@ -76,7 +76,9 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         digitalsoundPref.setOnPreferenceChangeListener(this);
         dtsdrcmodePref.setValue(SystemProperties.get("persist.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
-        if (!SettingsConstant.needDroidlogicDigitalSounds(getContext())) {
+        boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
+                && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
+        if (!SettingsConstant.needDroidlogicDigitalSounds(getContext()) || tvFlag) {
             digitalsoundPref.setVisible(false);
             Log.d(TAG, "tv don't need digital sound switch!");
         }

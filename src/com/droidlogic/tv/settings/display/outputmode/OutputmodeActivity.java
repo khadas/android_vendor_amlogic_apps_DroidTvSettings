@@ -1,6 +1,6 @@
 package com.droidlogic.tv.settings.display.outputmode;
 
-
+import com.droidlogic.tv.settings.SettingsConstant;
 import com.droidlogic.tv.settings.R;
 import com.droidlogic.tv.settings.dialog.old.Action;
 import com.droidlogic.tv.settings.dialog.old.ActionAdapter;
@@ -172,7 +172,11 @@ public class OutputmodeActivity extends DialogActivity implements ActionAdapter.
             }
             actions.add(resolution);
             actions.add(deep_color);
-            if (SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == true) {
+            //only S912 as Mbox, T962E as Mbox, can display this options
+            //T962E as TV and T962X, display in Settings-->Display list.
+            if ((SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == true) &&
+                    (!SettingsConstant.needDroidlogicTvFeature(this)
+                     || (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == true))) {
                 actions.add(dolby_vision);
             }
         }
