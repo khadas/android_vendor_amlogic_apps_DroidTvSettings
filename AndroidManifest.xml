@@ -127,6 +127,11 @@
                 <category android:name="com.android.settings.SHORTCUT" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".StubKeyguardService"
+            android:exported="true"
+            android:enabled="true" />
     </application>
 
 </manifest>
