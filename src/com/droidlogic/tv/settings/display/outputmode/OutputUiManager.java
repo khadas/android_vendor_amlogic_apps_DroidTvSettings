@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.droidlogic.app.OutputModeManager;
+import com.droidlogic.app.DolbyVisionSettingManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -134,13 +135,16 @@ public class OutputUiManager {
     private ArrayList<String> mColorValueList = new ArrayList<String>();
 
     private OutputModeManager mOutputModeManager;
+    private DolbyVisionSettingManager mDolbyVisionSettingManager;
     private Context mContext;
 
     private static String mUiMode;
+    private static String tvSupportDolbyVisionMode;
 
     public OutputUiManager(Context context){
         mContext = context;
         mOutputModeManager = new OutputModeManager(mContext);
+        mDolbyVisionSettingManager = new DolbyVisionSettingManager(mContext);
 
         mUiMode = getUiMode();
         initModeValues(mUiMode);
@@ -335,12 +339,67 @@ public class OutputUiManager {
                 }
 
             }
-            mHdmiValueList = listHdmiMode.toArray(new String[listValue.size()]);
-            mHdmiTitleList = listHdmiTitle.toArray(new String[listTitle.size()]);
+            if (strEdid.contains("2160p50hz") && (!strEdid.contains("2160p50hz420"))) {
+                listHdmiMode.add("2160p50hz");
+                listHdmiTitle.add("4k2k-50hz");
+            }
+
+            if (strEdid.contains("2160p60hz") && (!strEdid.contains("2160p60hz420"))) {
+                listHdmiMode.add("2160p60hz");
+                listHdmiTitle.add("4k2k-60hz");
+            }
+
+            List<String> listHdmiMode_tmp = new ArrayList<String>();
+            List<String> listHdmiTitle_tmp = new ArrayList<String>();
+            if (isDolbyVisionEnable() && isTvSupportDolbyVision()) {
+                for (int i = 0; i < listHdmiMode.size(); i++) {
+                    if (resolveResolutionValue(listHdmiMode.get(i))
+                            > resolveResolutionValue(tvSupportDolbyVisionMode)) {
+                        Log.e(TAG, "This TV not Support Dolby Vision in " + listHdmiMode.get(i));
+                    } else {
+                        listHdmiMode_tmp.add(listHdmiMode.get(i));
+                        listHdmiTitle_tmp.add(listHdmiTitle.get(i));
+                    }
+                }
+                mHdmiValueList = listHdmiMode_tmp.toArray(new String[listValue.size()]);
+                mHdmiTitleList = listHdmiTitle_tmp.toArray(new String[listTitle.size()]);
+            } else {
+                mHdmiValueList = listHdmiMode.toArray(new String[listValue.size()]);
+                mHdmiTitleList = listHdmiTitle.toArray(new String[listTitle.size()]);
+            }
         } else {
             mHdmiValueList = listValue.toArray(new String[listValue.size()]);
             mHdmiTitleList = listTitle.toArray(new String[listTitle.size()]);
         }
     }
 
+    public boolean isTvSupportDolbyVision() {
+        tvSupportDolbyVisionMode = mDolbyVisionSettingManager.isTvSupportDolbyVision();
+        return tvSupportDolbyVisionMode.equals("") ? false : true;
+    }
+
+    public boolean isDolbyVisionEnable() {
+        return mDolbyVisionSettingManager.isDolbyVisionEnable();
+    }
+
+    public void switchDolbyVisionState() {
+        mDolbyVisionSettingManager.setDolbyVisionEnable(isDolbyVisionEnable() ? 0 : 1);
+    }
+
+    public long resolveResolutionValue(String mode) {
+        return mDolbyVisionSettingManager.resolveResolutionValue(mode);
+    }
+
+    public void checkOutputmodeDeepcolor() {
+        String mode = getCurrentMode();
+        if ((tvSupportDolbyVisionMode != null) && (tvSupportDolbyVisionMode.contains("hz"))
+            && (resolveResolutionValue(mode) > resolveResolutionValue(tvSupportDolbyVisionMode))) {
+            change2NewMode(tvSupportDolbyVisionMode);
+        }
+
+        if ((getCurrentColorAttribute() == null)
+                || (!getCurrentColorAttribute().equals("444,8bit"))) {
+            changeColorAttribte("444,8bit");
+        }
+    }
 }

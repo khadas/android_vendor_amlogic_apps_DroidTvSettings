@@ -74,9 +74,11 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         drcmodePref.setOnPreferenceChangeListener(this);
         digitalsoundPref.setValue(getDigitalSoundPassthroughSetting());
         digitalsoundPref.setOnPreferenceChangeListener(this);
-        dtsdrcmodePref.setValue(getDtsDrcModePassthroughSetting());
+        dtsdrcmodePref.setValue(SystemProperties.get("persist.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
-        if (!SettingsConstant.needDroidlogicDigitalSounds(getContext())) {
+        boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
+                && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
+        if (!SettingsConstant.needDroidlogicDigitalSounds(getContext()) || tvFlag) {
             digitalsoundPref.setVisible(false);
             Log.d(TAG, "tv don't need digital sound switch!");
         }
@@ -108,13 +110,11 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             case DRC_OFF:
                 mOutputModeManager.enableDobly_DRC(false);
                 mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
-                mOutputModeManager.setDtsDrcScale(OutputModeManager.MIN_DRC_SCALE);
                 setDrcModePassthroughSetting(OutputModeManager.IS_DRC_OFF);
                 break;
             case DRC_LINE:
                 mOutputModeManager.enableDobly_DRC(true);
                 mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
-                mOutputModeManager.setDtsDrcScale(OutputModeManager.MAX_DRC_SCALE);
                 setDrcModePassthroughSetting(OutputModeManager.IS_DRC_LINE);
                 break;
             case DRC_RF:
@@ -160,7 +160,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         } else if (TextUtils.equals(preference.getKey(), KEY_DTSDRCMODE_PASSTHROUGH)) {
             final String selection = (String) newValue;
             mOutputModeManager.setDtsDrcScale(selection);
-            setDtsDrcModePassthroughSetting(selection);
             return true;
         }
         return true;
@@ -182,11 +181,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
     private void setDigitalSoundPassthroughSetting(int newVal) {
         Settings.Global.putInt(getContext().getContentResolver(),
                 OutputModeManager.DIGITAL_SOUND, newVal);
-    }
-
-    private void setDtsDrcModePassthroughSetting(String newVal) {
-        Settings.Global.putString(getContext().getContentResolver(),
-                OutputModeManager.DTSDRC_MODE, newVal);
     }
 
     public static boolean getSoundEffectsEnabled(ContentResolver contentResolver) {
@@ -221,11 +215,5 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         case OutputModeManager.IS_HDMI_RAW:
             return HDMI;
         }
-    }
-
-    private String getDtsDrcModePassthroughSetting() {
-        String dtsdrc_mode_value = Settings.Global.getString(getContext().getContentResolver(),
-                OutputModeManager.DTSDRC_MODE);
-        return dtsdrc_mode_value == null ? OutputModeManager.DEFAULT_DRC_SCALE : dtsdrc_mode_value;
     }
 }

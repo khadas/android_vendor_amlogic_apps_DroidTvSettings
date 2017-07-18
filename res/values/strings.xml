@@ -14,7 +14,7 @@
     <string name="device_outputmode">Screen resolution</string>
     <string name="device_color">Color</string>
     <string name="device_colorattribute">Format and Depth</string>
-    <string name="device_outputmode_moresetting">More setting</string>
+    <string name="device_outputmode_deep_color">Color Space &amp; Deep Color Settings</string>
     <string name="device_outputmode_auto">Auto switch to best resolution</string>
     <string name="device_outputmode_deepcolor">deep color mode</string>
     <string name="device_outputmode_confirm_mode">Confirm turn off deep color mode</string>
@@ -30,6 +30,11 @@
     <string name="playback_settings">Playback settings</string>
     <!-- Hdmi self-adaption switch -->
     <string name="playback_hdmi_selfadaption">HDMI self-adaption</string>
+    <string name="playback_hdmi_selfadaption_part">part mode</string>
+    <string name="playback_hdmi_selfadaption_total">totle mode</string>
+    <string name="playback_hdmi_selfadaption_part_desc">only support 23.976hz,29.97hz,59.94hz self adaption</string>
+    <string name="playback_hdmi_selfadaption_total_desc">support all frequencys self adaption</string>
+
     <string name="power_key_action">Power</string>
     <string name="system_powerkeyaction">Powerkey definition</string>
 
@@ -53,6 +58,8 @@
     <string name="device_sdr">SDR to HDR</string>
     <string name="dolby_vision">Dolby Vision</string>
     <string name="dolby_vision_set">Dolby Vision Set</string>
+    <string name="dolby_vision_tv">TV Dolby Vision</string>
+    <string name="dolby_vision_tv_set">TV Dolby Vision Set</string>
     <string name="captions_display_on">On</string>
     <!-- Subtext used under the captions_display string to denote that captions will NOT be shown. [CHAR LIMIT=50] -->
     <string name="captions_display_off">Off</string>

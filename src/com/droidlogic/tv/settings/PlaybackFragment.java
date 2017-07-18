@@ -15,67 +15,65 @@
  */
 package com.droidlogic.tv.settings;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.UserHandle;
-import android.provider.Settings;
+import android.os.Handler;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceGroup;
-import android.support.v7.preference.TwoStatePreference;
+import android.support.v7.preference.PreferenceCategory;
 
-import com.droidlogic.app.PlayBackManager;
 import com.droidlogic.tv.settings.R;
 
-import android.util.Log;
+import com.droidlogic.app.PlayBackManager;
 
 public class PlaybackFragment extends LeanbackPreferenceFragment {
-	private static final String TAG = "PlaybackFragment";
-	private static final String KEY_PLAYBACK_HDMI_SELFADAPTION = "playback_hdmi_selfadaption";
+    private static final String TAG = "PlaybackFragment";
 
-	private PlayBackManager mPlayBackManager;
+    private static final String KEY_PLAYBACK_HDMI_SELFADAPTION = "playback_hdmi_selfadaption";
 
-	private TwoStatePreference mHdmiSelfAdaptionSwitchPref;
+    private PlayBackManager mPlayBackManager;
+    private Preference hdmiSelfAdaptionPref = null;
 
-	public static PlaybackFragment newInstance() {
-		return new PlaybackFragment();
-	}
+    public static PlaybackFragment newInstance() {
+        return new PlaybackFragment();
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mPlayBackManager = new PlayBackManager(getContext());
-	}
+    @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		refresh();
-	}
+    @Override
+        public void onResume() {
+            super.onResume();
+            refreshStatus();
+        }
 
-	@Override
-	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-		setPreferencesFromResource(R.xml.playback_settings, null);
+    @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.playback_settings, null);
 
-		mHdmiSelfAdaptionSwitchPref = (TwoStatePreference) findPreference(KEY_PLAYBACK_HDMI_SELFADAPTION);
-	}
+            mPlayBackManager = new PlayBackManager(getContext());
 
-	@Override
-	public boolean onPreferenceTreeClick(Preference preference) {
-		final String key = preference.getKey();
-		if (key == null) {
-			return super.onPreferenceTreeClick(preference);
-		}
-		switch (key) {
-		case KEY_PLAYBACK_HDMI_SELFADAPTION:
-			mPlayBackManager.setHdmiSelfadaption(mHdmiSelfAdaptionSwitchPref.isChecked());
-			return true;
-		}
-		return super.onPreferenceTreeClick(preference);
-	}
+            hdmiSelfAdaptionPref = findPreference(KEY_PLAYBACK_HDMI_SELFADAPTION);
 
-	private void refresh() {
-		mHdmiSelfAdaptionSwitchPref.setChecked(mPlayBackManager.isHdmiSelfadaptionOn());
-	}
+            refreshStatus();
+        }
+
+    private String getHdmiSelfAdaptionStatus() {
+        int mode = mPlayBackManager.getHdmiSelfAdaptionMode();
+        switch (mode) {
+            case PlayBackManager.MODE_OFF:
+                return getString(R.string.off);
+            case PlayBackManager.MODE_PART:
+                return getString(R.string.playback_hdmi_selfadaption_part);
+            case PlayBackManager.MODE_TOTAL:
+                return getString(R.string.playback_hdmi_selfadaption_total);
+            default:
+                return getString(R.string.off);
+        }
+    }
+
+    private void refreshStatus() {
+        hdmiSelfAdaptionPref.setSummary(getHdmiSelfAdaptionStatus());
+    }
 }

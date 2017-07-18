@@ -27,10 +27,4 @@
     <item>LINE</item>
     <item>RF</item>
   </string-array>
-  <string-array name="digital_sounds_entries">
-    <item>自動</item>
-    <item>PCM</item>
-    <item>HDMI</item>
-    <item>SPDIF</item>
-  </string-array>
 </resources>

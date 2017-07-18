@@ -14,7 +14,7 @@
     <string name="device_outputmode">"屏幕分辨率"</string>
     <string name="device_color">"色彩"</string>
     <string name="device_colorattribute">"格式和色深"</string>
-    <string name="device_outputmode_moresetting">"更多设置"</string>
+    <string name="device_outputmode_deep_color">"色彩空间 &amp; 深色设置"</string>
     <string name="device_position">"屏幕缩放"</string>
     <string name="device_outputmode_auto">"自动切换到最佳分辨率"</string>
     <string name="device_outputmode_deepcolor">"深色模式"</string>
@@ -61,6 +61,11 @@
 
     <!-- Hdmi self-adaption switch -->
     <string name="playback_hdmi_selfadaption">"HDMI 自适应"</string>
+    <string name="playback_hdmi_selfadaption_part">部分模式</string>
+    <string name="playback_hdmi_selfadaption_total">完全模式</string>
+    <string name="playback_hdmi_selfadaption_part_desc">只支持23.976hz,29.97hz,59.94hz自适应</string>
+    <string name="playback_hdmi_selfadaption_total_desc">支持所有频率自适应</string>
+
     <string name="system_powerkeyaction">"电源键定义"</string>
 
     <!-- Preference which manages power key definition. -->

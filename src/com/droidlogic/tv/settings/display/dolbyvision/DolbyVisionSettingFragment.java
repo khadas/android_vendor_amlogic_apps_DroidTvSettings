@@ -32,95 +32,95 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment implements
-        Preference.OnPreferenceChangeListener{
+public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
     private static final String TAG = "DolbyVisionSettingFragment";
 
     public static final String KEY_DOLBY_VISION     = "dolby_vision_set";
 
-    private static final String DV_ENABLE            = "Y";
-    private static final String DV_DISABLE           = "N";
+    private static final int DV_ENABLE            = 1;
+    private static final int DV_DISABLE           = 0;
 
-    public static final int DOLBY_VISION_FOLLOW_SINK       = 0;
-    public static final int DOLBY_VISION_FOLLOW_SOURCE     = 1;
-    public static final int DOLBY_VISION_FORCE_OUTPUT_MODE = 2;
-
-    public static final int DOLBY_VISION_OUTPUT_MODE_BYPASS      = 0;
-    public static final int DOLBY_VISION_OUTPUT_MODE_IPT_TUNNEL  = 2;
-    public static final int DOLBY_VISION_OUTPUT_MODE_HDR10       = 3;
-    public static final int DOLBY_VISION_OUTPUT_MODE_SDR8        = 5;
-
-    public static final String DV_OFF                    = "dolby_vision_off";
-    public static final String DV_FOLLOW_SINK            = "dolby_vision_sink";
-    public static final String DV_FOLLOW_SOURCE          = "dolby_vision_source";
+    private static final String DV_RADIO_GROUP = "dv";
+    private static final String ACTION_ON = "on";
+    private static final String ACTION_OFF = "off";
 
     private DolbyVisionSettingManager mDolbyVisionSettingManager;
 
-    private ListPreference dvPref;
+    // Adjust this value to keep things relatively responsive without janking
+    // animations
+    private static final int DV_SET_DELAY_MS = 500;
+    private final Handler mDelayHandler = new Handler();
+    private String mNewDvMode;
+    private final Runnable mSetDvRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (ACTION_ON.equals(mNewDvMode)) {
+                mDolbyVisionSettingManager.setDolbyVisionEnable(DV_ENABLE);
+            } else if (ACTION_OFF.equals(mNewDvMode)) {
+                mDolbyVisionSettingManager.setDolbyVisionEnable(DV_DISABLE);
+            }
+        }
+    };
 
     public static DolbyVisionSettingFragment newInstance() {
         return new DolbyVisionSettingFragment();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.dolby_vision, null);
-        mDolbyVisionSettingManager = new DolbyVisionSettingManager((Context)getActivity());
+        mDolbyVisionSettingManager = new DolbyVisionSettingManager((Context) getActivity());
+        final Context themedContext = getPreferenceManager().getContext();
+        final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(themedContext);
+        screen.setTitle(R.string.dolby_vision_tv_set);
+        String currentDvMode = null;
+        Preference activePref = null;
 
-        dvPref = (ListPreference) findPreference(KEY_DOLBY_VISION);
-        dvPref.setOnPreferenceChangeListener(this);
+        final List<Action> dvInfoList = getActions();
+        for (final Action dvInfo : dvInfoList) {
+            final String dvTag = dvInfo.getKey();
+            final RadioPreference radioPreference = new RadioPreference(themedContext);
+            radioPreference.setKey(dvTag);
+            radioPreference.setPersistent(false);
+            radioPreference.setTitle(dvInfo.getTitle());
+            radioPreference.setRadioGroup(DV_RADIO_GROUP);
+            radioPreference.setLayoutResource(R.layout.preference_reversed_widget);
 
-        int policy = mDolbyVisionSettingManager.getDolbyVisionPolicy();
-        switch (policy) {
-            case DOLBY_VISION_FOLLOW_SINK:
-                dvPref.setValue(DV_FOLLOW_SINK);
-                break;
-            case DOLBY_VISION_FOLLOW_SOURCE:
-                dvPref.setValue(DV_FOLLOW_SOURCE);
-                break;
-            case DOLBY_VISION_FORCE_OUTPUT_MODE:
-                dvPref.setValue(DV_OFF);
-                break;
+            if (dvInfo.isChecked()) {
+                mNewDvMode = dvTag;
+                radioPreference.setChecked(true);
+                activePref = radioPreference;
+            }
+            screen.addPreference(radioPreference);
         }
+        if (activePref != null && savedInstanceState == null) {
+            scrollToPreference(activePref);
+        }
+        setPreferenceScreen(screen);
     }
 
+    private ArrayList<Action> getActions() {
+        boolean enable = mDolbyVisionSettingManager.isDolbyVisionEnable();
+        ArrayList<Action> actions = new ArrayList<Action>();
+        actions.add(new Action.Builder().key(ACTION_ON).title(getString(R.string.on))
+                .checked(enable == true).build());
+        actions.add(new Action.Builder().key(ACTION_OFF).title(getString(R.string.off))
+                .checked(enable == false).build());
+        return actions;
+    }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (TextUtils.equals(preference.getKey(), KEY_DOLBY_VISION)) {
-            final String selection = (String) newValue;
-            switch (selection) {
-                case DV_OFF:
-                    mDolbyVisionSettingManager.setDolbyVisionPolicy(DOLBY_VISION_FORCE_OUTPUT_MODE);
-                    mDolbyVisionSettingManager.setDolbyVisionMode(DOLBY_VISION_OUTPUT_MODE_BYPASS);
-                    mDolbyVisionSettingManager.setDolbyVisionEnable(false);
-                    break;
-                case DV_FOLLOW_SINK:
-                    mDolbyVisionSettingManager.setDolbyVisionPolicy(DOLBY_VISION_FOLLOW_SINK);
-                    mDolbyVisionSettingManager.setDolbyVisionEnable(true);
-                    mDolbyVisionSettingManager.setDolbyVisionMode(DOLBY_VISION_OUTPUT_MODE_IPT_TUNNEL);
-                    break;
-                case DV_FOLLOW_SOURCE:
-                    mDolbyVisionSettingManager.setDolbyVisionPolicy(DOLBY_VISION_FOLLOW_SOURCE);
-                    mDolbyVisionSettingManager.setDolbyVisionEnable(true);
-                    mDolbyVisionSettingManager.setDolbyVisionMode(DOLBY_VISION_OUTPUT_MODE_IPT_TUNNEL);
-                    break;
-                default:
-                    //throw new IllegalArgumentException("Unknown dolby vision policy pref value");
-                    break;
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (preference instanceof RadioPreference) {
+            final RadioPreference radioPreference = (RadioPreference) preference;
+            radioPreference.clearOtherRadioPreferences(getPreferenceScreen());
+            if (radioPreference.isChecked()) {
+                mNewDvMode = radioPreference.getKey().toString();
+                mDelayHandler.removeCallbacks(mSetDvRunnable);
+                mDelayHandler.postDelayed(mSetDvRunnable, DV_SET_DELAY_MS);
+            } else {
+                radioPreference.setChecked(true);
             }
-            return true;
         }
-        return true;
+        return super.onPreferenceTreeClick(preference);
     }
 }

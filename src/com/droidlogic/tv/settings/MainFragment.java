@@ -86,15 +86,21 @@ public class MainFragment extends LeanbackPreferenceFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.main_prefs, null);
         mTvUiMode = DroidUtils.hasTvUiMode();
+
+        //tvFlag, is true when TV and T962E as TV, false when Mbox and T962E as Mbox.
+        boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
+                && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
+
+        //BluetoothRemote/HDMI cec/Playback Settings display only in Mbox
         mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
-        mUpgradeBluetoothRemote.setVisible(SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()));
+        mUpgradeBluetoothRemote.setVisible(SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag);
 
         final Preference hdmicecPref = findPreference(KEY_HDMICEC);
         hdmicecPref.setVisible(getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC)
-                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext()));
+                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext()) && !tvFlag);
 
         final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
-        playbackPref.setVisible(SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()));
+        playbackPref.setVisible(SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()) && !tvFlag);
 
         mSoundsPref = findPreference(KEY_SOUNDS);
 

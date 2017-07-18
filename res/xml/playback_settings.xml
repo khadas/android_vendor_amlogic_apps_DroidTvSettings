@@ -18,9 +18,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/playback_settings" >
 
-    <SwitchPreference
+    <Preference
         android:key="playback_hdmi_selfadaption"
-        android:persistent="false"
-        android:title="@string/playback_hdmi_selfadaption" />
+        android:title="@string/playback_hdmi_selfadaption"
+        android:fragment="com.droidlogic.tv.settings.HdmiSelfAdaptionFragment"/>
 
 </PreferenceScreen>
