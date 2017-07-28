@@ -19,11 +19,8 @@
         android:title="@string/device_display">
         <Preference
             android:key="outputmode"
-            android:title="@string/device_outputmode">
-             <intent
-                android:targetClass="com.droidlogic.tv.settings.display.outputmode.OutputmodeActivity"
-                android:targetPackage="com.droidlogic.tv.settings" />
-        </Preference>
+            android:title="@string/device_outputmode"
+            android:fragment="com.droidlogic.tv.settings.display.outputmode.ScreenResolutionFragment"/>
         <Preference
             android:key="position"
             android:title="@string/device_position" >
