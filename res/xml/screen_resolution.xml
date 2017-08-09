@@ -28,7 +28,7 @@
         android:fragment="com.droidlogic.tv.settings.display.outputmode.OutputmodeFragment" />
     <Preference
         android:key="deepcolor_setting"
-        android:title="@string/device_formatcolor"
+        android:title="@string/device_outputmode_deep_color"
         android:fragment="com.droidlogic.tv.settings.display.outputmode.ColorAttributeFragment"/>
 
 </PreferenceScreen>

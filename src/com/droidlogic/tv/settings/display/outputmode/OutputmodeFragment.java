@@ -81,14 +81,14 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     private static String mode = null;
     private static final int MSG_FRESH_UI = 0;
     private static final int MSG_COUNT_DOWN = 1;
+    private static final int MSG_PLUG_FRESH_UI = 2;
     private IntentFilter mIntentFilter;
+    public boolean hpdFlag = false;
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final Activity activity = getActivity();
-            if (activity != null) {
-                mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, 1000);
-            }
+            hpdFlag = intent.getBooleanExtra ("state", false);
+            mHandler.sendEmptyMessageDelayed(MSG_PLUG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
         }
     };
     public static OutputmodeFragment newInstance() {
@@ -98,29 +98,8 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         mOutputUiManager = new OutputUiManager(getActivity());
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
-        final Context themedContext = getPreferenceManager().getContext();
-        final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
-                themedContext);
-        screen.setTitle(R.string.device_displaymode);
-        setPreferenceScreen(screen);
-
-        final List<Action> InfoList = getMainActions();
-        for (final Action Info : InfoList) {
-            final String InfoTag = Info.getKey();
-            final RadioPreference radioPreference = new RadioPreference(themedContext);
-            radioPreference.setKey(InfoTag);
-            radioPreference.setPersistent(false);
-            radioPreference.setTitle(Info.getTitle());
-            radioPreference.setLayoutResource(R.layout.preference_reversed_widget);
-            if (Info.isChecked()) {
-                radioPreference.setChecked(true);
-                curMode = InfoTag;
-                savePreference = radioPreference;
-                curPreference = radioPreference;
-            }
-            screen.addPreference(radioPreference);
-        }
-        //getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
+        updatePreferenceFragment();
+        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
@@ -150,7 +129,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     @Override
     public void onPause() {
         super.onPause();
-        //getActivity().unregisterReceiver(mIntentReceiver);
+        getActivity().unregisterReceiver(mIntentReceiver);
     }
 
     @Override
@@ -246,6 +225,9 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
                     }
                     countdown--;
                     break;
+                case MSG_PLUG_FRESH_UI:
+                    updatePreferenceFragment();
+                    break;
             }
         }
     };
@@ -256,4 +238,32 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
             mHandler.sendEmptyMessage(MSG_COUNT_DOWN);
         }
     };
+    private void updatePreferenceFragment() {
+        mOutputUiManager.updateUiMode();
+        final Context themedContext = getPreferenceManager().getContext();
+        final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
+                themedContext);
+        screen.setTitle(R.string.device_displaymode);
+        setPreferenceScreen(screen);
+
+        final List<Action> InfoList = getMainActions();
+        for (final Action Info : InfoList) {
+            final String InfoTag = Info.getKey();
+            final RadioPreference radioPreference = new RadioPreference(themedContext);
+            radioPreference.setKey(InfoTag);
+            radioPreference.setPersistent(false);
+            radioPreference.setTitle(Info.getTitle());
+            radioPreference.setLayoutResource(R.layout.preference_reversed_widget);
+            if (Info.isChecked()) {
+                radioPreference.setChecked(true);
+                curMode = InfoTag;
+                savePreference = radioPreference;
+                curPreference = radioPreference;
+            }
+            screen.addPreference(radioPreference);
+        }
+    }
+    private boolean isHdmiMode() {
+        return mOutputUiManager.isHdmiMode();
+    }
 }

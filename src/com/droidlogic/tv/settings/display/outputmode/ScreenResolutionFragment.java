@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemProperties;
 import android.provider.Settings;
 import android.support.v14.preference.SwitchPreference;
@@ -31,6 +33,7 @@ import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 
+import android.util.Log;
 import com.droidlogic.tv.settings.R;
 
 
@@ -48,14 +51,24 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private Preference mDeepColorPref;
     private OutputUiManager mOutputUiManager;
     private IntentFilter mIntentFilter;
+    public boolean hpdFlag = false;
+    private static final int MSG_FRESH_UI = 0;
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_FRESH_UI:
+                    updateScreenResolutionDisplay();
+                    break;
+            }
+        }
+    };
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final Activity activity = getActivity();
-            if (activity != null) {
-                updateScreenResolutionDisplay(activity);
-            }
+            hpdFlag = intent.getBooleanExtra ("state", false);
+            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
         }
     };
 
@@ -84,7 +97,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     @Override
     public void onResume() {
         super.onResume();
-        updateScreenResolutionDisplay(getActivity());
+        updateScreenResolutionDisplay();
     }
     @Override
     public void onDestroy() {
@@ -96,7 +109,8 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         super.onPause();
     }
 
-    private void updateScreenResolutionDisplay(Context context) {
+    private void updateScreenResolutionDisplay() {
+        mOutputUiManager.updateUiMode();
         ((SwitchPreference)mBestResolutionPref).setChecked(isBestResolution());
         if (isBestResolution()) {
            mBestResolutionPref.setSummary(R.string.captions_display_on);
@@ -104,14 +118,21 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
            mBestResolutionPref.setSummary(R.string.captions_display_off);
         }
         mDisplayModePref.setSummary(getCurrentDisplayMode());
-        mDeepColorPref.setSummary(getCurrentDeepColor());
+        if (isHdmiMode()) {
+            mBestResolutionPref.setVisible(true);
+            mDeepColorPref.setVisible(true);
+            mDeepColorPref.setSummary(getCurrentDeepColor());
+        } else {
+            mBestResolutionPref.setVisible(false);
+            mDeepColorPref.setVisible(false);
+        }
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (TextUtils.equals(preference.getKey(), KEY_BEST_RESOLUTION)) {
             setBestResolution();
-            updateScreenResolutionDisplay(getActivity());
+            updateScreenResolutionDisplay();
         }
         return true;
     }
@@ -129,5 +150,8 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         if (value.equals("default") || value == "" || value.equals(""))
             return DEFAULT_VALUE;
         return value;
+    }
+    private boolean isHdmiMode() {
+        return mOutputUiManager.isHdmiMode();
     }
 }

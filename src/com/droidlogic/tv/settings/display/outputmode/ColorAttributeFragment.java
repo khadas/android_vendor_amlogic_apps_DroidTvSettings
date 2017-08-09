@@ -57,16 +57,15 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     private static String curMode = null;
     private static final int MSG_FRESH_UI = 0;
     private IntentFilter mIntentFilter;
+    public boolean hpdFlag = false;
     private static final String DEFAULT_VALUE = "444,8bit";
     private static final String DEFAULT_TITLE = "YCbCr444 8bit";
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final Activity activity = getActivity();
-            if (activity != null) {
-                mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, 1000);
-            }
+            hpdFlag = intent.getBooleanExtra ("state", false);
+            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
         }
     };
     public static ColorAttributeFragment newInstance() {
@@ -76,11 +75,19 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         mOutputUiManager = new OutputUiManager(getActivity());
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+        updatePreferenceFragment();
+        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
+    }
+
+    private void updatePreferenceFragment() {
+        mOutputUiManager.updateUiMode();
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
         screen.setTitle(R.string.device_formatcolor);
         setPreferenceScreen(screen);
+        if (!isHdmiMode())
+            return;
         final List<Action> InfoList = getMainActions();
         for (final Action Info : InfoList) {
             final String InfoTag = Info.getKey();
@@ -94,7 +101,6 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
             }
             screen.addPreference(radioPreference);
         }
-        //getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
     private boolean isModeSupportColor(final String curMode, final String curValue){
         boolean  ret = false;
@@ -143,7 +149,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     @Override
     public void onPause() {
         super.onPause();
-        //getActivity().unregisterReceiver(mIntentReceiver);
+        getActivity().unregisterReceiver(mIntentReceiver);
     }
 
     @Override
@@ -188,8 +194,12 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_FRESH_UI:
+                    updatePreferenceFragment();
                     break;
             }
         }
     };
+    private boolean isHdmiMode() {
+        return mOutputUiManager.isHdmiMode();
+    }
 }
