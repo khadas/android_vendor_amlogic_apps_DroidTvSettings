@@ -144,6 +144,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
                 showDialog();
                 radioPreference.setChecked(true);
             } else {
+                radioPreference.setChecked(true);
             }
         }
         return super.onPreferenceTreeClick(preference);

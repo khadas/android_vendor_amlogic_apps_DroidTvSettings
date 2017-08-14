@@ -162,9 +162,10 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
                     radioPreference.setChecked(true);
                 }
             } else {
-            Log.i(LOG_TAG,"not checked");
+                radioPreference.setChecked(true);
+                Log.i(LOG_TAG,"not checked");
             }
-		    }
+        }
       return super.onPreferenceTreeClick(preference);
     }
     public boolean onClickHandle(String key) {
@@ -178,8 +179,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
            if (isModeSupportColor(curMode,curValue)) {
                mOutputUiManager.changeColorAttribte(curValue);
                return true;
-           }
-           else{
+           } else {
                String msg  = "Not support this color format & depth!";
                Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT);
                toast.show();
