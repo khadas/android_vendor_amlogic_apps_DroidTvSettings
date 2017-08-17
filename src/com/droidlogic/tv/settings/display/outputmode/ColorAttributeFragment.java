@@ -60,7 +60,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     public boolean hpdFlag = false;
     private static final String DEFAULT_VALUE = "444,8bit";
     private static final String DEFAULT_TITLE = "YCbCr444 8bit";
-
+    private ArrayList<String> colorTitleList = new ArrayList();
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -78,9 +78,21 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         updatePreferenceFragment();
         getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
-
+    private boolean needfrash() {
+        if (colorTitleList.size() > 0) {
+            ArrayList<String> list = mOutputUiManager.getColorTitleList();
+            for (String title:colorTitleList) {
+                if (!list.contains(title))
+                    return true;
+            }
+        }else {
+            return true;
+        }
+        return false;
+    }
     private void updatePreferenceFragment() {
         mOutputUiManager.updateUiMode();
+        if (!needfrash()) return;
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
@@ -110,7 +122,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
 
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
-        ArrayList<String> colorTitleList = mOutputUiManager.getColorTitleList();
+        colorTitleList = mOutputUiManager.getColorTitleList();
         ArrayList<String> colorValueList = mOutputUiManager.getColorValueList();
         String value = null;
         String  curColorValue = mOutputUiManager.getCurrentColorAttribute().toString().trim();
