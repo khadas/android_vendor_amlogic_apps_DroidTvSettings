@@ -84,6 +84,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     private static final int MSG_PLUG_FRESH_UI = 2;
     private IntentFilter mIntentFilter;
     public boolean hpdFlag = false;
+    public ArrayList<String> outputmodeTitleList = new ArrayList();
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -103,7 +104,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     }
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
-        ArrayList<String> outputmodeTitleList = mOutputUiManager.getOutputmodeTitleList();
+        outputmodeTitleList = mOutputUiManager.getOutputmodeTitleList();
         ArrayList<String> outputmodeValueList = mOutputUiManager.getOutputmodeValueList();
 
         int currentModeIndex = mOutputUiManager.getCurrentModeIndex();
@@ -130,6 +131,9 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(mIntentReceiver);
+        if (task != null)
+            task.cancel();
+        mHandler.removeMessages(MSG_COUNT_DOWN);
     }
 
     @Override
@@ -235,11 +239,26 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     private class DialogTimerTask extends TimerTask {
         @Override
         public void run() {
-            mHandler.sendEmptyMessage(MSG_COUNT_DOWN);
+            if (mHandler != null) {
+                mHandler.sendEmptyMessage(MSG_COUNT_DOWN);
+            }
         }
     };
+    private boolean needfrash() {
+        if (outputmodeTitleList.size() > 0) {
+            ArrayList<String> list = mOutputUiManager.getOutputmodeTitleList();
+            for (String title:outputmodeTitleList) {
+                if (!list.contains(title))
+                    return true;
+            }
+        }else {
+            return true;
+        }
+        return false;
+    }
     private void updatePreferenceFragment() {
         mOutputUiManager.updateUiMode();
+        if (!needfrash()) return;
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
