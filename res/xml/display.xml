@@ -23,11 +23,8 @@
             android:fragment="com.droidlogic.tv.settings.display.outputmode.ScreenResolutionFragment"/>
         <Preference
             android:key="position"
-            android:title="@string/device_position" >
-            <intent
-                android:targetClass="com.droidlogic.tv.settings.display.position.DisplayPositionActivity"
-                android:targetPackage="com.droidlogic.tv.settings" />
-        </Preference>
+            android:title="@string/device_position"
+            android:fragment="com.droidlogic.tv.settings.display.position.DisplayPositionFragment"/>
         <Preference
             android:key="hdr"
             android:title="@string/device_hdr"
