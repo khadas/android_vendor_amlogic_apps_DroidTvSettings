@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.droidlogic.tv.settings.display.position;
 
-import android.app.Fragment;
+package com.droidlogic.tv.settings.display.outputmode;
 
 import com.droidlogic.tv.settings.BaseSettingsFragment;
 import com.droidlogic.tv.settings.TvSettingsActivity;
 
-public class DisplayPositionActivity extends TvSettingsActivity {
+import android.app.Fragment;
+
+/**
+ * Activity to control HDMI CEC settings.
+ */
+public class ScreenResolutionActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
-        return DisplayPositionFragment.newInstance();
+        return SettingsFragment.newInstance();
     }
 
     public static class SettingsFragment extends BaseSettingsFragment {
@@ -35,7 +39,7 @@ public class DisplayPositionActivity extends TvSettingsActivity {
 
         @Override
         public void onPreferenceStartInitialScreen() {
-            final DisplayPositionFragment fragment = DisplayPositionFragment.newInstance();
+            final ScreenResolutionFragment fragment = ScreenResolutionFragment.newInstance();
             startPreferenceFragment(fragment);
         }
     }

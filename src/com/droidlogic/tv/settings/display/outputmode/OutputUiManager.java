@@ -166,6 +166,12 @@ public class OutputUiManager {
         initModeValues(mUiMode);
     }
 
+    public boolean isHdmiMode() {
+        if (mUiMode.contains("cvbs"))
+            return false;
+        return true;
+    }
+
     public String getCurrentMode(){
          return mOutputModeManager.getCurrentOutputMode();
     }

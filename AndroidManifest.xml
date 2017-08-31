@@ -82,6 +82,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".display.outputmode.ScreenResolutionActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:exported="true"
+            android:theme="@style/Theme.Settings.Transparent" />
+        <activity
             android:name=".display.outputmode.OutputmodeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:exported="true"
