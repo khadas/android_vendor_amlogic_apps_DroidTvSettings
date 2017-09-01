@@ -25,6 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Settings"
         android:usesCleartextTraffic="true" >
+
+        <uses-library android:name="droidlogic.software.core" />
         <activity
             android:name=".MainSettings"
             android:configChanges="keyboard|keyboardHidden|navigation"
