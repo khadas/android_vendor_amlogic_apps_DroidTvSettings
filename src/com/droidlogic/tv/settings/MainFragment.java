@@ -53,11 +53,13 @@ import java.util.Set;
 public class MainFragment extends LeanbackPreferenceFragment {
     private static final String TAG = "MainFragment";
 
+    private static final String MORE_SETTINGS_APP_PACKAGE = "com.android.settings";
     private static final String KEY_UPGRADE_BLUTOOTH_REMOTE = "upgrade_bluetooth_remote";
     private static final String KEY_HDMICEC = "hdmicec";
     private static final String KEY_PLAYBACK_SETTINGS = "playback_settings";
     private static final String KEY_SOUNDS = "sound_effects";
     private static final String KEY_NETFLIX_ESN = "netflix_esn";
+    private static final String KEY_MORE_SETTINGS = "more";
     private boolean mTvUiMode;
 
     private Preference mUpgradeBluetoothRemote;
@@ -113,6 +115,11 @@ public class MainFragment extends LeanbackPreferenceFragment {
                 netflixesnPref.setVisible(false);
             }
         }
+
+        final Preference moreSettingsPref = findPreference(KEY_MORE_SETTINGS);
+        if (!isPackageInstalled(getActivity(), MORE_SETTINGS_APP_PACKAGE)) {
+            getPreferenceScreen().removePreference(moreSettingsPref);
+        }
     }
 
     @Override
@@ -151,6 +158,14 @@ public class MainFragment extends LeanbackPreferenceFragment {
             return;
         }
         preference.setVisible(systemIntentIsHandled(preference.getIntent()) != null);
+    }
+
+    private static boolean isPackageInstalled(Context context, String packageName) {
+        try {
+            return context.getPackageManager().getPackageInfo(packageName, 0) != null;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     private ResolveInfo systemIntentIsHandled(Intent intent) {
