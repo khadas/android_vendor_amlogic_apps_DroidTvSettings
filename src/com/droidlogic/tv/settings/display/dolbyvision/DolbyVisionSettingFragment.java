@@ -71,7 +71,7 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
         mDolbyVisionSettingManager = new DolbyVisionSettingManager((Context) getActivity());
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(themedContext);
-        screen.setTitle(R.string.dolby_vision_tv_set);
+        screen.setTitle(R.string.dolby_vision_set);
         String currentDvMode = null;
         Preference activePref = null;
 

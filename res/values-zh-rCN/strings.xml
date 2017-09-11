@@ -13,7 +13,6 @@
     <string name="device_display">"显示"</string>
     <string name="device_outputmode">"屏幕分辨率"</string>
     <string name="device_displaymode">输出制式</string>
-    <string name="device_formatcolor">色彩</string>
     <string name="device_color">"色彩"</string>
     <string name="device_colorattribute">"格式和色深"</string>
     <string name="device_outputmode_deep_color">"色彩空间 &amp; 深色设置"</string>

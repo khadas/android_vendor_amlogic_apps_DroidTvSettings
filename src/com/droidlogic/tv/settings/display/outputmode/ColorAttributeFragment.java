@@ -96,7 +96,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
-        screen.setTitle(R.string.device_formatcolor);
+        screen.setTitle(R.string.device_outputmode_deep_color);
         setPreferenceScreen(screen);
         if (!isHdmiMode())
             return;

@@ -13,7 +13,6 @@
     <string name="device_display">Display</string>
     <string name="device_outputmode">Screen resolution</string>
     <string name="device_displaymode">Display Mode</string>
-    <string name="device_formatcolor">Format Color</string>
     <string name="device_color">Color</string>
     <string name="device_colorattribute">Format and Depth</string>
     <string name="device_outputmode_deep_color">Color Space &amp; Deep Color Settings</string>

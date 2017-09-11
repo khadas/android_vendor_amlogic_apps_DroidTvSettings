@@ -67,9 +67,9 @@ import java.util.TimerTask;
 @Keep
 public class OutputmodeFragment extends LeanbackPreferenceFragment implements OnClickListener {
     private OutputUiManager mOutputUiManager;
-    private static String saveMode;
+    private static String preMode;
     private static String curMode;
-    RadioPreference savePreference;
+    RadioPreference prePreference;
     RadioPreference curPreference;
     private View view_dialog;
     private TextView tx_title;
@@ -142,11 +142,12 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
             final RadioPreference radioPreference = (RadioPreference) preference;
             radioPreference.clearOtherRadioPreferences(getPreferenceScreen());
             if (radioPreference.isChecked()) {
+                preMode = mOutputUiManager.getCurrentMode().trim();
                 curMode = radioPreference.getKey();
                 curPreference = radioPreference;
                 mOutputUiManager.change2NewMode(curMode);
                 showDialog();
-                radioPreference.setChecked(true);
+                curPreference.setChecked(true);
             } else {
                 radioPreference.setChecked(true);
             }
@@ -173,6 +174,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         }
         mAlertDialog.show();
         mAlertDialog.getWindow().setContentView(view_dialog);
+        mAlertDialog.setCancelable(false);
 
         if (mOutputUiManager.getOutputmodeTitleList().size() <= 0) {
             tx_content.setText("Get outputmode empty!");
@@ -189,7 +191,9 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         timer.schedule(task, 0, 1000);
     }
     private void recoverOutputMode() {
-       mOutputUiManager.change2DeepColorMode();
+       mOutputUiManager.change2NewMode(preMode);
+       // need revert Preference display.
+       curPreference = prePreference;
        mHandler.sendEmptyMessage(MSG_FRESH_UI);
     }
 
@@ -205,6 +209,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
             case R.id.dialog_ok:
                 if (mAlertDialog != null) {
                     mAlertDialog.dismiss();
+                    prePreference = curPreference;
                 }
                 break;
         }
@@ -215,9 +220,8 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_FRESH_UI:
-                    savePreference.clearOtherRadioPreferences(getPreferenceScreen());
-                    savePreference.setChecked(true);
-                    curPreference = savePreference;
+                    curPreference.clearOtherRadioPreferences(getPreferenceScreen());
+                    curPreference.setChecked(true);
                     break;
                 case MSG_COUNT_DOWN:
                     tx_title.setText(Integer.toString(countdown) + " " + getResources().getString(R.string.device_outputmode_countdown));
@@ -257,6 +261,10 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         }
         return false;
     }
+
+    /**
+     * Display Outputmode list based on RadioPreference style.
+     */
     private void updatePreferenceFragment() {
         mOutputUiManager.updateUiMode();
         if (!needfrash()) return;
@@ -277,8 +285,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
             if (Info.isChecked()) {
                 radioPreference.setChecked(true);
                 curMode = InfoTag;
-                savePreference = radioPreference;
-                curPreference = radioPreference;
+                prePreference = curPreference = radioPreference;
             }
             screen.addPreference(radioPreference);
         }
