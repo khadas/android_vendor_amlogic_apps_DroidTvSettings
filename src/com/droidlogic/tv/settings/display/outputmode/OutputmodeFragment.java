@@ -66,6 +66,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 @Keep
 public class OutputmodeFragment extends LeanbackPreferenceFragment implements OnClickListener {
+    private static final String LOG_TAG = "OutputmodeFragment";
     private OutputUiManager mOutputUiManager;
     private static String saveMode;
     private static String curMode;
@@ -89,7 +90,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         @Override
         public void onReceive(Context context, Intent intent) {
             hpdFlag = intent.getBooleanExtra ("state", false);
-            mHandler.sendEmptyMessageDelayed(MSG_PLUG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
+            mHandler.sendEmptyMessageDelayed(MSG_PLUG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 2000 : 1000);
         }
     };
     public static OutputmodeFragment newInstance() {
@@ -99,14 +100,18 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         mOutputUiManager = new OutputUiManager(getActivity());
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+        mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         updatePreferenceFragment();
         getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
-        outputmodeTitleList = mOutputUiManager.getOutputmodeTitleList();
         ArrayList<String> outputmodeValueList = mOutputUiManager.getOutputmodeValueList();
-
+        outputmodeTitleList.clear();
+        ArrayList<String> mList = mOutputUiManager.getOutputmodeTitleList();
+        for (String title : mList) {
+            outputmodeTitleList.add(title);
+        }
         int currentModeIndex = mOutputUiManager.getCurrentModeIndex();
         for (int i = 0; i < outputmodeTitleList.size(); i++) {
             if (i == currentModeIndex) {
@@ -245,9 +250,10 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
             }
         }
     };
-    private boolean needfrash() {
-        if (outputmodeTitleList.size() > 0) {
-            ArrayList<String> list = mOutputUiManager.getOutputmodeTitleList();
+    private boolean needfresh() {
+        ArrayList<String> list = mOutputUiManager.getOutputmodeTitleList();
+        //Log.d(LOG_TAG, "outputmodeTitleList: " + outputmodeTitleList.toString() + "\n list: " + list.toString());
+        if (outputmodeTitleList.size() > 0 && outputmodeTitleList.size() == list.size()) {
             for (String title:outputmodeTitleList) {
                 if (!list.contains(title))
                     return true;
@@ -259,7 +265,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     }
     private void updatePreferenceFragment() {
         mOutputUiManager.updateUiMode();
-        if (!needfrash()) return;
+        if (!needfresh()) return;
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
