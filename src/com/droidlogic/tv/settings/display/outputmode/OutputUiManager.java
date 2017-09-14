@@ -164,6 +164,7 @@ public class OutputUiManager {
     public void updateUiMode(){
         mUiMode = getUiMode();
         initModeValues(mUiMode);
+        initColorValues(mUiMode);
     }
 
     public boolean isHdmiMode() {

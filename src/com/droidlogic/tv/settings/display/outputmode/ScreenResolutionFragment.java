@@ -108,7 +108,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         @Override
         public void onReceive(Context context, Intent intent) {
             hpdFlag = intent.getBooleanExtra ("state", false);
-            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
+            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 2000 : 1000);
         }
     };
 
@@ -133,6 +133,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         mDeepColorPref = findPreference(KEY_DEEPCOLOR);
         mDolbyVisionPref = findPreference(KEY_DOLBYVISION);
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+        mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
 

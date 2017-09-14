@@ -65,7 +65,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             hpdFlag = intent.getBooleanExtra ("state", false);
-            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
+            mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 2000 : 1000);
         }
     };
     public static ColorAttributeFragment newInstance() {
@@ -75,13 +75,15 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         mOutputUiManager = new OutputUiManager(getActivity());
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+        mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         updatePreferenceFragment();
         getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
-    private boolean needfrash() {
-        if (colorTitleList.size() > 0) {
-            ArrayList<String> list = mOutputUiManager.getColorTitleList();
-            for (String title:colorTitleList) {
+    private boolean needfresh() {
+        ArrayList<String> list = mOutputUiManager.getColorTitleList();
+        //Log.d(LOG_TAG, "colorTitleList: " + colorTitleList.toString() + "\n list: " + list.toString());
+        if (colorTitleList.size() > 0 && colorTitleList.size() == list.size()) {
+            for (String title : colorTitleList) {
                 if (!list.contains(title))
                     return true;
             }
@@ -92,14 +94,16 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     }
     private void updatePreferenceFragment() {
         mOutputUiManager.updateUiMode();
-        if (!needfrash()) return;
+        if (!needfresh()) return;
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
         screen.setTitle(R.string.device_outputmode_deep_color);
         setPreferenceScreen(screen);
-        if (!isHdmiMode())
+        if (!isHdmiMode()) {
+            colorTitleList.clear();
             return;
+        }
         final List<Action> InfoList = getMainActions();
         for (final Action Info : InfoList) {
             final String InfoTag = Info.getKey();
@@ -122,7 +126,11 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
 
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
-        colorTitleList = mOutputUiManager.getColorTitleList();
+        colorTitleList.clear();
+        ArrayList<String> mList = mOutputUiManager.getColorTitleList();
+        for (String color:mList) {
+            colorTitleList.add(color);
+        }
         ArrayList<String> colorValueList = mOutputUiManager.getColorValueList();
         String value = null;
         String  curColorValue = mOutputUiManager.getCurrentColorAttribute().toString().trim();
