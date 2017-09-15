@@ -84,6 +84,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     private static final int MSG_PLUG_FRESH_UI = 2;
     private IntentFilter mIntentFilter;
     public boolean hpdFlag = false;
+    private boolean isReceiverRegister = false;
     public ArrayList<String> outputmodeTitleList = new ArrayList();
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -100,7 +101,10 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         mOutputUiManager = new OutputUiManager(getActivity());
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         updatePreferenceFragment();
-        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
+        if (!isReceiverRegister) {
+            getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
+            isReceiverRegister = true;
+        }
     }
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
@@ -130,7 +134,10 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mIntentReceiver);
+        if (isReceiverRegister) {
+           isReceiverRegister = false;
+            getActivity().unregisterReceiver(mIntentReceiver);
+        }
         if (task != null)
             task.cancel();
         mHandler.removeMessages(MSG_COUNT_DOWN);

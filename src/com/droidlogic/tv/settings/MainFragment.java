@@ -88,7 +88,8 @@ public class MainFragment extends LeanbackPreferenceFragment {
         mTvUiMode = DroidUtils.hasTvUiMode();
 
         //tvFlag, is true when TV and T962E as TV, false when Mbox and T962E as Mbox.
-        boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
+        boolean needTvFeature = SettingsConstant.needDroidlogicTvFeature(getContext());
+        boolean tvFlag = needTvFeature
                 && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
 
         //BluetoothRemote/HDMI cec/Playback Settings display only in Mbox
