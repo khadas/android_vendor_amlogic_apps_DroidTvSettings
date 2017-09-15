@@ -132,14 +132,14 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         mDisplayModePref = findPreference(KEY_DISPLAYMODE);
         mDeepColorPref = findPreference(KEY_DEEPCOLOR);
         mDolbyVisionPref = findPreference(KEY_DOLBYVISION);
-        mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
-        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mHandler.sendEmptyMessage(MSG_FRESH_UI);
+        mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
     @Override
     public void onDestroy() {
@@ -191,7 +191,11 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         if ((SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == true) &&
                 (!SettingsConstant.needDroidlogicTvFeature(getContext())
                      || (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == true))) {
-            mDolbyVisionPref.setVisible(true);
+            if (isHdmiMode()) {
+                mDolbyVisionPref.setVisible(true);
+            } else {
+                mDolbyVisionPref.setVisible(false);
+            }
         } else {
             mDolbyVisionPref.setVisible(false);
         }
@@ -216,7 +220,9 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
             preDeepColor = getCurrentDeepColor();
             setBestResolution();
             mHandler.sendEmptyMessage(MSG_FRESH_UI);
-            showDialog();
+            if (isBestResolution()) {
+                showDialog();
+            }
         }
         return true;
     }
