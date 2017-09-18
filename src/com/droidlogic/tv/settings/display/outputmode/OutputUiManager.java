@@ -44,40 +44,40 @@ public class OutputUiManager {
     public static final String HDMI_MODE = "hdmi";
 
     private static final String[] HDMI_LIST = {
+        "2160p60hz",
+        "2160p50hz",
+        "2160p30hz",
+        "2160p25hz",
+        "2160p24hz",
+        "smpte24hz",
         "1080p60hz",
         "1080p50hz",
+        "1080p24hz",
         "720p60hz",
         "720p50hz",
-        "2160p24hz",
-        "2160p25hz",
-        "2160p30hz",
-        "2160p50hz420",
-        "2160p60hz420",
-        "smpte24hz",
-        "1080p24hz",
+        "1080i60hz",
+        "1080i50hz",
         "576p50hz",
         "480p60hz",
-        "1080i50hz",
-        "1080i60hz",
         "576i50hz",
         "480i60hz",
     };
     private static final String[] HDMI_TITLE = {
+        "4k2k-60hz",
+        "4k2k-50hz",
+        "4k2k-30hz",
+        "4k2k-25hz",
+        "4k2k-24hz",
+        "4k2k-smpte",
         "1080p-60hz",
         "1080p-50hz",
+        "1080p-24hz",
         "720p-60hz",
         "720p-50hz",
-        "4k2k-24hz",
-        "4k2k-25hz",
-        "4k2k-30hz",
-        "4k2k-50hz",
-        "4k2k-60hz",
-        "4k2k-smpte",
-        "1080p-24hz",
+        "1080i-60hz",
+        "1080i-50hz",
         "576p-50hz",
         "480p-60hz",
-        "1080i-50hz",
-        "1080i-60hz",
         "576i-50hz",
         "480i-60hz"
     };
@@ -345,15 +345,6 @@ public class OutputUiManager {
                     listHdmiTitle.add(listTitle.get(i));
                 }
 
-            }
-            if (strEdid.contains("2160p50hz") && (!strEdid.contains("2160p50hz420"))) {
-                listHdmiMode.add("2160p50hz");
-                listHdmiTitle.add("4k2k-50hz");
-            }
-
-            if (strEdid.contains("2160p60hz") && (!strEdid.contains("2160p60hz420"))) {
-                listHdmiMode.add("2160p60hz");
-                listHdmiTitle.add("4k2k-60hz");
             }
 
             List<String> listHdmiMode_tmp = new ArrayList<String>();

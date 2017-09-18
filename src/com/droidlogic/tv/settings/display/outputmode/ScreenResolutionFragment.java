@@ -183,6 +183,9 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         if (dvFlag) {
             mBestResolutionPref.setEnabled(false);
             mDeepColorPref.setEnabled(false);
+        } else {
+            mBestResolutionPref.setEnabled(true);
+            mDeepColorPref.setEnabled(true);
         }
         //only S912 as Mbox, T962E as Mbox, can display this options
         //T962E as TV and T962X, display in Settings-->Display list.
