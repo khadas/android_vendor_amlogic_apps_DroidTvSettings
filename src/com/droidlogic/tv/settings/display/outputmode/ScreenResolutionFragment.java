@@ -134,22 +134,22 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         mDolbyVisionPref = findPreference(KEY_DOLBYVISION);
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
-        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
         mHandler.sendEmptyMessage(MSG_FRESH_UI);
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(mIntentReceiver);
     }
     @Override
     public void onPause() {
         super.onPause();
+        getActivity().unregisterReceiver(mIntentReceiver);
     }
 
     private void updateScreenResolutionDisplay() {

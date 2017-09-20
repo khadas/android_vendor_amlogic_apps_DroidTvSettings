@@ -77,7 +77,6 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         updatePreferenceFragment();
-        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
     }
     private boolean needfresh() {
         ArrayList<String> list = mOutputUiManager.getColorTitleList();
@@ -164,12 +163,19 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
+        mHandler.sendEmptyMessage(MSG_FRESH_UI);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(mIntentReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
