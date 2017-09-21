@@ -90,7 +90,7 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
         @Override
         public void onReceive(Context context, Intent intent) {
             hpdFlag = intent.getBooleanExtra ("state", false);
-            mHandler.sendEmptyMessageDelayed(MSG_PLUG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 1000 : 0);
+            mHandler.sendEmptyMessageDelayed(MSG_PLUG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 2000 : 1000);
         }
     };
     public static OutputmodeFragment newInstance() {
