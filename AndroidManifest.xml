@@ -138,6 +138,17 @@
                 <category android:name="com.android.settings.SHORTCUT" />
             </intent-filter>
         </activity>
+        <receiver
+            android:exported="true"
+            android:name=".BluetoothAutoPairReceiver"
+            android:enabled="true" >
+            <intent-filter android:priority="1000" >
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name = ".BluetoothAutoPairService" >
+        </service>
     </application>
 
 </manifest>
