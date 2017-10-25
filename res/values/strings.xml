@@ -15,7 +15,8 @@
     <string name="device_displaymode">Display Mode</string>
     <string name="device_color">Color</string>
     <string name="device_colorattribute">Format and Depth</string>
-    <string name="device_outputmode_deep_color">Color Space &amp; Deep Color Settings</string>
+    <string name="device_outputmode_color_space">Color Space Settings</string>
+    <string name="device_outputmode_color_depth">Color Depth Settings</string>
     <string name="device_outputmode_auto">Auto switch to best resolution</string>
     <string name="device_outputmode_deepcolor">deep color mode</string>
     <string name="device_outputmode_confirm_mode">Confirm turn off deep color mode</string>
@@ -56,6 +57,13 @@
     <string name="dolby_vision_set">Dolby Vision Set</string>
     <string name="dolby_vision_tv">TV Dolby Vision</string>
     <string name="dolby_vision_tv_set">TV Dolby Vision Set</string>
+    <string name="dolby_vision_default_enable">Dolby vision enable</string>
+    <string name="dolby_vision_low_latency_yuv">Dolby vision enable with low latency (YUV)</string>
+    <string name="dolby_vision_low_latency_rgb">Dolby vision enable with low latency (RGB)</string>
+    <string name="dolby_vision_off">Dolby vision disable</string>
+    <string name="dolby_vision_graphics_priority">Dolby Vision Graphics Priority</string>
+    <string name="graphics_priority">Graphics Priority</string>
+    <string name="video_priority">Video Priority</string>
     <string name="captions_display_on">On</string>
     <!-- Subtext used under the captions_display string to denote that captions will NOT be shown. [CHAR LIMIT=50] -->
     <string name="captions_display_off">Off</string>

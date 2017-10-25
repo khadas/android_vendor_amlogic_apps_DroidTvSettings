@@ -102,7 +102,17 @@
             android:exported="true"
             android:theme="@style/Theme.Settings.Transparent" />
         <activity
+            android:name=".display.outputmode.ColorDepthActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:exported="true"
+            android:theme="@style/Theme.Settings.Transparent" />
+        <activity
             android:name=".display.dolbyvision.DolbyVisionSettingActivity"
+            android:theme="@style/Theme.Settings.Transparent"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:exported="true" />
+        <activity
+            android:name=".display.dolbyvision.GraphicsPrioritySettingActivity"
             android:theme="@style/Theme.Settings.Transparent"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:exported="true" />
