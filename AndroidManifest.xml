@@ -114,7 +114,17 @@
             android:exported="true"
             android:theme="@style/Theme.Settings.Transparent" />
         <activity
+            android:name=".display.outputmode.ColorDepthActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:exported="true"
+            android:theme="@style/Theme.Settings.Transparent" />
+        <activity
             android:name=".display.dolbyvision.DolbyVisionSettingActivity"
+            android:theme="@style/Theme.Settings.Transparent"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:exported="true" />
+        <activity
+            android:name=".display.dolbyvision.GraphicsPrioritySettingActivity"
             android:theme="@style/Theme.Settings.Transparent"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:exported="true" />
@@ -178,6 +188,13 @@
         <service
             android:name = ".BluetoothAutoPairService" >
         </service>
+        <receiver android:name=".display.dolbyvision.DvReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".display.dolbyvision.DolbyVisionService" />
     </application>
 
 </manifest>

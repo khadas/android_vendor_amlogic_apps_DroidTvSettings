@@ -53,10 +53,12 @@ import com.droidlogic.app.DolbyVisionSettingManager;
 public class ScreenResolutionFragment extends LeanbackPreferenceFragment implements
         Preference.OnPreferenceChangeListener, OnClickListener {
 
-    private static final String KEY_DEEPCOLOR = "deepcolor_setting";
+    private static final String KEY_COLORSPACE = "colorspace_setting";
+    private static final String KEY_COLORDEPTH = "colordepth_setting";
     private static final String KEY_DISPLAYMODE = "displaymode_setting";
     private static final String KEY_BEST_RESOLUTION = "best_resolution";
     private static final String KEY_DOLBYVISION = "dolby_vision";
+    private static final String KEY_DOLBYVISION_PRIORITY = "dolby_vision_graphics_priority";
     private static final String DEFAULT_VALUE = "444,8bit";
 
     private String preMode;
@@ -77,7 +79,9 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private Preference mBestResolutionPref;
     private Preference mDisplayModePref;
     private Preference mDeepColorPref;
+    private Preference mColorDepthPref;
     private Preference mDolbyVisionPref;
+    private Preference mGraphicsPriorityPref;
     private OutputUiManager mOutputUiManager;
     private IntentFilter mIntentFilter;
     public boolean hpdFlag = false;
@@ -130,10 +134,12 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         mBestResolutionPref = findPreference(KEY_BEST_RESOLUTION);
         mBestResolutionPref.setOnPreferenceChangeListener(this);
         mDisplayModePref = findPreference(KEY_DISPLAYMODE);
-        mDeepColorPref = findPreference(KEY_DEEPCOLOR);
+        mDeepColorPref = findPreference(KEY_COLORSPACE);
+        mColorDepthPref = findPreference(KEY_COLORDEPTH);
         mDolbyVisionPref = findPreference(KEY_DOLBYVISION);
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
+        mGraphicsPriorityPref = findPreference(KEY_DOLBYVISION_PRIORITY);
     }
 
     @Override
@@ -165,36 +171,61 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
 
         // set dolby vision summary.
         if (true == mDolbyVisionSettingManager.isDolbyVisionEnable()) {
-            mDolbyVisionPref.setSummary(R.string.captions_display_on);
+            if (mDolbyVisionSettingManager.getDolbyVisionType() == 2) {
+                mDolbyVisionPref.setSummary(R.string.dolby_vision_low_latency_yuv);
+            } else if (mDolbyVisionSettingManager.getDolbyVisionType() == 3) {
+                mDolbyVisionPref.setSummary(R.string.dolby_vision_low_latency_rgb);
+            } else {
+                mDolbyVisionPref.setSummary(R.string.dolby_vision_default_enable);
+            }
         } else {
-            mDolbyVisionPref.setSummary(R.string.captions_display_off);
+            mDolbyVisionPref.setSummary(R.string.dolby_vision_off);
+        }
+        if (mDolbyVisionSettingManager.getGraphicsPriority().equals("1")) {
+            mGraphicsPriorityPref.setSummary(R.string.graphics_priority);
+        } else if (mDolbyVisionSettingManager.getGraphicsPriority().equals("0")) {
+            mGraphicsPriorityPref.setSummary(R.string.video_priority);
         }
         mDisplayModePref.setSummary(getCurrentDisplayMode());
         if (isHdmiMode()) {
             mBestResolutionPref.setVisible(true);
             mDeepColorPref.setVisible(true);
-            mDeepColorPref.setSummary(getCurrentDeepColor());
+            mDeepColorPref.setSummary(mOutputUiManager.getCurrentColorSpaceTitle());
+            mColorDepthPref.setVisible(true);
+            mColorDepthPref.setSummary(
+                mOutputUiManager.getCurrentColorDepthAttr().contains("8bit") ? "off":"on");
         } else {
             mBestResolutionPref.setVisible(false);
             mDeepColorPref.setVisible(false);
+            mColorDepthPref.setVisible(false);
         }
         boolean dvFlag = mOutputUiManager.isDolbyVisionEnable()
             && mOutputUiManager.isTvSupportDolbyVision();
         if (dvFlag) {
             mBestResolutionPref.setEnabled(false);
             mDeepColorPref.setEnabled(false);
+            mColorDepthPref.setEnabled(false);
         } else {
             mBestResolutionPref.setEnabled(true);
             mDeepColorPref.setEnabled(true);
+            mColorDepthPref.setEnabled(true);
         }
         //only S912 as Mbox, T962E as Mbox, can display this options
         //T962E as TV and T962X, display in Settings-->Display list.
         if ((SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == true) &&
                 (!SettingsConstant.needDroidlogicTvFeature(getContext())
                      || (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == true))) {
-            mDolbyVisionPref.setVisible(true);
+            if (isHdmiMode()) {
+                mDolbyVisionPref.setVisible(true);
+                mGraphicsPriorityPref.setVisible(
+                    mDolbyVisionSettingManager.isDolbyVisionEnable() ? true:false);
+            } else {
+                mDolbyVisionPref.setVisible(false);
+                mGraphicsPriorityPref.setVisible(false);
+            }
         } else {
             mDolbyVisionPref.setVisible(false);
+            mGraphicsPriorityPref.setVisible(false);
         }
     }
 

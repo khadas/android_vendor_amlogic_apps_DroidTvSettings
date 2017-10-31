@@ -6,7 +6,7 @@ import com.droidlogic.tv.settings.TvSettingsActivity;
 import android.app.Fragment;
 
 /**
- * Activity to control HDMI CEC settings.
+ * Activity to control Output mode settings.
  */
 public class OutputmodeActivity extends TvSettingsActivity {
 
