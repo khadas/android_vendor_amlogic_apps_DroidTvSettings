@@ -9,8 +9,10 @@ package com.droidlogic.tv.settings.display.dolbyvision;
 
 import android.app.ActivityManagerNative;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.v14.preference.SwitchPreference;
@@ -51,13 +53,19 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
     private static final int DV_SET_DELAY_MS = 500;
     private final Handler mDelayHandler = new Handler();
     private String mNewDvMode;
+    Intent serviceIntent;
     private final Runnable mSetDvRunnable = new Runnable() {
         @Override
         public void run() {
             if (ACTION_ON.equals(mNewDvMode)) {
                 mDolbyVisionSettingManager.setDolbyVisionEnable(DV_ENABLE);
+                serviceIntent = new Intent(getPreferenceManager().getContext(), DolbyVisionService.class);
+                getPreferenceManager().getContext().startService(serviceIntent);
             } else if (ACTION_OFF.equals(mNewDvMode)) {
                 mDolbyVisionSettingManager.setDolbyVisionEnable(DV_DISABLE);
+                if (serviceIntent != null) {
+                    getPreferenceManager().getContext().stopService(serviceIntent);
+                }
             }
         }
     };
