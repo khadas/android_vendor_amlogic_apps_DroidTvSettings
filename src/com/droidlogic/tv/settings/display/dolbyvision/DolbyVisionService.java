@@ -53,7 +53,8 @@ public class DolbyVisionService extends Service
     private static final int MSG_DV_VIEW_CREAT = 0xd2;
     private static final int MSG_SCAN_FILE = 0xd4;
     private final String VFM_MAP_PATH = "/sys/class/vfm/map";
-    private final String DV_SRGING = "dvbldec(1) amlvideo(1)";
+    private final String TV_DV_STRGING = "dvbldec(1) amlvideo(1)";
+    private final String HDMI_DV_STRGING = "dv_vdin(1)";
     private String txtContext = null;
     private String updateTxtContext = null;
     private Timer cancelTimer = new Timer();
@@ -231,7 +232,7 @@ public class DolbyVisionService extends Service
     public boolean isDv() {
         updateTxtContext = readVfmMap();
         if (updateTxtContext != null) {
-            if (updateTxtContext.contains(DV_SRGING))
+            if (updateTxtContext.contains(TV_DV_STRGING) || updateTxtContext.contains(HDMI_DV_STRGING))
                 return true;
             else
                 return false;
