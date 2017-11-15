@@ -74,4 +74,13 @@
     <item name="picker_item_visible_column_item_alpha" format="float" type="dimen">0.50</item>
 
     <color name="activity_progress_text">#FFEEEEEE</color>
+    <color name="unlock_pattern_view_regular_color">@android:color/white</color>
+    <color name="unlock_pattern_view_success_color">#ff84ffff</color>
+    <color name="lock_pattern_view_regular_color">#ff37474f</color>
+    <color name="lock_pattern_view_success_color">#ff84ffff</color>
+    <color name="title_color">@android:color/holo_blue_light</color>
+    <color name="lock_pattern_background">#00000000</color>
+    <color name="confirm_device_credential_transparent_black">#60000000</color>
+    <color name="crypt_keeper_password_background">#70606060</color>
+    <color name="lock_pattern_view_regular_color_dark">#ffffff</color>
 </resources>

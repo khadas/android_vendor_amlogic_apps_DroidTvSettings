@@ -187,5 +187,12 @@
     <dimen name="activity_progress_top_margin">187dp</dimen>
     <dimen name="activity_progress_title_text_size">36sp</dimen>
     <item name="activity_progress_title_line_spacing" format="float" type="dimen">1.04296</item>
-
+    <dimen name="crypt_keeper_edit_text_ime_padding">8dip</dimen>
+    <dimen name="crypt_keeper_password_width">280dip</dimen>
+    <dimen name="crypt_keeper_password_top_margin">88dip</dimen>
+    <dimen name="crypt_keeper_pattern_top_margin">88dip</dimen>
+    <dimen name="crypt_keeper_pattern_size">354dip</dimen>
+    <dimen name="crypt_keeper_pattern_separator">100dip</dimen>
+    <dimen name="settings_side_margin">0dip</dimen>
+    <dimen name="confirm_credentials_top_padding">0dp</dimen>
 </resources>

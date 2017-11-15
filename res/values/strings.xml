@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!-- Main app title [CHAR LIMIT=40] -->
     <string name="settings_app_name">Droid Settings</string>
@@ -108,5 +108,112 @@
     <string name="power_action_restart">restart</string>
     <string name="power_action_shutdown">shutdown</string>
     <string name="netflix_esn">Netflix ESN</string>
+    <string name="crypt_keeper_encrypt_title">Encrypt MBOX</string>
+    <string name="crypt_keeper_settings_title">Encryption</string>
+    <string name="crypt_keeper_encrypted_summary">Encrypted</string>
+    <string name="enter_password">To start Android, enter your password</string>
+    <string name="starting_android">Starting Android\u2026</string>
+    <string name="crypt_keeper_switch_input_method">Switch input method</string>
+    <string name="cryptkeeper_wrong_password">Wrong Password</string>
+    <string name="cryptkeeper_return_to_call">Return to call</string>
+    <string name="cryptkeeper_emergency_call">Emergency call</string>
+    <string name="crypt_keeper_dialog_need_password_title">No lock screen PIN or password</string>
+    <string name="crypt_keeper_settings_title">Encryption</string>
+    <string name="crypt_keeper_button_text">Encrypt Mbox</string>
+    <string name="crypt_keeper_low_charge_text">Charge your battery and try again.</string>
+    <string name="crypt_keeper_unplugged_text">Plug in your charger and try again.</string>
+    <string name="crypt_keeper_dialog_need_password_message">You need to set a lock screen PIN or password before you can start encryption.</string>
+    <string name="crypt_keeper_desc">
+      You can encrypt your accounts, settings, downloaded apps and their data,
+      media, and other files. After you encrypt your tablet, assuming you\u2019ve set up a screen lock
+      (that is, a pattern or numeric PIN or password), you\u2019ll need to unlock the screen to decrypt
+      the tablet every time you power it on. The only other way to decrypt is to perform a factory
+      data reset, erasing all your data.\n\nEncryption takes an hour or more. You must start with
+      a charged battery and keep your tablet plugged in throughout the process. If you interrupt it,
+      you\u2019ll lose some or all of your data</string>
+    <string name="crypt_keeper_confirm_title">Encrypt?</string>
+    <string name="crypt_keeper_final_desc">
+    The encryption operation is irreversible and if you interrupt it, you\u2019ll lose data.
+    Encryption takes an hour or more, during which the tablet will restart several times.
+    </string>
+ <!-- Title of the progress screen while encrypting the device -->
+    <string name="crypt_keeper_setup_title">Encrypting</string>
 
+    <string name="crypt_keeper_setup_description">Wait while your phone
+    is being encrypted. <xliff:g id="percent" example="50">^1</xliff:g>% complete.</string>
+    <string name="crypt_keeper_setup_time_remaining">Wait while your phone
+    is being encrypted. Time remaining: <xliff:g id="duration" example="1:23">^1</xliff:g></string>
+    <string name="crypt_keeper_force_power_cycle">To unlock your phone, turn it off and then on.</string>
+
+
+    <!-- Warn user their device will be wiped if they make x more failed attempts -->
+    <string name="crypt_keeper_warn_wipe">Warning: Your device will be wiped after
+    <xliff:g id="count" example="7">^1</xliff:g> more failed attempts to be unlocked!
+    </string>
+
+    <!-- Informational text on the password entry screen prompting the user for their password -->
+    <string name="crypt_keeper_enter_password">Type your password</string>
+
+    <!-- Title of the encryption screen when encrypting the device failed -->
+    <string name="crypt_keeper_failed_title">Encryption unsuccessful</string>
+
+    <!-- Informational text when encryption fails -->
+    <string name="crypt_keeper_failed_summary">
+      Encryption was interrupted and can\u2019t complete. As a result, the data on
+      your phone is no longer accessible.
+      \n\nTo resume using your phone, you need to perform a factory reset.
+      When you set up your phone after the reset, you\u2019ll have an opportunity
+      to restore any data that was backed up to your Google Account.
+    </string>
+
+    <!-- Title of the encryption screen when decrypting the device failed -->
+    <string name="crypt_keeper_data_corrupt_title">Decryption unsuccessful</string>
+
+    <!-- Informational text when encryption fails -->
+    <string name="crypt_keeper_data_corrupt_summary">
+      The password you entered is correct, but unfortunately your data is
+      corrupt.
+      \n\nTo resume using your phone, you need to perform a factory reset.
+      When you set up your phone after the reset, you\u2019ll have an opportunity
+      to restore any data that was backed up to your Google Account.
+    </string>
+
+    <!-- Image button description to switch input method -->
+    <string name="crypt_keeper_switch_input_method">Switch input method</string>
+    <string name="master_clear_button_text">Reset Mbx</string>
+    <string name="checking_decryption">Checking\u2026</string>
+    <string name="cryptkeeper_wrong_pin">Wrong PIN</string>
+    <string name="cryptkeeper_wrong_pattern">Wrong Pattern</string>
+    <string name="enter_pin">To start Android, enter your PIN</string>
+    <string name="enter_pattern">To start Android, draw your pattern</string>
+    <string name="lockpattern_too_many_failed_confirmation_attempts">Too many incorrect attempts. Try again in <xliff:g id="number">%d</xliff:g> seconds.</string>
+    <string name="lock_profile_wipe_attempts">Try again. Attempt <xliff:g id="current_attempts">%1$d</xliff:g> of <xliff:g id="total_attempts">%2$d</xliff:g>.</string>
+    <string name="global_change_warning">This setting affects all users on this tablet.</string>
+    <string name="battery_history_seconds"><xliff:g id="seconds">%1$d</xliff:g>s</string>
+    <string name="battery_history_days"><xliff:g id="days">%1$d</xliff:g>d <xliff:g id="hours">%2$d</xliff:g>h <xliff:g id="minutes">%3$d</xliff:g>m <xliff:g id="seconds">%4$d</xliff:g>s</string>
+    <string name="battery_history_hours"><xliff:g id="hours">%1$d</xliff:g>h <xliff:g id="minutes">%2$d</xliff:g>m <xliff:g id="seconds">%3$d</xliff:g>s</string>
+    <string name="battery_history_minutes"><xliff:g id="minutes">%1$d</xliff:g>m <xliff:g id="seconds">%2$d</xliff:g>s</string>
+    <string name="battery_history_minutes_no_seconds"><xliff:g id="minutes">%1$d</xliff:g>m</string>
+    <string name="battery_history_hours_no_seconds"><xliff:g id="hours">%1$d</xliff:g>h <xliff:g id="minutes">%2$d</xliff:g>m</string>
+    <string name="battery_history_days_no_seconds"><xliff:g id="days">%1$d</xliff:g>d <xliff:g id="hours">%2$d</xliff:g>h <xliff:g id="minutes">%3$d</xliff:g>m</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm_fingerprint_icon_content_description">Use your fingerprint to continue.</string>
+    <string name="lock_profile_wipe_warning_content_pattern">If you enter an incorrect work pattern on this attempt, your work profile and associated data will be removed from this device.</string>
+    <string name="lockpassword_confirm_your_pin_generic">Enter your device PIN to continue</string>
+    <string name="lockpassword_confirm_your_pin_generic_profile">Enter your work PIN to continue</string>
+    <string name="lock_profile_wipe_warning_title">Last try</string>
+    <string name="lock_profile_wipe_content">Too many incorrect attempts. Your work profile and associated data will be removed from this device.</string>
+    <string name="lock_profile_wipe_dismiss">Dismiss</string>
+    <string name="lockpassword_confirm_your_password_generic">Enter your device password to continue</string>
+    <string name="lockpassword_confirm_your_password_generic_profile">Enter your work password to continue</string>
+    <string name="lockpassword_strong_auth_required_reason_restart_device_pin">Enter your device PIN to continue. Required after device restarts.</string>
+    <string name="lockpassword_strong_auth_required_reason_restart_work_pin">Enter your work PIN to continue. Required after device restarts.</string>
+    <string name="lockpassword_strong_auth_required_reason_restart_device_password">Enter your device password to continue. Required after device restarts.</string>
+    <string name="lockpassword_strong_auth_required_reason_restart_work_password">Enter your work password to continue. Required after device restarts.</string>
+    <string name="lockpassword_confirm_your_password_header">Confirm your password</string>
+    <string name="lockpassword_confirm_your_pin_header">Confirm your PIN</string>
+    <string name="lockpassword_invalid_password">Wrong password</string>
+    <string name="lockpassword_invalid_pin">Wrong PIN</string>
+    <string name="lock_profile_wipe_warning_content_password">If you enter an incorrect work password on this attempt, your work profile and associated data will be removed from this device.</string>
+    <string name="lock_profile_wipe_warning_content_pin">If you enter an incorrect work PIN on this attempt, your work profile and associated data will be removed from this device.</string>
 </resources>

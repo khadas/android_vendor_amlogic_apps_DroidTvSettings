@@ -19,6 +19,7 @@ package com.droidlogic.tv.settings;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorDescription;
+import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -30,12 +31,15 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.content.pm.UserInfo;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
 import android.os.Bundle;
+import android.os.Binder;
 import android.os.SystemProperties;
 import android.os.UserHandle;
+import android.os.RemoteException;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.Preference;
@@ -60,6 +64,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
     private static final String KEY_SOUNDS = "sound_effects";
     private static final String KEY_NETFLIX_ESN = "netflix_esn";
     private static final String KEY_MORE_SETTINGS = "more";
+    private static final String KEY_ENCRYPT_MBX = "encrypt";
     private boolean mTvUiMode;
 
     private Preference mUpgradeBluetoothRemote;
@@ -117,9 +122,32 @@ public class MainFragment extends LeanbackPreferenceFragment {
         }
 
         final Preference moreSettingsPref = findPreference(KEY_MORE_SETTINGS);
+        final Preference securePref = findPreference(KEY_ENCRYPT_MBX);
+        final String state = SystemProperties.get("vold.decrypt");
         if (!isPackageInstalled(getActivity(), MORE_SETTINGS_APP_PACKAGE)) {
             getPreferenceScreen().removePreference(moreSettingsPref);
+            if (getCurrentUserId() != UserHandle.USER_SYSTEM) {
+                getPreferenceScreen().removePreference(securePref);
+            }else if (CryptKeeper.DECRYPT_STATE.equals(state)) {
+                securePref.setSummary(getString(R.string.crypt_keeper_encrypted_summary));
+                securePref.setEnabled(false);
+            }
+        } else {
+            getPreferenceScreen().removePreference(securePref);
         }
+    }
+
+    private int getCurrentUserId() {
+        final long ident = Binder.clearCallingIdentity();
+        try {
+            UserInfo currentUser = ActivityManager.getService().getCurrentUser();
+            return currentUser.id;
+        } catch (RemoteException e) {
+            // Activity manager not running, nothing we can do assume user 0.
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
+        return UserHandle.USER_SYSTEM;
     }
 
     @Override

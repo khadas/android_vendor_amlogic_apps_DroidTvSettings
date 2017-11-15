@@ -28,6 +28,7 @@ else
 LOCAL_PRIVILEGED_MODULE := true
 endif
 
+include frameworks/base/packages/SettingsLib/common.mk
 LOCAL_JAVA_LIBRARIES := droidlogic
 LOCAL_STATIC_JAVA_LIBRARIES := \
     android-support-v7-recyclerview \
@@ -52,7 +53,7 @@ LOCAL_AAPT_FLAGS := --auto-add-overlay \
 LOCAL_SRC_FILES := \
     $(call all-java-files-under, src) \
     $(call all-Iaidl-files-under, src)
-
+include frameworks/opt/setupwizard/library/common-gingerbread.mk
 include frameworks/base/packages/SettingsLib/common.mk
 
 include $(BUILD_PACKAGE)
