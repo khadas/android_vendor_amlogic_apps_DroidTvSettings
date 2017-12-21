@@ -42,10 +42,13 @@ public class BluetoothAutoPairService extends IntentService {
     private boolean mScanFlag   = true;
     private boolean mBondFlag   = true;
     private static Timer timer  = null;
-    static final long SNAPSHOT_INTERVAL = 30 * 1000;
+    static final long SNAPSHOT_INTERVAL = 30 * 1000L;
     private static final String CONNECTING_TO_REMOTE = "Auto Connecting to Amlogic Remote...";
     private Handler mHandler;
     private Toast toast;
+    private int[] mRssi = {80,80,80};
+    private int mRssitarge = 0;
+    private int mRssiLimit = 0;
     //private LeDeviceListAdapter mLeDeviceListAdapter;
     private void Log(String msg) {
         if (DEBUG) {
@@ -134,6 +137,8 @@ public class BluetoothAutoPairService extends IntentService {
         Log("getSpecialDeviceInfo mBtClass:"+mBtClass);
         mBtNamePrefix = SystemProperties.get("ro.autoconnectbt.nameprefix");
         Log("getSpecialDeviceInfo mBtNamePrefix:"+mBtNamePrefix);
+        mRssiLimit = Integer.parseInt(SystemProperties.get("ro.autoconnectbt.rssilimit","55"));
+        Log("getSpecialDeviceInfo mRssiLimit:"+mRssiLimit);
         return (!mBtNamePrefix.isEmpty() && !mBtClass.isEmpty());
     }
     private boolean isSpecialDevice(BluetoothDevice bd) {
@@ -151,15 +156,13 @@ public class BluetoothAutoPairService extends IntentService {
     new BluetoothAdapter.LeScanCallback(){
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord){
-        if ( device.getName() != mBtCallback ) {
-                mBtCallback = device.getName();
                 Log("BluetoothDevice = " + device.getName() +
                 " Address=" + device.getAddress() +
-                " class=" + device.getBluetoothClass().toString());
+                " class=" + device.getBluetoothClass().toString() +" rssi:"+(short)rssi );
                 BluetoothDevice btDevice=device;
-                if (btDevice != null) {
-                    if (isSpecialDevice(btDevice)) {
-                        Log("Scan result isSpecialDevice!");
+                if ( (btDevice != null) && isSpecialDevice(btDevice) ) {
+                    if (getAverageRssi(rssi) < mRssiLimit) {
+                        Log("Scan result isSpecialDevice and in limit rssi value");
                         if (btDevice.getBondState() == BluetoothDevice.BOND_NONE) {
                             Log("Device no bond!");
                             Log("Find remoteDevice and parm: name= " + btDevice.getName() +
@@ -180,8 +183,7 @@ public class BluetoothAutoPairService extends IntentService {
                         }
                     }
                 }
-            }
-        }
+       }
     };
     private void connected(BluetoothDevice device) throws Exception {
         if ( mService != null && device != null ) {
@@ -274,5 +276,14 @@ public class BluetoothAutoPairService extends IntentService {
                 Log("Toast show ");
             }
         });
+    }
+
+    private int getAverageRssi(int mRssinew){
+        mRssinew = Math.abs(mRssinew);
+        mRssi[0] = mRssi[1];
+        mRssi[1] = mRssi[2];
+        mRssi[2] = mRssinew;
+        Log("Average =" + (mRssi[0]+mRssi[1]+mRssi[2])/3);
+        return (mRssi[0]+mRssi[1]+mRssi[2])/3;
     }
 }
