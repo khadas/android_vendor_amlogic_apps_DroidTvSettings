@@ -124,9 +124,12 @@ public class MainFragment extends LeanbackPreferenceFragment {
         final Preference moreSettingsPref = findPreference(KEY_MORE_SETTINGS);
         final Preference securePref = findPreference(KEY_ENCRYPT_MBX);
         final String state = SystemProperties.get("vold.decrypt");
+        final String useFilecrypto = SystemProperties.get("ro.crypto.type");
         if (!isPackageInstalled(getActivity(), MORE_SETTINGS_APP_PACKAGE)) {
             getPreferenceScreen().removePreference(moreSettingsPref);
-            if (getCurrentUserId() != UserHandle.USER_SYSTEM) {
+            if (useFilecrypto.equals("file")) {
+                getPreferenceScreen().removePreference(securePref);
+            }else if (getCurrentUserId() != UserHandle.USER_SYSTEM) {
                 getPreferenceScreen().removePreference(securePref);
             }else if (CryptKeeper.DECRYPT_STATE.equals(state)) {
                 securePref.setSummary(getString(R.string.crypt_keeper_encrypted_summary));
