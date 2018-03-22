@@ -49,8 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 
 @Keep
-public class ColorAttributeFragment extends LeanbackPreferenceFragment {
-    private static final String LOG_TAG = "ColorAttributeFragment";
+public class ColorDepthFragment extends LeanbackPreferenceFragment {
+    private static final String LOG_TAG = "ColorDepthFragment";
     private OutputUiManager mOutputUiManager;
     private static String saveValue = null;
     private static String curValue = null;
@@ -58,10 +58,12 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
     private static final int MSG_FRESH_UI = 0;
     private IntentFilter mIntentFilter;
     public boolean hpdFlag = false;
-    private static final String DEFAULT_VALUE = "444";
-    private static final String DEFAULT_TITLE = "YCbCr444";
     private static final String DEFAULT_COLOR_DEPTH_VALUE = "8bit";
-    private ArrayList<String> colorTitleList = new ArrayList();
+    private static final String ENABLE_COLOR_DEPTH_VALUE = "12bit";
+    private static final String ACTION_ON = "on";
+    private static final String ACTION_OFF = "off";
+
+    private ArrayList<String> curValueList = new ArrayList();
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,21 +71,19 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
             mHandler.sendEmptyMessageDelayed(MSG_FRESH_UI, hpdFlag ^ isHdmiMode() ? 2000 : 1000);
         }
     };
-    public static ColorAttributeFragment newInstance() {
-        return new ColorAttributeFragment();
+    public static ColorDepthFragment newInstance() {
+        return new ColorDepthFragment();
     }
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         mOutputUiManager = new OutputUiManager(getActivity());
-        mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
-        mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         updatePreferenceFragment();
     }
     private boolean needfresh() {
-        ArrayList<String> list = mOutputUiManager.getColorTitleList();
-        //Log.d(LOG_TAG, "colorTitleList: " + colorTitleList.toString() + "\n list: " + list.toString());
-        if (colorTitleList.size() > 0 && colorTitleList.size() == list.size()) {
-            for (String title : colorTitleList) {
+        ArrayList<String> list = mOutputUiManager.getColorValueList();
+        //Log.d(LOG_TAG, "curValueList: " + curValueList.toString() + "\n list: " + list.toString());
+        if (curValueList.size() > 0 && curValueList.size() == list.size()) {
+            for (String title : curValueList) {
                 if (!list.contains(title))
                     return true;
             }
@@ -98,10 +98,10 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
-        screen.setTitle(R.string.device_outputmode_color_space);
+        screen.setTitle(R.string.device_outputmode_color_depth);
         setPreferenceScreen(screen);
         if (!isHdmiMode()) {
-            colorTitleList.clear();
+            curValueList.clear();
             return;
         }
         final List<Action> InfoList = getMainActions();
@@ -126,19 +126,19 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
 
     private ArrayList<Action> getMainActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
-        colorTitleList.clear();
-        ArrayList<String> mList = mOutputUiManager.getColorTitleList();
+        curValueList.clear();
+        ArrayList<String> mList = mOutputUiManager.getColorValueList();
         for (String color:mList) {
-            colorTitleList.add(color);
+            curValueList.add(color);
         }
         ArrayList<String> colorValueList = mOutputUiManager.getColorValueList();
         String value = null;
         String filterValue = null;
-        String  curColorSpaceValue = mOutputUiManager.getCurrentColorSpaceAttr();
-        Log.i(LOG_TAG,"curColorSpaceValue: "+curColorSpaceValue);
-        if (curColorSpaceValue.equals("default"))
-            curColorSpaceValue = DEFAULT_VALUE;
-        for (int i = 0; i < colorTitleList.size(); i++) {
+        String  curColorDepthValue = mOutputUiManager.getCurrentColorAttribute().toString().trim();
+        Log.i(LOG_TAG,"curColorDepthValue: "+curColorDepthValue);
+        if (curColorDepthValue.equals("default"))
+            curColorDepthValue = DEFAULT_COLOR_DEPTH_VALUE;
+        for (int i = 0; i < curValueList.size(); i++) {
             value = colorValueList.get(i).trim();
             curMode = mOutputUiManager.getCurrentMode().trim();
             if (!isModeSupportColor(curMode, value)) {
@@ -147,42 +147,33 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
             filterValue += value;
         }
 
-        for (int i = 0; i < OutputUiManager.COLOR_SPACE_LIST.length; i++) {
-            if (filterValue.contains(OutputUiManager.COLOR_SPACE_LIST[i])) {
-                if (curColorSpaceValue.contains(OutputUiManager.COLOR_SPACE_LIST[i])) {
-                    actions.add(new Action.Builder().key(OutputUiManager.COLOR_SPACE_LIST[i])
-                        .title("        " + OutputUiManager.COLOR_SPACE_TITLE[i])
-                        .checked(true).build());
-                } else {
-                    actions.add(new Action.Builder().key(OutputUiManager.COLOR_SPACE_LIST[i])
-                        .title("        " + OutputUiManager.COLOR_SPACE_TITLE[i])
-                        .description("").build());
-                }
-            }
+        if (filterValue.contains(mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + ENABLE_COLOR_DEPTH_VALUE)) {
+            actions.add(new Action.Builder().key(ACTION_ON)
+                .title("        " + getString(R.string.on))
+                .checked(curColorDepthValue.contains(ENABLE_COLOR_DEPTH_VALUE) ? true : false)
+                .description("")
+                .build());
         }
-        if (actions.size() == 0) {
-            actions.add(new Action.Builder().key(DEFAULT_VALUE)
-                .title("        " + DEFAULT_TITLE)
-                .checked(true).build());
-        }
+
+        actions.add(new Action.Builder().key(ACTION_OFF)
+            .title("        " + getString(R.string.off))
+            .checked(curColorDepthValue.contains(DEFAULT_COLOR_DEPTH_VALUE) ? true : false)
+            .description("")
+            .build());
+
         return actions;
     }
     @Override
     public void onResume() {
         super.onResume();
+        mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         getActivity().registerReceiver(mIntentReceiver, mIntentFilter);
-        mHandler.sendEmptyMessage(MSG_FRESH_UI);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(mIntentReceiver);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -202,21 +193,19 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
       return super.onPreferenceTreeClick(preference);
     }
     public boolean onClickHandle(String key) {
-        curValue = key;
-        saveValue= mOutputUiManager.getCurrentColorSpaceAttr().toString().trim();
+        curValue = key.contains(ACTION_ON) ? ENABLE_COLOR_DEPTH_VALUE : DEFAULT_COLOR_DEPTH_VALUE;
+        saveValue= mOutputUiManager.getCurrentColorDepthAttr().toString().trim();
         if (saveValue.equals("default"))
-            saveValue = DEFAULT_VALUE;
+            saveValue = DEFAULT_COLOR_DEPTH_VALUE;
         curMode = mOutputUiManager.getCurrentMode().trim();
-        Log.i(LOG_TAG,"Set Color Space Value: "+curValue + "CurValue: "+saveValue);
+        Log.i(LOG_TAG,"Set Color Depth Value: "+curValue + "CurValue: "+saveValue);
+
         if (!curValue.equals(saveValue)) {
-            curValue = curValue + "," + mOutputUiManager.getCurrentColorDepthAttr().trim();
+            curValue = mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + curValue;
             if (isModeSupportColor(curMode,curValue)) {
                mOutputUiManager.changeColorAttribte(curValue);
-            } else {
-                curValue = key + "," + DEFAULT_COLOR_DEPTH_VALUE;
-                mOutputUiManager.changeColorAttribte(curValue);
-            }
-            return true;
+               return true;
+           }
         }
         return false;
     }

@@ -6,9 +6,9 @@ import com.droidlogic.tv.settings.TvSettingsActivity;
 import android.app.Fragment;
 
 /**
- * Activity to control Color space settings.
+ * Activity to control Color Depth settings.
  */
-public class ColorAttributeActivity extends TvSettingsActivity {
+public class ColorDepthActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
@@ -23,7 +23,7 @@ public class ColorAttributeActivity extends TvSettingsActivity {
 
         @Override
         public void onPreferenceStartInitialScreen() {
-            final ColorAttributeFragment fragment = ColorAttributeFragment.newInstance();
+            final ColorDepthFragment fragment = ColorDepthFragment.newInstance();
             startPreferenceFragment(fragment);
         }
     }

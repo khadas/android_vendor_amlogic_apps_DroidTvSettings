@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.droidlogic.tv.settings.display.dolbyvision;
 
-package com.droidlogic.tv.settings.display.outputmode;
+import android.app.Fragment;
 
 import com.droidlogic.tv.settings.BaseSettingsFragment;
 import com.droidlogic.tv.settings.TvSettingsActivity;
 
-import android.app.Fragment;
-
-/**
- * Activity to control Screen resolution options settings.
- */
-public class ScreenResolutionActivity extends TvSettingsActivity {
+public class GraphicsPrioritySettingActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
@@ -39,7 +35,7 @@ public class ScreenResolutionActivity extends TvSettingsActivity {
 
         @Override
         public void onPreferenceStartInitialScreen() {
-            final ScreenResolutionFragment fragment = ScreenResolutionFragment.newInstance();
+            final GraphicsPrioritySettingFragment fragment = GraphicsPrioritySettingFragment.newInstance();
             startPreferenceFragment(fragment);
         }
     }

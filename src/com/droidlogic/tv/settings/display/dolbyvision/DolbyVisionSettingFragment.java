@@ -9,8 +9,10 @@ package com.droidlogic.tv.settings.display.dolbyvision;
 
 import android.app.ActivityManagerNative;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.v14.preference.SwitchPreference;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.text.TextUtils;
 
 import com.droidlogic.app.DolbyVisionSettingManager;
+import com.droidlogic.app.OutputModeManager;
 import com.droidlogic.tv.settings.R;
 import com.droidlogic.tv.settings.RadioPreference;
 import com.droidlogic.tv.settings.dialog.old.Action;
@@ -37,27 +40,46 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
 
     public static final String KEY_DOLBY_VISION     = "dolby_vision_set";
 
+    private static final int DV_LL_RGB            = 3;
+    private static final int DV_LL_YUV            = 2;
     private static final int DV_ENABLE            = 1;
     private static final int DV_DISABLE           = 0;
 
     private static final String DV_RADIO_GROUP = "dv";
-    private static final String ACTION_ON = "on";
-    private static final String ACTION_OFF = "off";
+    private static final String DOLBY_VISION_DEFAULT = "dolby_vision_default";
+    private static final String DOLBY_VISION_LL_YUV  = "dolby_vision_ll_yuv";
+    private static final String DOLBY_VISION_LL_RGB  = "dolby_vision_ll_rgb";
+    private static final String DOLBY_VISION_DISABLE = "dolby_vision_disable";
 
     private DolbyVisionSettingManager mDolbyVisionSettingManager;
+    private OutputModeManager mOutputModeManager;
 
     // Adjust this value to keep things relatively responsive without janking
     // animations
     private static final int DV_SET_DELAY_MS = 500;
     private final Handler mDelayHandler = new Handler();
     private String mNewDvMode;
+    Intent serviceIntent;
     private final Runnable mSetDvRunnable = new Runnable() {
         @Override
         public void run() {
-            if (ACTION_ON.equals(mNewDvMode)) {
+            if (DOLBY_VISION_DEFAULT.equals(mNewDvMode)) {
                 mDolbyVisionSettingManager.setDolbyVisionEnable(DV_ENABLE);
-            } else if (ACTION_OFF.equals(mNewDvMode)) {
+                serviceIntent = new Intent(getPreferenceManager().getContext(), DolbyVisionService.class);
+                getPreferenceManager().getContext().startService(serviceIntent);
+            } else if (DOLBY_VISION_LL_YUV.equals(mNewDvMode)) {
+                mDolbyVisionSettingManager.setDolbyVisionEnable(DV_LL_YUV);
+                serviceIntent = new Intent(getPreferenceManager().getContext(), DolbyVisionService.class);
+                getPreferenceManager().getContext().startService(serviceIntent);
+            } else if (DOLBY_VISION_LL_RGB.equals(mNewDvMode)) {
+                mDolbyVisionSettingManager.setDolbyVisionEnable(DV_LL_RGB);
+                serviceIntent = new Intent(getPreferenceManager().getContext(), DolbyVisionService.class);
+                getPreferenceManager().getContext().startService(serviceIntent);
+            } else if (DOLBY_VISION_DISABLE.equals(mNewDvMode)) {
                 mDolbyVisionSettingManager.setDolbyVisionEnable(DV_DISABLE);
+                if (serviceIntent != null) {
+                    getPreferenceManager().getContext().stopService(serviceIntent);
+                }
             }
         }
     };
@@ -69,6 +91,7 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         mDolbyVisionSettingManager = new DolbyVisionSettingManager((Context) getActivity());
+        mOutputModeManager = new OutputModeManager((Context) getActivity());
         final Context themedContext = getPreferenceManager().getContext();
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(themedContext);
         screen.setTitle(R.string.dolby_vision_set);
@@ -100,11 +123,39 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
 
     private ArrayList<Action> getActions() {
         boolean enable = mDolbyVisionSettingManager.isDolbyVisionEnable();
+        int type = mDolbyVisionSettingManager.getDolbyVisionType();
+        String mode = mDolbyVisionSettingManager.isTvSupportDolbyVision();
+        String curMode = mOutputModeManager.getCurrentOutputMode();
         ArrayList<Action> actions = new ArrayList<Action>();
-        actions.add(new Action.Builder().key(ACTION_ON).title(getString(R.string.on))
-                .checked(enable == true).build());
-        actions.add(new Action.Builder().key(ACTION_OFF).title(getString(R.string.off))
-                .checked(enable == false).build());
+        if ((!mode.equals("") && mode.contains("DV_RGB_444_8BIT")) || mode.equals("")) {
+            actions.add(new Action.Builder()
+                .key(DOLBY_VISION_DEFAULT)
+                .title(getString(R.string.dolby_vision_default_enable))
+                .checked((enable == true) && (type == DV_ENABLE))
+                .build());
+        }
+        if (!mode.equals("")) {
+            if (mode.contains("LL_YCbCr_422_12BIT")) {
+                actions.add(new Action.Builder()
+                    .key(DOLBY_VISION_LL_YUV)
+                    .title(getString(R.string.dolby_vision_low_latency_yuv))
+                    .checked((enable == true) && (type == DV_LL_YUV))
+                    .build());
+            }
+            if ((mode.contains("LL_RGB_444_12BIT") || mode.contains("LL_RGB_444_10BIT"))
+                    && !curMode.contains("2160") && !curMode.contains("smpte")) {
+                actions.add(new Action.Builder()
+                    .key(DOLBY_VISION_LL_RGB)
+                    .title(getString(R.string.dolby_vision_low_latency_rgb))
+                    .checked((enable == true) && (type == DV_LL_RGB))
+                    .build());
+            }
+        }
+        actions.add(new Action.Builder()
+            .key(DOLBY_VISION_DISABLE)
+            .title(getString(R.string.dolby_vision_off))
+            .checked(enable == false)
+            .build());
         return actions;
     }
 

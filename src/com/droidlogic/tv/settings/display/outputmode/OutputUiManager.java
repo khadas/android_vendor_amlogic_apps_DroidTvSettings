@@ -111,6 +111,27 @@ public class OutputUiManager {
         "RGB 8bit"
     };
 
+    public static final String[] COLOR_SPACE_LIST = {
+        "444",
+        "422",
+        "420",
+        "rgb",
+    };
+
+    public static final String[] COLOR_SPACE_TITLE = {
+        "YCbCr444",
+        "YCbCr422",
+        "YCbCr420",
+        "RGB",
+    };
+
+    public static final String[] COLOR_DEPTH_LIST = {
+        "16bit",
+        "12bit",
+        "10bit",
+        "8bit",
+    };
+
     private static final String[] CVBS_MODE_VALUE_LIST = {
         "480cvbs",
         "576cvbs"
@@ -118,6 +139,13 @@ public class OutputUiManager {
     private static final String[] CVBS_MODE_TITLE_LIST = {
         "480 CVBS",
         "576 CVBS"
+    };
+
+    private static final String[] DOLBY_VISION_TYPE = {
+         "DV_RGB_444_8BIT",
+//         "DV_YCbCr_422_12BIT",
+         "LL_YCbCr_422_12BIT",
+         "LL_RGB_444_12BIT"
     };
     private static final int DEFAULT_HDMI_MODE = 0;
     private static final int DEFAULT_CVBS_MODE = 1;
@@ -140,6 +168,7 @@ public class OutputUiManager {
 
     private static String mUiMode;
     private static String tvSupportDolbyVisionMode;
+    private static String tvSupportDolbyVisionType;
 
     public OutputUiManager(Context context){
         mContext = context;
@@ -177,8 +206,35 @@ public class OutputUiManager {
          return mOutputModeManager.getCurrentOutputMode();
     }
 
-   public String getCurrentColorAttribute(){
+    public String getCurrentColorAttribute(){
          return mOutputModeManager.getCurrentColorAttribute();
+    }
+
+    public String getCurrentColorSpaceAttr() {
+        for (int i = 0; i < COLOR_SPACE_LIST.length; i++) {
+            if (getCurrentColorAttribute().contains(COLOR_SPACE_LIST[i])) {
+                return COLOR_SPACE_LIST[i];
+            }
+        }
+        return "default";
+    }
+
+    public String getCurrentColorSpaceTitle() {
+        for (int i = 0; i < COLOR_SPACE_LIST.length; i++) {
+            if (getCurrentColorAttribute().contains(COLOR_SPACE_LIST[i])) {
+                return COLOR_SPACE_TITLE[i];
+            }
+        }
+        return "default";
+    }
+
+    public String getCurrentColorDepthAttr() {
+        for (int i = 0; i < COLOR_DEPTH_LIST.length; i++) {
+            if (getCurrentColorAttribute().contains(COLOR_DEPTH_LIST[i])) {
+                return COLOR_DEPTH_LIST[i];
+            }
+        }
+        return "default";
     }
 
     private void initColorValues(String mode){
@@ -372,7 +428,25 @@ public class OutputUiManager {
     }
 
     public boolean isTvSupportDolbyVision() {
-        tvSupportDolbyVisionMode = mDolbyVisionSettingManager.isTvSupportDolbyVision();
+        String dv_cap = mDolbyVisionSettingManager.isTvSupportDolbyVision();
+        tvSupportDolbyVisionType = null;
+        if (!dv_cap.equals("")) {
+            for (int i = 0;i < HDMI_LIST.length; i++) {
+                if (dv_cap.contains(HDMI_LIST[i])) {
+                    tvSupportDolbyVisionMode = HDMI_LIST[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < DOLBY_VISION_TYPE.length; i++) {
+                if (dv_cap.contains(DOLBY_VISION_TYPE[i])) {
+                    tvSupportDolbyVisionType += DOLBY_VISION_TYPE[i];
+                }
+            }
+        } else {
+            tvSupportDolbyVisionMode = "";
+            tvSupportDolbyVisionType = "";
+        }
+
         return tvSupportDolbyVisionMode.equals("") ? false : true;
     }
 
