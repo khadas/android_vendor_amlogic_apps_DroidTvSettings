@@ -11,7 +11,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass.Device;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.bluetooth.BluetoothInputDevice;
+import android.bluetooth.BluetoothHidHost;
 import android.bluetooth.BluetoothProfile;
 import android.content.IntentFilter;
 import android.os.SystemProperties;
@@ -34,7 +34,7 @@ public class BluetoothAutoPairService extends IntentService {
     private String mBtNamePrefix;
     private String mBtClass;
     private String mBtCallback;
-    private BluetoothInputDevice mService = null;
+    private BluetoothHidHost mService = null;
     private Context mContext = null;
     private static final boolean DEBUG = false;
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -218,7 +218,7 @@ public class BluetoothAutoPairService extends IntentService {
             }
         }
         if (!mBluetoothAdapter.getProfileProxy(mContext, mServiceConnection,
-                BluetoothProfile.INPUT_DEVICE)) {
+                BluetoothProfile.HID_HOST)) {
             Log("Bluetooth getProfileProxy failed!");
         }
         return true;
@@ -236,7 +236,7 @@ public class BluetoothAutoPairService extends IntentService {
             if (DEBUG) {
                 Log("Bluetooth service proxy connected");
             }
-            mService = (BluetoothInputDevice)proxy;
+            mService = (BluetoothHidHost)proxy;
         }
     };
 

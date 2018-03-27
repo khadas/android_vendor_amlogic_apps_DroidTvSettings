@@ -40,10 +40,9 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
 
 LOCAL_RESOURCE_DIR := \
     $(LOCAL_PATH)/res \
-    $(TOP)/frameworks/support/v17/leanback/res \
+    $(TOP)/frameworks/support/leanback/src/main/res \
     frameworks/support/v7/preference/res \
-    frameworks/support/v14/preference/res \
-    frameworks/support/v17/preference-leanback/res \
+    frameworks/support/preference-leanback/src/main/res \
     frameworks/support/v7/appcompat/res \
     $(TOP)/frameworks/support/v7/recyclerview/res
 

@@ -900,7 +900,7 @@ public final class Utils extends com.android.settingslib.Utils {
         // Try finding the corresponding bitmap in the dark bitmap cache
         bitmap = sDarkDefaultUserBitmapCache.get(userId);
         if (bitmap == null) {
-            bitmap = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(userId, false));
+            bitmap = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(Resources.getSystem(),userId, false));
             // Save it to cache
             sDarkDefaultUserBitmapCache.put(userId, bitmap);
         }
