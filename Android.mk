@@ -12,47 +12,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := $(call my-dir)
-
-include $(CLEAR_VARS)
-
-LOCAL_PACKAGE_NAME := DroidTvSettings
-LOCAL_CERTIFICATE := platform
-LOCAL_MODULE_TAGS := optional
-LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
-
-
-ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26 && echo OK),OK)
-LOCAL_PROPRIETARY_MODULE := true
-else
-LOCAL_PRIVILEGED_MODULE := true
-endif
-
-include frameworks/base/packages/SettingsLib/common.mk
-LOCAL_JAVA_LIBRARIES := droidlogic
-LOCAL_STATIC_JAVA_LIBRARIES := \
-    android-support-v7-recyclerview \
-    android-support-v7-preference \
-    android-support-v7-appcompat \
-    android-support-v14-preference \
-    android-support-v17-preference-leanback \
-    android-support-v17-leanback
-
-LOCAL_RESOURCE_DIR := \
-    $(LOCAL_PATH)/res \
-    $(TOP)/frameworks/support/leanback/src/main/res \
-    frameworks/support/v7/preference/res \
-    frameworks/support/preference-leanback/src/main/res \
-    frameworks/support/v7/appcompat/res \
-    $(TOP)/frameworks/support/v7/recyclerview/res
-
-LOCAL_AAPT_FLAGS := --auto-add-overlay \
-    --extra-packages android.support.v17.leanback:android.support.v7.preference:android.support.v14.preference:android.support.v17.preference:android.support.v7.appcompat:android.support.v7.recyclerview
-
-LOCAL_SRC_FILES := \
-    $(call all-java-files-under, src) \
-    $(call all-Iaidl-files-under, src)
-include frameworks/opt/setupwizard/library/common-gingerbread.mk
-include frameworks/base/packages/SettingsLib/common.mk
-
-include $(BUILD_PACKAGE)
+#LOCAL_PATH := $(call my-dir)
+#
+#include $(CLEAR_VARS)
+#
+#LOCAL_PACKAGE_NAME := DroidTvSettings
+#LOCAL_CERTIFICATE := platform
+#LOCAL_MODULE_TAGS := optional
+#LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
+#
+#
+#ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26 && echo OK),OK)
+#LOCAL_PROPRIETARY_MODULE := true
+#else
+#LOCAL_PRIVILEGED_MODULE := true
+#endif
+#
+#LOCAL_JAVA_LIBRARIES := droidlogic
+#LOCAL_STATIC_JAVA_LIBRARIES := \
+#    android-support-v7-recyclerview \
+#    android-support-v7-preference \
+#    android-support-v7-appcompat \
+#    android-support-v14-preference \
+#    android-support-v17-preference-leanback \
+#    android-support-v17-leanback
+#
+#LOCAL_RESOURCE_DIR := \
+#    $(LOCAL_PATH)/res \
+#    $(TOP)/frameworks/support/leanback/src/main/res \
+#    frameworks/support/v7/preference/res \
+#    frameworks/support/preference-leanback/src/main/res \
+#    frameworks/support/v7/appcompat/res \
+#    $(TOP)/frameworks/support/v7/recyclerview/res
+#
+#LOCAL_AAPT_FLAGS := --auto-add-overlay \
+#    --extra-packages android.support.v17.leanback:android.support.v7.preference:android.support.v14.preference:android.support.v17.preference:android.support.v7.appcompat:android.support.v7.recyclerview
+#
+#LOCAL_SRC_FILES := \
+#    $(call all-java-files-under, src) \
+#    $(call all-Iaidl-files-under, src)
+#include frameworks/opt/setupwizard/library/common-gingerbread.mk
+#include frameworks/base/packages/SettingsLib/common.mk
+#
+#LOCAL_PRIVATE_PLATFORM_APIS := true
+#include $(BUILD_PACKAGE)
