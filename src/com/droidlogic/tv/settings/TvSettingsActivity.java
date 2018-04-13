@@ -27,11 +27,27 @@ import android.transition.TransitionManager;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.provider.Settings;
+
+import com.droidlogic.tv.settings.tvoption.TvOptionSettingManager;
 
 public abstract class TvSettingsActivity extends Activity {
 
+    private static final String TAG = "TvSettingsActivity";
     private static final String SETTINGS_FRAGMENT_TAG =
             "com.droidlogic.tv.settings.MainSettings.SETTINGS_FRAGMENT";
+    public static final String INTENT_ACTION_FINISH_FRAGMENT = "action.finish.droidsettingsmodefragment";
+    public static final int MODE_LAUNCHER = 0;
+    public static final int MODE_LIVE_TV = 1;
+    private int mStartMode = MODE_LAUNCHER;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +85,93 @@ public abstract class TvSettingsActivity extends Activity {
                         }
                     });
         }
+        mStartMode = getIntent().getIntExtra("from_live_tv", MODE_LAUNCHER);
+        if (SettingsConstant.needDroidlogicCustomization(this)) {
+            if (mStartMode == MODE_LIVE_TV) {
+                startShowActivityTimer();
+            }
+        }
+    }
+
+    public BroadcastReceiver mMenuTimeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "intent = " + intent);
+            if (intent.getAction().equals(INTENT_ACTION_FINISH_FRAGMENT)) {
+                startShowActivityTimer();
+            }
+        }
+    };
+
+    public void registerMenuTimeReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(INTENT_ACTION_FINISH_FRAGMENT);
+        registerReceiver(mMenuTimeReceiver, intentFilter);
+    }
+
+    public void unregisterMenuTimeReceiver() {
+        unregisterReceiver(mMenuTimeReceiver);
+    }
+
+    public void startShowActivityTimer () {
+        handler.removeMessages(0);
+
+        int seconds = Settings.System.getInt(getContentResolver(), TvOptionSettingManager.KEY_MENU_TIME, TvOptionSettingManager.DEFUALT_MENU_TIME);
+        if (seconds == 0) {
+            seconds = 10;
+        } else if (seconds == 1) {
+            seconds = 20;
+        } else if (seconds == 2) {
+            seconds = 40;
+        } else if (seconds == 3) {
+            seconds = 60;
+        }
+        handler.sendEmptyMessageDelayed(0, seconds * 1000);
+    }
+
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            finish();
+        }
+    };
+
+    @Override
+    public void onResume() {
+        registerMenuTimeReceiver();
+        if (SettingsConstant.needDroidlogicCustomization(this)) {
+            if (mStartMode == MODE_LIVE_TV) {
+                startShowActivityTimer();
+            }
+        }
+        super.onResume();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent (KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_BACK:
+                    if (mStartMode == MODE_LIVE_TV) {
+                        startShowActivityTimer();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterMenuTimeReceiver();
     }
 
     @Override

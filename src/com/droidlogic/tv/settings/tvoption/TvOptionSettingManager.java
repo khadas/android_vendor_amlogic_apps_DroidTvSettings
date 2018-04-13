@@ -42,6 +42,7 @@ import com.droidlogic.app.tv.TvInSignalInfo;
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
 import com.droidlogic.app.SystemControlManager;
+import vendor.amlogic.hardware.tvserver.V1_0.FreqList;
 import com.droidlogic.app.tv.TvChannelParams;
 import com.droidlogic.app.DaylightSavingTime;
 
@@ -615,7 +616,7 @@ public class TvOptionSettingManager {
         }
 
         alarm.setExact(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + timeout, pendingIntent);
-        Log.d(TAG, "start time count down after " + timeout + " ms");
+        Log.d(TAG, "start time count down elapsedRealtime " + SystemClock.elapsedRealtime() + "  timeout after " + timeout + " ms");
     }
 
 
@@ -675,6 +676,10 @@ public class TvOptionSettingManager {
         mTvControlManager.StopTv();
         setStartupSetting(0);
         setAudioADSwitch(0);
+        setAutoSyncTVTime(0);
+        setAutoBacklightStatus(0);
+        setMenuTime(0);
+        setSleepTimer(0);
         setDefAudioStreamVolume();
         clearHdmi20Mode();
         // SystemControlManager mSystemControlManager = new SystemControlManager(mContext);
@@ -683,7 +688,6 @@ public class TvOptionSettingManager {
         for (int i = 0; i < tvPackages.length; i++) {
             ClearPackageData(tvPackages[i]);
         }
-        mTvControlManager.stopAutoBacklight();
         mTvControlManager.SSMInitDevice();
         mTvControlManager.FactoryCleanAllTableForProgram();
     }

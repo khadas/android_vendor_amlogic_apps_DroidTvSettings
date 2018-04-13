@@ -198,7 +198,7 @@ public class DolbyVisionService extends Service
 
     public boolean isSwitchVideo() {
         updateTxtContext = readVfmMap();
-        if (updateTxtContext.equals(txtContext)) {
+        if (updateTxtContext != null && updateTxtContext.equals(txtContext)) {
             return false;
         }
         else
@@ -213,6 +213,8 @@ public class DolbyVisionService extends Service
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
+            Log.e(TAG, "readVfmMap fileInputStream erro: " + e1.getMessage());
+            return null;
         }
         StringBuffer sb = new StringBuffer();
         InputStreamReader inputStreamReader = null;

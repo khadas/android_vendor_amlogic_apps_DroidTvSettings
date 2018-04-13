@@ -61,4 +61,9 @@ public class SettingsConstant {
         SystemControlManager sm = new SystemControlManager(context);
         return sm.getPropertyBoolean("ro.tvsoc.as.mbox", false);
     }
+
+    public static boolean needDroidlogicCustomization(Context context){
+        SystemControlManager sm = new SystemControlManager(context);
+        return sm.getPropertyBoolean("ro.platform.customize_tvsetting", false);
+    }
 }
