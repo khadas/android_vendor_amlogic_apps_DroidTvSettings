@@ -116,7 +116,6 @@
     <string name="cryptkeeper_return_to_call">"返回通话"</string>
     <string name="cryptkeeper_emergency_call">"紧急呼救"</string>
     <string name="crypt_keeper_dialog_need_password_title">"没有锁屏PIN码或密码"</string>
-    <string name="crypt_keeper_settings_title">"加密"</string>
     <string name="crypt_keeper_button_text">"加密电视"</string>
     <string name="crypt_keeper_low_charge_text">"请为电池充电，然后重试。"</string>
     <string name="crypt_keeper_unplugged_text">"请插上充电器，然后重试。"</string>
@@ -156,7 +155,6 @@
     <string name="crypt_keeper_data_corrupt_summary">"您输入的密码正确无误，但遗憾的是，您的数据已损坏。\n\n要继续使用您的电视，您需要将其恢复出厂设置。对恢复出厂设置后的电视进行设置时，您可以恢复之前备份到 Google 帐号的任何数据。"
     </string>
     <!-- Image button description to switch input method -->
-    <string name="crypt_keeper_switch_input_method">"切换输入法"</string>
     <string name="master_clear_button_text">"恢复出厂设置"</string>
     <string name="checking_decryption">"正在检查…"</string>
     <string name="cryptkeeper_wrong_pin">"PIN 码错误"</string>

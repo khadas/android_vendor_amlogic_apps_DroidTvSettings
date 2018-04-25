@@ -56,4 +56,9 @@ public class SettingsConstant {
     public static boolean needDroidlogicBluetoothRemoteFeature(Context context){
         return context.getResources().getBoolean(R.bool.display_need_bluetooth_remote_function);
     }
+
+    public static boolean hasMboxFeature(Context context){
+        SystemControlManager sm = new SystemControlManager(context);
+        return sm.getPropertyBoolean("ro.tvsoc.as.mbox", false);
+    }
 }

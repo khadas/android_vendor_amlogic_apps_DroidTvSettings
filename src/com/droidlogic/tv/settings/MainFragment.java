@@ -51,12 +51,19 @@ import android.util.Log;
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
 
+import com.droidlogic.app.tv.TvControlManager;
+import com.droidlogic.app.tv.DroidLogicTvUtils;
+
 import java.util.ArrayList;
 import java.util.Set;
 
 public class MainFragment extends LeanbackPreferenceFragment {
     private static final String TAG = "MainFragment";
 
+    private static final String KEY_MAIN_MENU = "droidsettings";
+    private static final String KEY_DISPLAY = "display";
+    private static final String KEY_MBOX_SOUNDS = "mbox_sound";
+    private static final String KEY_POWERKEY = "powerkey_action";
     private static final String MORE_SETTINGS_APP_PACKAGE = "com.android.settings";
     private static final String KEY_UPGRADE_BLUTOOTH_REMOTE = "upgrade_bluetooth_remote";
     private static final String KEY_HDMICEC = "hdmicec";
@@ -65,6 +72,10 @@ public class MainFragment extends LeanbackPreferenceFragment {
     private static final String KEY_NETFLIX_ESN = "netflix_esn";
     private static final String KEY_MORE_SETTINGS = "more";
     private static final String KEY_ENCRYPT_MBX = "encrypt";
+    private static final String KEY_PICTURE = "pictrue_mode";
+    private static final String KEY_TV_OPTION = "tv_option";
+    private static final String KEY_TV_CHANNEL = "channel";
+    private static final String KEY_TV_SETTINGS = "tv_settings";
     private boolean mTvUiMode;
 
     private Preference mUpgradeBluetoothRemote;
@@ -92,28 +103,31 @@ public class MainFragment extends LeanbackPreferenceFragment {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.main_prefs, null);
+        boolean is_from_live_tv = getActivity().getIntent().getIntExtra("from_live_tv", 0) == 1;
         mTvUiMode = DroidUtils.hasTvUiMode();
-
         //tvFlag, is true when TV and T962E as TV, false when Mbox and T962E as Mbox.
         boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
                 && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
 
+        final Preference mainPref = findPreference(KEY_MAIN_MENU);
+        final Preference displayPref = findPreference(KEY_DISPLAY);
+        final Preference hdmicecPref = findPreference(KEY_HDMICEC);
+        final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
+        mSoundsPref = findPreference(KEY_SOUNDS);
+        final Preference mboxSoundsPref = findPreference(KEY_MBOX_SOUNDS);
+        final Preference powerKeyPref = findPreference(KEY_POWERKEY);
         //BluetoothRemote/HDMI cec/Playback Settings display only in Mbox
         mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
-        mUpgradeBluetoothRemote.setVisible(SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag);
-
-        final Preference hdmicecPref = findPreference(KEY_HDMICEC);
-        hdmicecPref.setVisible(getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC)
-                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext()) && !tvFlag);
-
-        final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
-        playbackPref.setVisible(SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()) && !tvFlag);
-
-        mSoundsPref = findPreference(KEY_SOUNDS);
-
         final Preference netflixesnPref = findPreference(KEY_NETFLIX_ESN);
+
+        mUpgradeBluetoothRemote.setVisible(is_from_live_tv ? false : (SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag));
+        hdmicecPref.setVisible(is_from_live_tv ? false : (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_HDMI_CEC)
+                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext()) && !tvFlag));
+        playbackPref.setVisible(is_from_live_tv ? false : (SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()) && !tvFlag));
         if (netflixesnPref != null) {
-            if (getContext().getPackageManager().hasSystemFeature("droidlogic.software.netflix")) {
+            if (is_from_live_tv) {
+                netflixesnPref.setVisible(false);
+            } else if (getContext().getPackageManager().hasSystemFeature("droidlogic.software.netflix")) {
                 netflixesnPref.setVisible(true);
                 netflixesnPref.setSummary(mEsnText);
             } else {
@@ -125,7 +139,10 @@ public class MainFragment extends LeanbackPreferenceFragment {
         final Preference securePref = findPreference(KEY_ENCRYPT_MBX);
         final String state = SystemProperties.get("vold.decrypt");
         final String useFilecrypto = SystemProperties.get("ro.crypto.type");
-        if (!isPackageInstalled(getActivity(), MORE_SETTINGS_APP_PACKAGE)) {
+        if (is_from_live_tv) {
+            securePref.setVisible(false);
+            moreSettingsPref.setVisible(false);
+         } else if (!isPackageInstalled(getActivity(), MORE_SETTINGS_APP_PACKAGE)) {
             getPreferenceScreen().removePreference(moreSettingsPref);
             if (useFilecrypto.equals("file")) {
                 getPreferenceScreen().removePreference(securePref);
@@ -138,6 +155,54 @@ public class MainFragment extends LeanbackPreferenceFragment {
         } else {
             getPreferenceScreen().removePreference(securePref);
         }
+
+        final Preference picturePref = findPreference(KEY_PICTURE);
+        final Preference mTvOption = findPreference(KEY_TV_OPTION);
+        final Preference channelPref = findPreference(KEY_TV_CHANNEL);
+        final Preference settingsPref = findPreference(KEY_TV_SETTINGS);
+
+        if (is_from_live_tv) {
+            mainPref.setTitle(R.string.settings_menu);
+            displayPref.setVisible(false);
+            mboxSoundsPref.setVisible(false);
+            powerKeyPref.setVisible(false);
+            mTvOption.setVisible(false);
+            moreSettingsPref.setVisible(false);
+            TvControlManager tvControlManager = TvControlManager.getInstance();
+            int sourceinputtype = tvControlManager.GetCurrentSourceInput();
+            if (sourceinputtype != DroidLogicTvUtils.DEVICE_ID_ADTV
+                && sourceinputtype != DroidLogicTvUtils.DEVICE_ID_ATV
+                && sourceinputtype != DroidLogicTvUtils.DEVICE_ID_DTV) {
+                if (sourceinputtype == -1) {
+                    channelPref.setVisible(true);
+                } else {
+                    channelPref.setVisible(false);
+                }
+            } else {
+                channelPref.setVisible(true);
+            }
+        } else {
+            mSoundsPref.setVisible(false);
+            channelPref.setVisible(false);
+            settingsPref.setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        super.onPreferenceTreeClick(preference);
+        if (TextUtils.equals(preference.getKey(), KEY_TV_CHANNEL)) {
+            startUiInLiveTv(KEY_TV_CHANNEL);
+        }
+        return false;
+    }
+
+    private void startUiInLiveTv(String value) {
+        Intent intent = new Intent();
+        intent.setAction("action.startlivetv.settingui");
+        intent.putExtra(value, true);
+        getActivity().sendBroadcast(intent);
+        getActivity().finish();
     }
 
     private int getCurrentUserId() {

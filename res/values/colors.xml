@@ -83,4 +83,9 @@
     <color name="confirm_device_credential_transparent_black">#60000000</color>
     <color name="crypt_keeper_password_background">#70606060</color>
     <color name="lock_pattern_view_regular_color_dark">#ffffff</color>
+
+    <color name="lb_preference_decor_header_background">#0277BD</color>
+
+    <color name="color_text_item">#FF65686F</color>
+    <color name="color_text_prompt">#FF808080</color>
 </resources>

@@ -16,6 +16,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.IntentFilter;
 import android.os.SystemProperties;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.widget.Toast;
 import android.view.Gravity;
@@ -49,6 +50,8 @@ public class BluetoothAutoPairService extends IntentService {
     private int[] mRssi = {80,80,80};
     private int mRssitarge = 0;
     private int mRssiLimit = 0;
+    private HandlerThread scanner = new HandlerThread("auto_bt");
+    private Handler mAutoHandler;
     //private LeDeviceListAdapter mLeDeviceListAdapter;
     private void Log(String msg) {
         if (DEBUG) {
@@ -59,76 +62,83 @@ public class BluetoothAutoPairService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log("onHandleIntent begin");
         mHandler = new Handler(Looper.getMainLooper());
-        if (!getSpecialDeviceInfo()) {
-            Log("getSpecialDeviceInfo fail!");
-            return;
-        }
-        if (initBt(this)) {
-            try {
-                Thread.sleep(5000);
-            } catch(Exception e) {
-              e.printStackTrace();
-            }
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-            public void run() {
-                try{
-                    mScanFlag=false;
-                    mBondFlag=false;
-                    Log("Scan BT Timeout!!!");
-                }catch(Exception e) {
-                   e.printStackTrace();
+        scanner.start();
+        mAutoHandler = new Handler(scanner.getLooper());
+        mAutoHandler.post(new Runnable(){
+          public void run() {
+            if (!getSpecialDeviceInfo()) {
+                    Log("getSpecialDeviceInfo fail!");
+                    return;
                 }
-            }
-            }, SNAPSHOT_INTERVAL, SNAPSHOT_INTERVAL );
-            if (isSpecialDevicePaired())  {
-                Log("Hasfound SpecialDevicePaired!");
-            }
-            if ( mActionFlag == true ) {
-                while (mScanFlag) {
-                    if (!mBluetoothAdapter.isDiscovering()) {
-                        mBluetoothAdapter.startLeScan(mLeScanCallback);
+                if (initBt(BluetoothAutoPairService.this)) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch(Exception e) {
+                      e.printStackTrace();
                     }
-                }
-                Log("Cancel Scan!");
-                timer.cancel();
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                if ( mBondFlag == true ) {
-                try {
-                        Thread.sleep(1000);
-                        Log("Device start bond...");
-                        if ( createBond( RemoteDevice.getClass(), RemoteDevice ) ) {
-                            Log("Remote Device bond ok!");
-                        } else {
-                            Log("Remote Device bond failed!");
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                    public void run() {
+                        try{
+                            mScanFlag=false;
+                            mBondFlag=false;
+                            Log("Scan BT Timeout!!!");
+                        }catch(Exception e) {
+                           e.printStackTrace();
                         }
-                        Thread.sleep(1000);
-                        int bondState = RemoteDevice.getBondState();
-                        if ( bondState == BluetoothDevice.BOND_BONDED ) {
-                            connected(RemoteDevice);
-                        } else {
-                            Log("Remote Device has no bond!");
-                            int mConnetFail=0;
-                            while ( bondState != BluetoothDevice.BOND_BONDED ) {
-                                createBond( RemoteDevice.getClass(), RemoteDevice );
-                                Thread.sleep(1000);
-                                bondState = RemoteDevice.getBondState();
-                                Log.d(TAG,"Renjun.xu add waitting BT bond...");
-                                mConnetFail++;
-                                if ( mConnetFail > 5 ) {
-                                    Log.d(TAG,"waitting BT bond fail ...");
-                                    break;
-                                }
+                    }
+                    }, SNAPSHOT_INTERVAL, SNAPSHOT_INTERVAL );
+                    if (isSpecialDevicePaired())  {
+                        Log("Hasfound SpecialDevicePaired!");
+                    }
+                    if ( mActionFlag == true ) {
+                        while (mScanFlag) {
+                            if (!mBluetoothAdapter.isDiscovering()) {
+                                mBluetoothAdapter.startLeScan(mLeScanCallback);
                             }
-                            connected(RemoteDevice);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        Log("Cancel Scan!");
+                        timer.cancel();
+                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                        if ( mBondFlag == true ) {
+                        try {
+                                Thread.sleep(1000);
+                                Log("Device start bond...");
+                                if ( createBond( RemoteDevice.getClass(), RemoteDevice ) ) {
+                                    Log("Remote Device bond ok!");
+                                } else {
+                                    Log("Remote Device bond failed!");
+                                }
+                                Thread.sleep(1000);
+                                int bondState = RemoteDevice.getBondState();
+                                if ( bondState == BluetoothDevice.BOND_BONDED ) {
+                                    connected(RemoteDevice);
+                                } else {
+                                    Log("Remote Device has no bond!");
+                                    int mConnetFail=0;
+                                    while ( bondState != BluetoothDevice.BOND_BONDED ) {
+                                        createBond( RemoteDevice.getClass(), RemoteDevice );
+                                        Thread.sleep(1000);
+                                        bondState = RemoteDevice.getBondState();
+                                        Log.d(TAG,"Renjun.xu add waitting BT bond...");
+                                        mConnetFail++;
+                                        if ( mConnetFail > 5 ) {
+                                            Log.d(TAG,"waitting BT bond fail ...");
+                                            break;
+                                        }
+                                    }
+                                    connected(RemoteDevice);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
+                    Log("Exit BluetoothAutoPairService!");
                 }
-            }
-            Log("Exit BluetoothAutoPairService!");
-        }
+          }
+        });
+
     }
     private boolean getSpecialDeviceInfo() {
         mBtMacPrefix = SystemProperties.get("ro.autoconnectbt.macprefix");
@@ -152,37 +162,43 @@ public class BluetoothAutoPairService extends IntentService {
         }
         return  (bd.getName().startsWith(mBtNamePrefix) || bd.getAddress().startsWith(mBtMacPrefix));
     }
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-    new BluetoothAdapter.LeScanCallback(){
+
+    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
-        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord){
-                Log("BluetoothDevice = " + device.getName() +
-                " Address=" + device.getAddress() +
-                " class=" + device.getBluetoothClass().toString() +" rssi:"+(short)rssi );
-                BluetoothDevice btDevice=device;
-                if ( (btDevice != null) && isSpecialDevice(btDevice) ) {
-                    if (getAverageRssi(rssi) < mRssiLimit) {
-                        Log("Scan result isSpecialDevice and in limit rssi value");
-                        if (btDevice.getBondState() == BluetoothDevice.BOND_NONE) {
-                            Log("Device no bond!");
-                            Log("Find remoteDevice and parm: name= " + btDevice.getName() +
-                            " Address=" + btDevice.getAddress() +
-                            " class=" + btDevice.getBluetoothClass().toString()+"rssi:"+(short)rssi);
-                            RemoteDevice = mBluetoothAdapter.getRemoteDevice(btDevice.getAddress());
-                            Intent intent = new Intent();
-                            intent.setAction(BluetoothDevice.ACTION_FOUND);
-                            intent.putExtra(BluetoothDevice.EXTRA_DEVICE, RemoteDevice);
-                            intent.putExtra(BluetoothDevice.EXTRA_RSSI, (short)rssi);
-                            intent.putExtra(BluetoothDevice.EXTRA_NAME, btDevice.getName());
-                            intent.putExtra(BluetoothDevice.EXTRA_CLASS, btDevice.getBluetoothClass());
-                            sendBroadcast(intent);
-                            timer.cancel();
-                            mScanFlag=false;
-                        } else {
-                            Log("Device has bond");
-                        }
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            Log("BluetoothDevice = " + device.getName() +
+            " Address=" + device.getAddress() +
+            " class=" + device.getBluetoothClass().toString() +" rssi:"+(short)rssi );
+            // BluetoothDevice btDevice=device;
+            final int frssi = rssi;
+            mAutoHandler.post( new Runnable() {
+                public void run() {
+                    if ( (device != null) && isSpecialDevice(device) ) {
+                          if (getAverageRssi(rssi) < mRssiLimit) {
+                              Log("Scan result isSpecialDevice and in limit rssi value");
+                              if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                                  Log("Device no bond!");
+                                  Log("Find remoteDevice and parm: name= " + device.getName() +
+                                  " Address=" + device.getAddress() +
+                                  " class=" + device.getBluetoothClass().toString()+"rssi:"+(short)frssi);
+                                  RemoteDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
+                                  Intent intent = new Intent();
+                                  intent.setAction(BluetoothDevice.ACTION_FOUND);
+                                  intent.putExtra(BluetoothDevice.EXTRA_DEVICE, RemoteDevice);
+                                  intent.putExtra(BluetoothDevice.EXTRA_RSSI, (short)frssi);
+                                  intent.putExtra(BluetoothDevice.EXTRA_NAME, device.getName());
+                                  intent.putExtra(BluetoothDevice.EXTRA_CLASS, device.getBluetoothClass());
+                                  sendBroadcast(intent);
+                                  timer.cancel();
+                                  mScanFlag=false;
+                              } else {
+                                  Log("Device has bond");
+                              }
+                          }
                     }
-                }
+                }//end run
+            }//end post
+            );
        }
     };
     private void connected(BluetoothDevice device) throws Exception {

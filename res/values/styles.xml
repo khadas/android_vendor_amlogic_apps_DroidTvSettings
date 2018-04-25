@@ -70,8 +70,8 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@style/SettingsWindowAnimationStyle</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.8</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowShowWallpaper">false</item>
     </style>
     <style name="Theme.Settings.Crypto">
         <item name="android:windowIsTranslucent">true</item>
@@ -97,9 +97,6 @@
 
     <style name="Theme.Settings.BluetoothPairing" parent="@style/SettingsStyle.TextAppearanceMedium">
         <item name="android:textSize">@dimen/text_size_description</item>
-    </style>
-    <style name="CryptKeeperBlankTheme" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="android:background">#ff000000</item>
     </style>
     <style name="HintText">
         <item name="android:fontFamily">sans-serif-thin</item>

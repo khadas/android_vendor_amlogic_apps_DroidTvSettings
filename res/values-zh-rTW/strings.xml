@@ -110,7 +110,6 @@
     <string name="cryptkeeper_return_to_call">"返回通話"</string>
     <string name="cryptkeeper_emergency_call">"緊急電話"</string>
     <string name="crypt_keeper_dialog_need_password_title">"沒有鎖定螢幕的 PIN 或密碼"</string>
-    <string name="crypt_keeper_settings_title">"加密"</string>
     <string name="crypt_keeper_button_text">"加密電視"</string>
     <string name="crypt_keeper_low_charge_text">"請將電池充電，然後再試一次。"</string>
     <string name="crypt_keeper_unplugged_text">"請插上充電器，然後再試一次。"</string>
@@ -150,7 +149,6 @@
     <string name="crypt_keeper_data_corrupt_summary">"您輸入的密碼正確，不過您的數據已損毀。\n\n如要繼續使用，您必須將設備恢復原廠設定。經過重設後，您可以在設定設備時將早前備份到個人 Google 帳戶的數據全部還原。"
     </string>
     <!-- Image button description to switch input method -->
-    <string name="crypt_keeper_switch_input_method">"切換輸入法"</string>
     <string name="master_clear_button_text">"重設電視設備"</string>
     <string name="checking_decryption">"正在檢查…"</string>
     <string name="cryptkeeper_wrong_pin">"PIN錯誤"</string>

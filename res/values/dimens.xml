@@ -195,4 +195,11 @@
     <dimen name="crypt_keeper_pattern_separator">100dip</dimen>
     <dimen name="settings_side_margin">0dip</dimen>
     <dimen name="confirm_credentials_top_padding">0dp</dimen>
+
+    <dimen name="pq_seekbar_title">16sp</dimen>
+    <dimen name="pq_seekbar_item">14sp</dimen>
+    <dimen name="pq_seekbar_title_marginTop">29dp</dimen>
+    <dimen name="pq_seekbar_item_marginBottom">12dp</dimen>
+    <dimen name="pq_seekbar_item_marginTop">12dp</dimen>
+    <dimen name="pq_seekbar_item_marginLeft">12dp</dimen>
 </resources>

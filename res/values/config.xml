@@ -27,4 +27,26 @@
     <bool name="display_need_hdmicec_function">true</bool>
     <bool name="display_need_playback_set_function">true</bool>
     <bool name="display_need_bluetooth_remote_function">true</bool>
+
+    <!--tv-->
+    <bool name="tv_pq_need_pictrue_mode">true</bool>
+    <bool name="tv_pq_need_brightness">true</bool>
+    <bool name="tv_pq_need_contrast">true</bool>
+    <bool name="tv_pq_need_color">true</bool>
+    <bool name="tv_pq_need_sharpness">true</bool>
+    <bool name="tv_pq_need_tone">true</bool>
+    <bool name="tv_pq_need_aspect_ratio">true</bool>
+    <bool name="tv_pq_need_color_temprature">true</bool>
+    <bool name="tv_pq_need_dnr">true</bool>
+
+    <!--box-->
+    <bool name="box_pq_need_pictrue_mode">true</bool>
+    <bool name="box_pq_need_brightness">true</bool>
+    <bool name="box_pq_need_contrast">true</bool>
+    <bool name="box_pq_need_color">true</bool>
+    <bool name="box_pq_need_sharpness">false</bool>
+    <bool name="box_pq_need_tone">true</bool>
+    <bool name="box_pq_need_aspect_ratio">false</bool>
+    <bool name="box_pq_need_color_temprature">false</bool>
+    <bool name="box_pq_need_dnr">true</bool>
 </resources>
