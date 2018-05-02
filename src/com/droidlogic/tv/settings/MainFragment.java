@@ -233,6 +233,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
         getActivity().getApplicationContext().registerReceiver(esnReceiver, esnIntentFilter,
                 "com.netflix.ninja.permission.ESN", null);
         Intent esnQueryIntent = new Intent("com.netflix.ninja.intent.action.ESN");
+        esnQueryIntent.setPackage("com.netflix.ninja");
         esnQueryIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         getActivity().getApplicationContext().sendBroadcast(esnQueryIntent);
     }
