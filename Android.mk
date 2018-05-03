@@ -53,10 +53,11 @@ include frameworks/opt/setupwizard/library/common-gingerbread.mk
 include frameworks/base/packages/SettingsLib/common.mk
 
 LOCAL_PRIVATE_PLATFORM_APIS := true
-FILE := device/amlogic/$(TARGET_PRODUCT)/files/DroidTvSettings/AndroidManifest-common.xml
+FILE := device/*/$(TARGET_PRODUCT)/files/DroidTvSettings/AndroidManifest-common.xml
+FILES := $(foreach v,$(wildcard $(FILE)),$(v))
 
-ifeq ($(FILE), $(wildcard $(FILE)))
-LOCAL_FULL_LIBS_MANIFEST_FILES := $(FILE)
+ifeq ($(FILES), $(wildcard $(FILE)))
+LOCAL_FULL_LIBS_MANIFEST_FILES := $(FILES)
 LOCAL_JACK_COVERAGE_INCLUDE_FILTER := com.droidlogic.tv.settings*
 endif
 
