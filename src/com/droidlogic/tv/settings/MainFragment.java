@@ -182,6 +182,8 @@ public class MainFragment extends LeanbackPreferenceFragment {
                 channelPref.setVisible(true);
             }
         } else {
+            picturePref.setVisible(!SettingsConstant.needDroidlogicTvFeature(getContext()));
+            mTvOption.setVisible(tvFlag);
             mSoundsPref.setVisible(false);
             channelPref.setVisible(false);
             settingsPref.setVisible(false);
