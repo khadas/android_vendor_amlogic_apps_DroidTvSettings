@@ -17,7 +17,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_PROGUARD_ENABLED := disabled
 LOCAL_PACKAGE_NAME := DroidTvSettings
-LOCAL_CERTIFICATE := platform
+
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
 LOCAL_USE_AAPT2 := true
