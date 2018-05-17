@@ -309,26 +309,30 @@ public class PQSettingsManager {
     }
 
     public boolean isNtscSignalOrNot() {
-        TvInSignalInfo info;
-        String videoStd = getVideoStd();
-        if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_TV
-            && videoStd != null && videoStd.equals(mResources.getString(R.string.ntsc))) {
-            info = mTvControlManager.GetCurrentSignalInfo();
-            if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
-                if (CanDebug()) Log.d(TAG, "ATV NTSC mode signal is stable, show Tint");
-                return true;
-            }
-        } else if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_AV) {
-            info = mTvControlManager.GetCurrentSignalInfo();
-            if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
-                String[] strings = info.sigFmt.toString().split("_");
-                if (strings[4].contains("NTSC")) {
-                    if (CanDebug()) Log.d(TAG, "AV NTSC mode signal is stable, show Tint");
+        if (SettingsConstant.needDroidlogicTvFeature(mContext)) {//TV
+            TvInSignalInfo info;
+            String videoStd = getVideoStd();
+            if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_TV
+                && videoStd != null && videoStd.equals(mResources.getString(R.string.ntsc))) {
+                info = mTvControlManager.GetCurrentSignalInfo();
+                if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
+                    if (CanDebug()) Log.d(TAG, "ATV NTSC mode signal is stable, show Tint");
                     return true;
                 }
+            } else if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_AV) {
+                info = mTvControlManager.GetCurrentSignalInfo();
+                if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
+                    String[] strings = info.sigFmt.toString().split("_");
+                    if (strings[4].contains("NTSC")) {
+                        if (CanDebug()) Log.d(TAG, "AV NTSC mode signal is stable, show Tint");
+                        return true;
+                    }
+                }
             }
+            return false;
+        }else {//MBOX
+            return false;
         }
-        return false;
     }
 
     public boolean isNtscSignal() {
@@ -407,6 +411,19 @@ public class PQSettingsManager {
         else
             ret = tint;
         return ret;
+    }
+
+    public void setBacklightValue (int value) {
+        if (CanDebug()) Log.d(TAG, "setBacklightValue : "+ value);
+        int source = mSystemControlManager.GetCurrentSourceInfo()[0];
+        mSystemControlManager.SetBacklight(source, getBacklightStatus() + value, 1);
+    }
+
+    public int getBacklightStatus () {
+        int source = mSystemControlManager.GetCurrentSourceInfo()[0];
+        int value = mSystemControlManager.GetBacklight(source);
+        if (CanDebug()) Log.d(TAG, "getBacklightStatus : " + value);
+        return value;
     }
 }
 
