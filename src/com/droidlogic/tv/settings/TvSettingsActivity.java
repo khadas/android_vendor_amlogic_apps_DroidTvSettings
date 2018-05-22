@@ -59,9 +59,9 @@ public abstract class TvSettingsActivity extends Activity {
                             });
 
                             final Slide slide = new Slide(Gravity.END);
-                            slide.setSlideFraction(
+                            /*slide.setSlideFraction(
                                     getResources().getDimension(R.dimen.lb_settings_pane_width)
-                                            / root.getWidth());
+                                            / root.getWidth());*/
                             TransitionManager.go(scene, slide);
 
                             // Skip the current draw, there's nothing in it
