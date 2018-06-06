@@ -600,7 +600,7 @@ public class TvOptionSettingManager {
     public void setSleepTimer (int mode) {
         AlarmManager alarm = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0,
-                new Intent("android.intent.action.TIMER_SUSPEND"), 0);
+                new Intent("droidlogic.intent.action.TIMER_SUSPEND"), 0);
         alarm.cancel(pendingIntent);
 
         mSystemControlManager.setProperty("tv.sleep_timer", mode+"");
