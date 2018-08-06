@@ -483,7 +483,7 @@ public class TvOptionSettingManager {
     }
 
     public int getSwitchChannelStatus () {
-        if (mTvControlManager.SSMReadBlackoutEnalbe() == 0)
+        if (mTvControlManager.getBlackoutEnalbe() == 0)
             return 0;
         else
             return 1;

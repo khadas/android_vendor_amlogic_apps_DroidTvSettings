@@ -416,12 +416,12 @@ public class PQSettingsManager {
     public void setBacklightValue (int value) {
         if (CanDebug()) Log.d(TAG, "setBacklightValue : "+ value);
         int source = mSystemControlManager.GetCurrentSourceInfo()[0];
-        mSystemControlManager.SetBacklight(source, getBacklightStatus() + value, 1);
+        mSystemControlManager.SetBacklight(getBacklightStatus() + value, 1);
     }
 
     public int getBacklightStatus () {
         int source = mSystemControlManager.GetCurrentSourceInfo()[0];
-        int value = mSystemControlManager.GetBacklight(source);
+        int value = mSystemControlManager.GetBacklight();
         if (CanDebug()) Log.d(TAG, "getBacklightStatus : " + value);
         return value;
     }
