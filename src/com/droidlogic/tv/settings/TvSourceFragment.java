@@ -152,7 +152,7 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
             Preference sourcePreference = new Preference(themedContext);
             sourcePreference.setKey(input.getId());
             sourcePreference.setPersistent(false);
-            sourcePreference.setIcon(getIcon(input));
+            sourcePreference.setIcon(getIcon(input, isInputEnabled(input)));
             if (input.isPassthroughInput()) {
                 if (input.isHidden(themedContext) || input.getParentId() != null) {
                     continue;
@@ -170,18 +170,13 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
                 needDTV = true;
             }
 
-            if (DEBUG) Log.d(TAG, "updatePreferenceFragment input="+input+ " enable=" + isInputEnabled(input) );
-            if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
-                sourcePreference.setEnabled(isInputEnabled(input));
-            }
-
             screen.addPreference(sourcePreference);
 
             if (DroidLogicTvUtils.isChina(themedContext) && needDTV) {
                 Preference sourcePreferenceDtv = new Preference(themedContext);
                 sourcePreferenceDtv.setKey(input.getId());
                 sourcePreferenceDtv.setPersistent(false);
-                sourcePreferenceDtv.setIcon(R.drawable.ic_dtv);
+                sourcePreferenceDtv.setIcon(R.drawable.ic_dtv_connected);
                 sourcePreferenceDtv.setTitle(R.string.input_dtv);
                 if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
                     sourcePreferenceDtv.setEnabled(isInputEnabled(input));
@@ -274,16 +269,32 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
         }
     }
 
-    private int getIcon(TvInputInfo info) {
+    private int getIcon(TvInputInfo info, boolean isConnected) {
         switch (info.getType()) {
             case TvInputInfo.TYPE_TUNER:
-                return DroidLogicTvUtils.isChina(mContext) ? R.drawable.ic_atv : R.drawable.ic_atsc;
+                if (isConnected) {
+                    return DroidLogicTvUtils.isChina(mContext) ? R.drawable.ic_atv_connected : R.drawable.ic_atsc_connected;
+                } else {
+                    return DroidLogicTvUtils.isChina(mContext) ? R.drawable.ic_atv_disconnected : R.drawable.ic_atsc_disconnected;
+                }
             case TvInputInfo.TYPE_HDMI:
-                return R.drawable.ic_hdmi;
+                if (isConnected) {
+                    return R.drawable.ic_hdmi_connected;
+                } else {
+                    return R.drawable.ic_hdmi_disconnected;
+                }
             case TvInputInfo.TYPE_COMPOSITE:
-                return R.drawable.ic_av;
+                if (isConnected) {
+                    return R.drawable.ic_av_connected;
+                } else {
+                    return R.drawable.ic_av_disconnected;
+                }
             default:
-                return R.drawable.ic_spdif;
+                 if (isConnected) {
+                    return R.drawable.ic_spdif_connected;
+                } else {
+                    return R.drawable.ic_spdif_disconnected;
+                }
          }
      }
 }
