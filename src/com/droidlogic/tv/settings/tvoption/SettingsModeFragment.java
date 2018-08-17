@@ -70,7 +70,7 @@ public class SettingsModeFragment extends LeanbackPreferenceFragment implements 
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_settings_mode, null);
         if (mTvOptionSettingManager == null) {
-            mTvOptionSettingManager = new TvOptionSettingManager(getActivity());
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
         }
         final ListPreference startupseting = (ListPreference) findPreference(SRATUP_SETTING);
         startupseting.setValueIndex(mTvOptionSettingManager.getStartupSettingStatus());

@@ -185,4 +185,10 @@
     <string name="lock_profile_wipe_warning_content_password">"如果您這次輸入錯誤的工作密碼，工作設定檔和相關資料將從這部裝置中移除。"</string>
     <string name="lock_profile_wipe_warning_content_pin">"如果您這次輸入錯誤的工作密碼，工作設定檔和相關資料將從這部裝置中移除。"</string>
 
+    <string name="tv_factory_menu">工廠菜單</string>
+    <string name="tv_sound_agc">"自動增益控制"</string>
+    <string name="tv_sound_agc_enable">"自動增益控制"</string>
+    <string name="tv_sound_agc_max_level">"最大電平"</string>
+    <string name="tv_sound_agc_attrack_time">"攻擊時間"</string>
+    <string name="tv_sound_agc_release_time">"釋放時間"</string>
 </resources>

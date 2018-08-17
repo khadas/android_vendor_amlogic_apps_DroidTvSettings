@@ -59,6 +59,7 @@ public class PQSettingsManager {
     public static final String STATUS_STANDARD                      = "standard";
     public static final String STATUS_VIVID                         = "vivid";
     public static final String STATUS_SOFT                          = "soft";
+    public static final String STATUS_SPORT                         = "sport";
     public static final String STATUS_MONITOR                    = "monitor";
     public static final String STATUS_USER                          = "user";
     public static final String STATUS_WARM                          = "warm";
@@ -110,10 +111,11 @@ public class PQSettingsManager {
         mChannelId = mTvSettingsActivity.getIntent().getLongExtra(CURRENT_CHANNEL_ID, -1);
         mResources = mContext.getResources();
         mSystemControlManager = new SystemControlManager(context);
-        if (SettingsConstant.needDroidlogicTvFeature(context)) {
+        if (SettingsConstant.needDroidlogicTvFeature(mContext)) {
             ChannelInfo currentChannel;
-
-            mTvControlManager = TvControlManager.getInstance();
+            if (mTvControlManager == null) {
+                mTvControlManager = TvControlManager.getInstance();
+            }
             mTvDataBaseManager = new TvDataBaseManager(context);
             mTvSource = DroidLogicTvUtils.parseTvSourceTypeFromDeviceId(mDeviceId);
             mTvSourceInput = DroidLogicTvUtils.parseTvSourceInputFromDeviceId(mDeviceId);
@@ -149,7 +151,9 @@ public class PQSettingsManager {
     public static final int PIC_VIVID = 1;
     public static final int PIC_SOFT = 2;
     public static final int PIC_USER = 3;
+    public static final int PIC_MOVIE = 4;
     public static final int PIC_MONITOR = 6;
+    public static final int PIC_SPORT = 8;
 
     public String getPictureModeStatus () {
         int pictureModeIndex = mSystemControlManager.GetPQMode();
@@ -165,6 +169,10 @@ public class PQSettingsManager {
                 return STATUS_USER;
             case PIC_MONITOR:
                 return STATUS_MONITOR;
+            case PIC_SPORT:
+                return STATUS_SPORT;
+            case PIC_MOVIE:
+                return STATUS_MOVIE;
             default:
                 return STATUS_STANDARD;
         }
@@ -237,6 +245,10 @@ public class PQSettingsManager {
             mSystemControlManager.SetPQMode(PIC_USER, 1, 0);
         } else if (mode.equals(STATUS_MONITOR)) {
             mSystemControlManager.SetPQMode(PIC_MONITOR, 1, 0);
+        } else if (mode.equals(STATUS_SPORT)) {
+            mSystemControlManager.SetPQMode(PIC_SPORT, 1, 0);
+        } else if (mode.equals(STATUS_MOVIE)) {
+            mSystemControlManager.SetPQMode(PIC_MOVIE, 1, 0);
         }
     }
 
@@ -309,30 +321,35 @@ public class PQSettingsManager {
     }
 
     public boolean isNtscSignalOrNot() {
-        if (SettingsConstant.needDroidlogicTvFeature(mContext)) {//TV
-            TvInSignalInfo info;
-            String videoStd = getVideoStd();
-            if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_TV
-                && videoStd != null && videoStd.equals(mResources.getString(R.string.ntsc))) {
-                info = mTvControlManager.GetCurrentSignalInfo();
-                if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
-                    if (CanDebug()) Log.d(TAG, "ATV NTSC mode signal is stable, show Tint");
-                    return true;
-                }
-            } else if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_AV) {
-                info = mTvControlManager.GetCurrentSignalInfo();
-                if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
-                    String[] strings = info.sigFmt.toString().split("_");
-                    if (strings[4].contains("NTSC")) {
-                        if (CanDebug()) Log.d(TAG, "AV NTSC mode signal is stable, show Tint");
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }else {//MBOX
+        if (!SettingsConstant.needDroidlogicTvFeature(mContext)) {
             return false;
         }
+        TvInSignalInfo info;
+        String videoStd = getVideoStd();
+        if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_TV
+            && videoStd != null && videoStd.equals(mResources.getString(R.string.ntsc))) {
+            if (mTvControlManager == null) {
+                mTvControlManager = TvControlManager.getInstance();
+            }
+            info = mTvControlManager.GetCurrentSignalInfo();
+            if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
+                if (CanDebug()) Log.d(TAG, "ATV NTSC mode signal is stable, show Tint");
+                return true;
+            }
+        } else if (mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_AV) {
+            if (mTvControlManager == null) {
+                mTvControlManager = TvControlManager.getInstance();
+            }
+            info = mTvControlManager.GetCurrentSignalInfo();
+            if (info.sigStatus == TvInSignalInfo.SignalStatus.TVIN_SIG_STATUS_STABLE) {
+                String[] strings = info.sigFmt.toString().split("_");
+                if (strings[4].contains("NTSC")) {
+                    if (CanDebug()) Log.d(TAG, "AV NTSC mode signal is stable, show Tint");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isNtscSignal() {
@@ -381,6 +398,8 @@ public class PQSettingsManager {
             case PIC_VIVID:
             case PIC_SOFT:
             case PIC_MONITOR:
+            case PIC_SPORT:
+            case PIC_MOVIE:
                 setPictureMode(STATUS_USER);
                 break;
         }
@@ -415,15 +434,60 @@ public class PQSettingsManager {
 
     public void setBacklightValue (int value) {
         if (CanDebug()) Log.d(TAG, "setBacklightValue : "+ value);
-        int source = mSystemControlManager.GetCurrentSourceInfo()[0];
         mSystemControlManager.SetBacklight(getBacklightStatus() + value, 1);
     }
 
     public int getBacklightStatus () {
-        int source = mSystemControlManager.GetCurrentSourceInfo()[0];
         int value = mSystemControlManager.GetBacklight();
         if (CanDebug()) Log.d(TAG, "getBacklightStatus : " + value);
         return value;
     }
-}
 
+    private static final int AUTO_RANGE = 0;
+    private static final int FULL_RANGE = 1;
+    private static final int LIMIT_RANGE = 2;
+
+    public void setHdmiColorRangeValue (int value) {
+        if (CanDebug()) Log.d(TAG, "setHdmiColorRangeValue : "+ value);
+        TvControlManager.HdmiColorRangeMode hdmicolor = TvControlManager.HdmiColorRangeMode.AUTO_RANGE;
+        switch (value) {
+            case AUTO_RANGE :
+                hdmicolor = TvControlManager.HdmiColorRangeMode.AUTO_RANGE;
+                break;
+            case FULL_RANGE :
+                hdmicolor = TvControlManager.HdmiColorRangeMode.FULL_RANGE;
+                break;
+            case LIMIT_RANGE :
+                hdmicolor = TvControlManager.HdmiColorRangeMode.LIMIT_RANGE;
+                break;
+            default:
+                hdmicolor = TvControlManager.HdmiColorRangeMode.AUTO_RANGE;
+                break;
+        }
+        if (mTvControlManager == null) {
+            mTvControlManager = TvControlManager.getInstance();
+        }
+        if (mTvControlManager != null) {
+            mTvControlManager.SetHdmiColorRangeMode(hdmicolor);
+        }
+    }
+
+    public int getHdmiColorRangeStatus () {
+        int value = 0;
+        if (mTvControlManager == null) {
+            mTvControlManager = TvControlManager.getInstance();
+        }
+        if (mTvControlManager != null) {
+            value = mTvControlManager.GetHdmiColorRangeMode();
+        }
+        if (CanDebug()) Log.d(TAG, "getHdmiColorRangeStatus : " + value);
+        return value;
+    }
+
+    public boolean isHdmiSource() {
+        if (mTvSourceInput != null) {
+            return mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_HDMI;
+        }
+        return false;
+    }
+}

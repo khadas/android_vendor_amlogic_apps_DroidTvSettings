@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.droidlogic.tv.settings.tvoption;
+package com.droidlogic.tv.settings.pqsettings;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,25 +30,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import android.provider.Settings;
 
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
 import com.droidlogic.tv.settings.R;
 
-import com.droidlogic.app.tv.TvControlManager;
+public class AdjustBaclLightFragment extends LeanbackPreferenceFragment implements SeekBar.OnSeekBarChangeListener {
 
-public class TvOptionSettingSeekBarFragment extends LeanbackPreferenceFragment implements SeekBar.OnSeekBarChangeListener {
+    private static final String TAG = "AdjustBaclLightFragment";
 
-    private static final String TAG = "TvOptionSettingSeekBarFragment";
+    private SeekBar seekbar_blacklight;
+    private TextView text_blacklight;
+    private PQSettingsManager mPQSettingsManager;
+    private boolean isSeekBarInited = false;
 
-    private SeekBar seekbar_audio_ad_mix_level;
-    private TextView text_audio_ad_mix_level;
-
-    private TvOptionSettingManager mTvOptionSettingManager;
-
-    public static TvOptionSettingSeekBarFragment newInstance() {
-        return new TvOptionSettingSeekBarFragment();
+    public static AdjustBaclLightFragment newInstance() {
+        return new AdjustBaclLightFragment();
     }
 
     @Override
@@ -58,15 +56,12 @@ public class TvOptionSettingSeekBarFragment extends LeanbackPreferenceFragment i
 
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.xml.tv_settings_seekbar, container, false);
+        View view = inflater.inflate(R.xml.backlight_seekbar, container, false);
         return view;
     }
 
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
-        if (mTvOptionSettingManager == null) {
-            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
-        }
         initSeekBar(view);
     }
 
@@ -76,29 +71,39 @@ public class TvOptionSettingSeekBarFragment extends LeanbackPreferenceFragment i
     }
 
     private void initSeekBar(View view) {
+        if (mPQSettingsManager == null) {
+            mPQSettingsManager = new PQSettingsManager(getActivity());
+        }
         int status = -1;
         boolean hasfocused = false;
-        seekbar_audio_ad_mix_level = (SeekBar) view.findViewById(R.id.seekbar_tv_audio_ad_mix_level);
-        text_audio_ad_mix_level = (TextView) view.findViewById(R.id.text_tv_audio_ad_mix_level);
-        if (true) {
-            status = mTvOptionSettingManager.getADMixStatus();
-            seekbar_audio_ad_mix_level.setOnSeekBarChangeListener(this);
-            seekbar_audio_ad_mix_level.setProgress(status);
-            setShow(R.id.seekbar_tv_audio_ad_mix_level, status);
-            seekbar_audio_ad_mix_level.requestFocus();
+        boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
+        seekbar_blacklight = (SeekBar) view.findViewById(R.id.seekbar_backlight);
+        text_blacklight = (TextView) view.findViewById(R.id.text_backlight);
+        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_backlight)) ||
+                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_backlight))) {
+            status = mPQSettingsManager.getBacklightStatus();
+            seekbar_blacklight.setOnSeekBarChangeListener(this);
+            seekbar_blacklight.setProgress(status);
+            setShow(R.id.seekbar_backlight, status);
+            seekbar_blacklight.requestFocus();
             hasfocused = true;
         } else {
-            seekbar_audio_ad_mix_level.setVisibility(View.GONE);
-            text_audio_ad_mix_level.setVisibility(View.GONE);
+            seekbar_blacklight.setVisibility(View.GONE);
+            text_blacklight.setVisibility(View.GONE);
         }
+
+        isSeekBarInited = true;
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (!isSeekBarInited) {
+            return;
+        }
         switch (seekBar.getId()) {
-            case R.id.seekbar_tv_audio_ad_mix_level:{
-                setShow(R.id.seekbar_tv_audio_ad_mix_level, progress);
-                mTvOptionSettingManager.setADMix(progress - mTvOptionSettingManager.getADMixStatus());
+            case R.id.seekbar_backlight:{
+                setShow(R.id.seekbar_backlight, progress);
+                mPQSettingsManager.setBacklightValue(progress - mPQSettingsManager.getBacklightStatus());
                 break;
             }
             default:
@@ -118,8 +123,8 @@ public class TvOptionSettingSeekBarFragment extends LeanbackPreferenceFragment i
 
     private void setShow(int id, int value) {
         switch (id) {
-            case R.id.seekbar_tv_audio_ad_mix_level:{
-                text_audio_ad_mix_level.setText(getShowString(R.string.tv_audio_ad_mix_level, value));
+            case R.id.seekbar_backlight:{
+                text_blacklight.setText(getShowString(R.string.pq_backlight, value));
                 break;
             }
             default:

@@ -34,6 +34,7 @@ import android.util.Log;
 import com.droidlogic.app.OutputModeManager;
 import com.droidlogic.tv.settings.SettingsConstant;
 import com.droidlogic.tv.settings.R;
+import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 
 public class SoundFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener {
     public static final String TAG = "SoundFragment";
@@ -42,46 +43,58 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
     private static final String KEY_DTSDRCMODE_PASSTHROUGH = "dtsdrc_mode";
     private static final String KEY_DTSDRCCUSTOMMODE_PASSTHROUGH = "dtsdrc_custom_mode";
 
-    public static final String DRC_OFF = "off";
-    public static final String DRC_LINE = "line";
-    public static final String DRC_RF = "rf";
-    public static final String PCM = "pcm";
-    public static final String HDMI = "hdmi";
-    public static final String SPDIF = "spdif";
+    //audio out switch
+    private static final String KEY_BOX_LINEOUT = "box_lineout";
+    private static final String KEY_BOX_HDMI = "box_hdmi";
+    private static final String KEY_TV_SPEAKER = "tv_speaker";
+    private static final String KEY_TV_ARC = "tv_arc";
 
     private OutputModeManager mOutputModeManager;
+    private SoundParameterSettingManager mSoundParameterSettingManager;
 
     public static SoundFragment newInstance() {
         return new SoundFragment();
+    }
+
+    private boolean CanDebug() {
+        return SystemProperties.getBoolean("sys.sound.debug", false);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mOutputModeManager = new OutputModeManager(getActivity());
+        if (mSoundParameterSettingManager == null) {
+            mSoundParameterSettingManager = new SoundParameterSettingManager(getActivity());
+        }
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.sound, null);
 
+        if (mSoundParameterSettingManager == null) {
+            mSoundParameterSettingManager = new SoundParameterSettingManager(getActivity());
+        }
+
         final ListPreference drcmodePref = (ListPreference) findPreference(KEY_DRCMODE_PASSTHROUGH);
         final ListPreference digitalsoundPref = (ListPreference) findPreference(KEY_DIGITALSOUND_PASSTHROUGH);
         final ListPreference dtsdrccustommodePref = (ListPreference) findPreference(KEY_DTSDRCCUSTOMMODE_PASSTHROUGH);
         final ListPreference dtsdrcmodePref = (ListPreference) findPreference(KEY_DTSDRCMODE_PASSTHROUGH);
 
-        drcmodePref.setValue(getDrcModePassthroughSetting());
+        //audio out switch
+        final ListPreference boxlineout = (ListPreference) findPreference(KEY_BOX_LINEOUT);
+        final ListPreference boxhdmi= (ListPreference) findPreference(KEY_BOX_HDMI);
+        final ListPreference tvspeaker = (ListPreference) findPreference(KEY_TV_SPEAKER);
+        final ListPreference tvarc = (ListPreference) findPreference(KEY_TV_ARC);
+
+        drcmodePref.setValue(mSoundParameterSettingManager.getDrcModePassthroughSetting());
         drcmodePref.setOnPreferenceChangeListener(this);
-        digitalsoundPref.setValue(getDigitalSoundPassthroughSetting());
+        digitalsoundPref.setValueIndex(mSoundParameterSettingManager.getDigitalAudioFormat());
         digitalsoundPref.setOnPreferenceChangeListener(this);
         dtsdrcmodePref.setValue(SystemProperties.get("persist.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
-        boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
-                && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
-        if (!SettingsConstant.needDroidlogicDigitalSounds(getContext()) || tvFlag) {
-            digitalsoundPref.setVisible(false);
-            Log.d(TAG, "tv don't need digital sound switch!");
-        }
+        boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext());
         if (!SystemProperties.getBoolean("ro.platform.support.dolby", false)) {
             drcmodePref.setVisible(false);
             Log.d(TAG, "platform doesn't support dolby");
@@ -95,6 +108,23 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         } else {
             dtsdrccustommodePref.setVisible(false);
         }
+        if (tvFlag) {
+            boxlineout.setVisible(false);
+            boxhdmi.setVisible(false);
+            tvspeaker.setValueIndex(mSoundParameterSettingManager.getSpeakerAudioStatus());
+            tvspeaker.setOnPreferenceChangeListener(this);
+            tvspeaker.setVisible(false);//tv hide this as setting conflict
+            tvarc.setValueIndex(mSoundParameterSettingManager.getArcAudioStatus());
+            tvarc.setOnPreferenceChangeListener(this);
+            tvarc.setVisible(false);//tv hide this as setting conflict
+        } else {
+            tvspeaker.setVisible(false);
+            tvarc.setVisible(false);
+            boxlineout.setValueIndex(mSoundParameterSettingManager.getLineOutAudioStatus());
+            boxlineout.setOnPreferenceChangeListener(this);
+            boxhdmi.setValueIndex(mSoundParameterSettingManager.getHdmiAudioStatus());
+            boxhdmi.setOnPreferenceChangeListener(this);
+        }
     }
 
     @Override
@@ -107,113 +137,53 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         if (TextUtils.equals(preference.getKey(), KEY_DRCMODE_PASSTHROUGH)) {
             final String selection = (String) newValue;
             switch (selection) {
-            case DRC_OFF:
+            case SoundParameterSettingManager.DRC_OFF:
                 mOutputModeManager.enableDobly_DRC(false);
                 mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
-                setDrcModePassthroughSetting(OutputModeManager.IS_DRC_OFF);
+                mSoundParameterSettingManager.setDrcModePassthroughSetting(OutputModeManager.IS_DRC_OFF);
                 break;
-            case DRC_LINE:
+            case SoundParameterSettingManager.DRC_LINE:
                 mOutputModeManager.enableDobly_DRC(true);
                 mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
-                setDrcModePassthroughSetting(OutputModeManager.IS_DRC_LINE);
+                mSoundParameterSettingManager.setDrcModePassthroughSetting(OutputModeManager.IS_DRC_LINE);
                 break;
-            case DRC_RF:
+            case SoundParameterSettingManager.DRC_RF:
                 mOutputModeManager.enableDobly_DRC(false);
                 mOutputModeManager.setDoblyMode(OutputModeManager.RF_DRCMODE);
-                setDrcModePassthroughSetting(OutputModeManager.IS_DRC_RF);
+                mSoundParameterSettingManager.setDrcModePassthroughSetting(OutputModeManager.IS_DRC_RF);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown drc mode pref value");
             }
             return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DIGITALSOUND_PASSTHROUGH)) {
-            final String selection = (String) newValue;
+            final int selection = Integer.parseInt((String)newValue);
             switch (selection) {
-            case PCM:
-                AudioSystem.setDeviceConnectionState(
-                        AudioSystem.DEVICE_OUT_SPDIF,
-                        AudioSystem.DEVICE_STATE_UNAVAILABLE,
-                        "Amlogic", "Amlogic-S/PDIF");
-                setDigitalSoundMode(OutputModeManager.PCM);
-                setDigitalSoundPassthroughSetting(OutputModeManager.IS_PCM);
-                break;
-            case SPDIF:
-                AudioSystem.setDeviceConnectionState(
-                        AudioSystem.DEVICE_OUT_SPDIF,
-                        AudioSystem.DEVICE_STATE_AVAILABLE,
-                        "Amlogic", "Amlogic-S/PDIF");
-                setDigitalSoundMode(OutputModeManager.SPDIF_RAW);
-                setDigitalSoundPassthroughSetting(OutputModeManager.IS_SPDIF_RAW);
-                break;
-            case HDMI:
-                AudioSystem.setDeviceConnectionState(
-                        AudioSystem.DEVICE_OUT_SPDIF,
-                        AudioSystem.DEVICE_STATE_UNAVAILABLE,
-                        "Amlogic", "Amlogic-S/PDIF");
-                autoSwitchDigitalSound();
-                setDigitalSoundPassthroughSetting(OutputModeManager.IS_HDMI_RAW);
+            case OutputModeManager.DIGITAL_PCM:
+            case OutputModeManager.DIGITAL_AUTO:
+                mSoundParameterSettingManager.setDigitalAudioFormat(selection);
                 break;
             default:
-                throw new IllegalArgumentException("Unknown digital sound pref value");
+                throw new IllegalArgumentException("Unknown digital audio format value");
             }
             return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DTSDRCMODE_PASSTHROUGH)) {
             final String selection = (String) newValue;
             mOutputModeManager.setDtsDrcScale(selection);
             return true;
+        } else if (TextUtils.equals(preference.getKey(), KEY_BOX_LINEOUT)) {
+            final int selection = Integer.parseInt((String)newValue);
+            mSoundParameterSettingManager.enableLineOutAudio(selection == OutputModeManager.BOX_LINE_OUT_ON);
+        } else if (TextUtils.equals(preference.getKey(), KEY_BOX_HDMI)) {
+            final int selection = Integer.parseInt((String)newValue);
+            mSoundParameterSettingManager.enableHdmiAudio(selection == OutputModeManager.BOX_HDMI_ON);
+        } else if (TextUtils.equals(preference.getKey(), KEY_TV_SPEAKER)) {
+            final int selection = Integer.parseInt((String)newValue);
+            mSoundParameterSettingManager.enableSpeakerAudio(selection == OutputModeManager.TV_SPEAKER_ON);
+        } else if (TextUtils.equals(preference.getKey(), KEY_TV_ARC)) {
+            final int selection = Integer.parseInt((String)newValue);
+            mSoundParameterSettingManager.enableArcAudio(selection == OutputModeManager.TV_ARC_ON);
         }
         return true;
-    }
-
-    private int autoSwitchDigitalSound() {
-        return mOutputModeManager.autoSwitchHdmiPassthough();
-    }
-
-    private void setDigitalSoundMode(String mode) {
-        mOutputModeManager.setDigitalMode(mode);
-    }
-
-    private void setDrcModePassthroughSetting(int newVal) {
-        Settings.Global.putInt(getContext().getContentResolver(),
-                OutputModeManager.DRC_MODE, newVal);
-    }
-
-    private void setDigitalSoundPassthroughSetting(int newVal) {
-        Settings.Global.putInt(getContext().getContentResolver(),
-                OutputModeManager.DIGITAL_SOUND, newVal);
-    }
-
-    public static boolean getSoundEffectsEnabled(ContentResolver contentResolver) {
-        return Settings.System.getInt(contentResolver, Settings.System.SOUND_EFFECTS_ENABLED, 1) != 0;
-    }
-
-    private String getDrcModePassthroughSetting() {
-        final int value = Settings.Global.getInt(getContext().getContentResolver(),
-                OutputModeManager.DRC_MODE, OutputModeManager.IS_DRC_LINE);
-
-        switch (value) {
-        case OutputModeManager.IS_DRC_OFF:
-            return DRC_OFF;
-        case OutputModeManager.IS_DRC_LINE:
-        default:
-            return DRC_LINE;
-        case OutputModeManager.IS_DRC_RF:
-            return DRC_RF;
-        }
-    }
-
-    private String getDigitalSoundPassthroughSetting() {
-        final int value = Settings.Global.getInt(getContext().getContentResolver(),
-                OutputModeManager.DIGITAL_SOUND, OutputModeManager.IS_PCM);
-
-        switch (value) {
-        case OutputModeManager.IS_PCM:
-        default:
-            return PCM;
-        case OutputModeManager.IS_SPDIF_RAW:
-            return SPDIF;
-        case OutputModeManager.IS_HDMI_RAW:
-            return HDMI;
-        }
     }
 }

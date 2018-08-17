@@ -61,6 +61,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     private static final String SLEEP_TIMER = "sleep_timer";
     private static final String DAYLIGHT_SAVING_TIME = "tv_daylight_saving_time";
     private static final String AUTOSYNC_TVTIME = "tv_autosync_tvtime";
+    private static final String FACTORY_MENU =  "tv_factory_menu";
 
     private static final String AV_PARENTAL_CONTROLS_ON = "On";
     private static final String AV_PARENTAL_CONTROLS_OFF = "Off";
@@ -91,7 +92,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.droid_settings_mode, null);
         if (mTvOptionSettingManager == null) {
-            mTvOptionSettingManager = new TvOptionSettingManager(getActivity());
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
         }
         if (mTvControlManager == null) {
             mTvControlManager = TvControlManager.getInstance();
@@ -158,6 +159,8 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
             startUiInLiveTv(CLOSED_CAPTIONS);
         } else if (TextUtils.equals(preference.getKey(), PIP)) {
             startUiInLiveTv(PIP);
+        } else if (TextUtils.equals(preference.getKey(), FACTORY_MENU)) {
+            startFactoryMenu();
         }
         return super.onPreferenceTreeClick(preference);
     }
@@ -167,6 +170,12 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         intent.setAction("action.startlivetv.settingui");
         intent.putExtra(value, true);
         getActivity().sendBroadcast(intent);
+        getActivity().finish();
+    }
+
+    private void startFactoryMenu() {
+        Intent factory = new Intent("droidlogic.intent.action.FactoryMainActivity");
+        getActivity().startActivity(factory);
         getActivity().finish();
     }
 

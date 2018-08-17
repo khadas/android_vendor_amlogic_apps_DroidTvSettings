@@ -50,6 +50,7 @@ import android.util.Log;
 
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
+import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
@@ -133,6 +134,9 @@ public class MainFragment extends LeanbackPreferenceFragment {
             } else {
                 netflixesnPref.setVisible(false);
             }
+            if (SystemProperties.get("ro.nrdp.validation", "").equals("")) {
+                netflixesnPref.setVisible(false);
+            }
         }
 
         final Preference moreSettingsPref = findPreference(KEY_MORE_SETTINGS);
@@ -183,7 +187,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
             }
         } else {
             picturePref.setVisible(!SettingsConstant.needDroidlogicTvFeature(getContext()));
-            mTvOption.setVisible(tvFlag);
+            mTvOption.setVisible(SettingsConstant.needDroidlogicTvFeature(getContext()));
             mSoundsPref.setVisible(false);
             channelPref.setVisible(false);
             settingsPref.setVisible(false);
@@ -248,7 +252,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
             return;
         }
 
-        mSoundsPref.setIcon(SoundFragment.getSoundEffectsEnabled(getContext().getContentResolver())
+        mSoundsPref.setIcon(SoundParameterSettingManager.getSoundEffectsEnabled(getContext().getContentResolver())
                 ? R.drawable.ic_volume_up : R.drawable.ic_volume_off);
     }
 

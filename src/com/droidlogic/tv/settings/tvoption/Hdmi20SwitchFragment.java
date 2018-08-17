@@ -84,17 +84,13 @@ public class Hdmi20SwitchFragment extends LeanbackPreferenceFragment implements 
         all.add(hdmi2);
         all.add(hdmi3);
         all.add(hdmi4);
-        int no = mTvOptionSettingManager.getNumOfHdmi();
-        for (int i = no; i < 4; i++) {
-            getPreferenceScreen().removePreference(all.get(i));
-        }
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_hdmi_switch, null);
         if (mTvOptionSettingManager == null) {
-            mTvOptionSettingManager = new TvOptionSettingManager(getActivity());
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
         }
         int[] fourhdmi = mTvOptionSettingManager.getFourHdmi20Status();
         final ListPreference hdmi1 = (ListPreference) findPreference(HDMI1_SWITCH);

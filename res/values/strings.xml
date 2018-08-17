@@ -77,9 +77,9 @@
     <!-- [CHAR LIMIT=20] Title for status off for location services -->
     <string name="off">Off</string>
     <!-- Title for preference screen controlling sound settings [CHAR LIMIT=50] -->
-    <string name="device_sound">Sound</string>
+    <string name="device_sound">Audio Output</string>
     <!-- Title for preference which controls surround sound passthrough function [CHAR LIMIT=50] -->
-    <string name="device_sound_digital">Digital sounds</string>
+    <string name="device_sound_digital">Digital Audio Format</string>
     <string name="device_sound_digital_auto">Auto detection</string>
     <string name="device_sound_digital_auto_off">OFF</string>
     <string name="device_sound_digital_pcm">PCM</string>
@@ -102,6 +102,13 @@
     <string name="device_sound_dolby_drcoff">OFF</string>
     <string name="device_sound_dolby_drcline">LINE</string>
     <string name="device_sound_dolby_drcrf">RF</string>
+
+    <!--audio out switch-->
+    <string name="device_box_audio_lineout">Lineout</string>
+    <string name="device_box_audio_hdmi">Hdmi</string>
+    <string name="device_tv_audio_speaker">Speaker</string>
+    <string name="device_tv_audio_arc">Arc</string>
+    <string name="device_audio_spdif">Spdif</string>
 
     <!-- Image description for the sync failed icon. -->
     <string name="sync_failed">Sync failed</string>
@@ -232,18 +239,23 @@
     <string name="pq_pictrue_mode">Picture Mode</string>
     <string name="pq_brightness">Brightness</string>
     <string name="pq_contrast">Contrast</string>
+    <string name="pq_saturation">Saturation</string>
     <string name="pq_color">color</string>
     <string name="pq_sharpness">Sharpness</string>
     <string name="pq_backlight">Dynamic Backlight</string>
     <string name="pq_tone">Tone</string>
+    <string name="pq_hue">Hue</string>
     <string name="ntsc">NTSC</string>
     <string name="pal">PAL</string>
     <string name="pq_color_temprature">Color Temprature</string>
     <string name="pq_aspect_ratio">Aspect Ratio</string>
     <string name="pq_dnr">DNR</string>
+    <string name="pq_hdmi_color">Hdmi Color Range Mode</string>
     <string name="pq_standard">standard</string>
     <string name="pq_vivid">vivid</string>
     <string name="pq_soft">soft</string>
+    <string name="pq_movie">movie</string>
+    <string name="pq_sport">sport</string>
     <string name="pq_monitor">monitor</string>
     <string name="pq_user">user</string>
     <string name="pq_warm">warm</string>
@@ -265,6 +277,7 @@
     <string name="pq_mode_du">down up mode</string>
     <string name="pq_mode_3d_to_2d">3D to 2D</string>
     <string name="pq_custom">Custom Settings</string>
+    <string name="pq_backlight_settings">Backlight Settings</string>
     <!-- tv setting. -->
     <string name="tv_name">TV</string>
     <string name="tv_channel">Channel</string>
@@ -283,15 +296,31 @@
     <string name="tv_sound">Sound</string>
     <string name="settings_mode">Settings</string>
     <string name="tv_sound_mode">Sound Mode</string>
+    <string name="input_atv">ATV</string>
+    <string name="input_dtv">DTV</string>
+    <string name="tv_audio_effect_band1">Band 1:</string>
+    <string name="tv_audio_effect_band2">Band 2:</string>
+    <string name="tv_audio_effect_band3">Band 3:</string>
+    <string name="tv_audio_effect_band4">Band 4:</string>
+    <string name="tv_audio_effect_band5">Band 5:</string>
+    <string name="tv_audio_five_band">Five Band Settings</string>
     <string name="multi_settings">Multi settings</string>
+    <string name="tv_treble_bass_effect">Treble&#60;bass</string>
     <string name="tv_treble">Treble</string>
     <string name="tv_bass">Bass</string>
-    <string name="tv_balance">Balance</string>
+    <string name="tv_balance_effect">Balance</string>
     <string name="tv_spdif">SPDIF</string>
+    <string name="tv_dts_effect">DTS</string>
     <string name="tv_virtual_surround">Virtual Surround</string>
     <string name="tv_surround">Surround</string>
     <string name="tv_dialog_clarity">Dialog Clarity</string>
     <string name="tv_bass_boost">Bass Boost</string>
+    <string name="tv_sound_output_device">Sound Output Device</string>
+    <string name="tv_sound_agc">AGC</string>
+    <string name="tv_sound_agc_enable">AGC Enable</string>
+    <string name="tv_sound_agc_max_level">Max Level</string>
+    <string name="tv_sound_agc_attrack_time">Attrack Time</string>
+    <string name="tv_sound_agc_release_time">Release Time</string>
     <string name="tv_sound_standard">standard</string>
     <string name="tv_sound_music">music</string>
     <string name="tv_sound_news">news</string>
@@ -325,6 +354,7 @@
     <string name="tv_fbc_upgrade">FBC Upgrade</string>
     <string name="tv_hdmi_switch">HDMI 2.0</string>
     <string name="tv_startup_lancher">luncher</string>
+    <string name="tv_factory_menu">Factory Menu</string>
     <string name="tv_startup_tv">TV</string>
     <string name="tv_settins_on">on</string>
     <string name="tv_settins_off">off</string>

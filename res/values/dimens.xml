@@ -202,4 +202,8 @@
     <dimen name="pq_seekbar_item_marginBottom">12dp</dimen>
     <dimen name="pq_seekbar_item_marginTop">12dp</dimen>
     <dimen name="pq_seekbar_item_marginLeft">12dp</dimen>
+
+    <dimen name="activity_horizontal_margin">32dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="remote_marginStart">100dp</dimen>
 </resources>
