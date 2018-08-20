@@ -229,12 +229,21 @@
             android:name = ".BluetoothAutoPairService" >
         </service>
         <receiver android:name=".display.dolbyvision.DvReceiver">
-            <intent-filter>
+            <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
         <service android:name=".display.dolbyvision.DolbyVisionService" />
+        <provider
+            android:name=".database.TvControlDataProvider"
+            android:authorities="com.droidlogic.tv.settings"
+            android:exported="true">
+        <grant-uri-permission android:pathPattern="/tv_control_scan" />
+        <grant-uri-permission android:pathPattern="/tv_control_sound" />
+        <grant-uri-permission android:pathPattern="/tv_control_pppoe" />
+        <grant-uri-permission android:pathPattern="/tv_control_others" />
+        </provider>
     </application>
 
 </manifest>
