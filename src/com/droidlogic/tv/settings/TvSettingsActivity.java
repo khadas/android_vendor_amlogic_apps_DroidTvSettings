@@ -90,7 +90,7 @@ public abstract class TvSettingsActivity extends Activity {
                         }
                     });
         }
-        mStartMode = getIntent().getIntExtra("from_live_tv", MODE_LAUNCHER);
+        mStartMode = getIntent().getIntExtra("start_mode", MODE_LAUNCHER);
         if (SettingsConstant.needDroidlogicCustomization(this)) {
             if (mStartMode == MODE_LIVE_TV) {
                 startShowActivityTimer();
