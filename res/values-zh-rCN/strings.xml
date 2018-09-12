@@ -204,7 +204,7 @@
     <string name="tv_dialog_clarity">清脆人声</string>
     <string name="tv_bass_boost">低音增强</string>
     <string name="tv_sound_output_device">声音输出设备</string>
-    <string name="pq_backlight">自动背光</string>
+    <string name="pq_backlight">背光</string>
     <string name="tv_audio_ad_switch">声音AD开关</string>
     <string name="tv_audio_ad_mix_level">声音AD混合度</string>
     <string name="tv_restore_factory">电视恢复出厂设置</string>
