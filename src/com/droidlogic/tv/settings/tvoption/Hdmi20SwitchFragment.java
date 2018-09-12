@@ -84,6 +84,11 @@ public class Hdmi20SwitchFragment extends LeanbackPreferenceFragment implements 
         all.add(hdmi2);
         all.add(hdmi3);
         all.add(hdmi4);
+        int no = mTvOptionSettingManager.getNumOfHdmi();
+        Log.d(TAG,"refresh:"+no+",total size:"+getPreferenceScreen().getPreferenceCount());
+        for (int i = no; i < getPreferenceScreen().getPreferenceCount(); i++) {
+            getPreferenceScreen().removePreference(all.get(i));
+        }
     }
 
     @Override

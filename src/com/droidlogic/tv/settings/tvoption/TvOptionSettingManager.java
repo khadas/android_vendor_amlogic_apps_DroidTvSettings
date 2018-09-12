@@ -56,6 +56,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.SimpleTimeZone;
+import android.media.tv.TvInputManager;
+import android.media.tv.TvInputInfo;
+import java.util.List;
 import java.util.UUID;
 
 public class TvOptionSettingManager {
@@ -291,30 +294,17 @@ public class TvOptionSettingManager {
         return fourhdmistatus;
     }
 
-    public int getCurrentHdmiNo() {
-        return getHdmiNo(mDeviceId);
-    }
-
-    private int getHdmiNo(int id) {
-        int ret = -1;
-        switch (id) {
-            case DroidLogicTvUtils.DEVICE_ID_HDMI1:
-                ret = 0;
-                break;
-            case DroidLogicTvUtils.DEVICE_ID_HDMI2:
-                ret = 1;
-                break;
-            case DroidLogicTvUtils.DEVICE_ID_HDMI3:
-                ret = 2;
-                break;
-            case DroidLogicTvUtils.DEVICE_ID_HDMI4:
-                ret = 3;
-                break;
-            default:
-                ret = -1;
-                break;
+    public int getNumOfHdmi() {
+        TvInputManager inputManager = (TvInputManager) mContext.getSystemService(Context.TV_INPUT_SERVICE);
+        List<TvInputInfo> inputs = inputManager.getTvInputList();
+        int num_hdmi = 0;
+        for (TvInputInfo input : inputs) {
+            Log.d(TAG,"input:"+ input.toString());
+            if (input.getId().contains("Hdmi") && input.getParentId() == null)
+                num_hdmi++;
         }
-        return ret;
+        Log.d(TAG,"num_hdmi:"+num_hdmi);
+        return num_hdmi;
     }
 
     public void setDtvType (int value) {
