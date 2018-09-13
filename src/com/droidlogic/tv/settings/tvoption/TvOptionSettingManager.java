@@ -237,7 +237,7 @@ public class TvOptionSettingManager {
 
     // 0 1 ~ off on
     public int getDynamicBacklightStatus () {
-        int switchVal = 1;//mSystemControlManager.GetDynamicBacklight();//need to add in systemcontrol
+        int switchVal = mSystemControlManager.GetDynamicBacklight();
         if (CanDebug()) Log.d(TAG, "getDynamicBacklightStatus = " + switchVal);
 
         if (switchVal != 0) {
@@ -395,9 +395,8 @@ public class TvOptionSettingManager {
 
     public void setAutoBacklightStatus(int value) {
         if (CanDebug()) Log.d(TAG, "setAutoBacklightStatus = " + value);
-        //need to add in systemcontrol
-        //SystemControlManager.Dynamic_Backlight_Mode mode = SystemControlManager.Dynamic_Backlight_Mode.values()[value];
-        //mSystemControlManager.SetDynamicBacklight(mode, 1);
+        SystemControlManager.Dynamic_Backlight_Mode mode = SystemControlManager.Dynamic_Backlight_Mode.values()[value];
+        mSystemControlManager.SetDynamicBacklight(mode, 1);
     }
 
     public void setAudioADSwitch (int switchVal) {
