@@ -198,8 +198,16 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
             Log.d(TAG, "===== getHardwareDeviceId:tvInputId = " + input.getId());
             Log.d(TAG, "===== deviceId : "+ deviceId);
         }
-        int connectStatus = mTvControlManager.GetSourceConnectStatus(
-                    DroidLogicTvUtils.parseTvSourceInputFromDeviceId(deviceId));
+        TvControlManager.SourceInput tvSourceInput = DroidLogicTvUtils.parseTvSourceInputFromDeviceId(deviceId);
+        int connectStatus = -1;
+        if (tvSourceInput != null) {
+            connectStatus = mTvControlManager.GetSourceConnectStatus(tvSourceInput);
+        } else {
+            if (DEBUG) {
+                Log.w(TAG, "===== cannot find tvSourceInput");
+            }
+        }
+
         return !input.isPassthroughInput() || 1 == connectStatus || deviceId == DroidLogicTvUtils.DEVICE_ID_SPDIF;
     }
 
