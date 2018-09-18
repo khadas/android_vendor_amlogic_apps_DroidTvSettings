@@ -56,6 +56,7 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
     private boolean needDTV = false;
 
     private final String COMMANDACTION = "action.startlivetv.settingui";
+    private static final String DROIDLOGIC_TVINPUT = "com.droidlogic.tvinput";
 
     private TvInputManager mTvInputManager;
     private TvControlManager mTvControlManager;
@@ -105,6 +106,10 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
             final Preference sourcePreference = preference;
             List<TvInputInfo> inputList = mTvInputManager.getTvInputList();
             for (TvInputInfo input : inputList) {
+                if (!input.getId().contains(DROIDLOGIC_TVINPUT)) {
+                    continue;
+                }
+
                 if (sourcePreference.getKey().equals(input.getId())) {
                     if (DEBUG) Log.d(TAG, "onPreferenceTreeClick:  info=" + input);
                     if (TextUtils.equals(sourcePreference.getTitle(), mContext.getResources().getString(R.string.input_atv))) {
@@ -149,6 +154,10 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
         List<TvInputInfo> inputList = mTvInputManager.getTvInputList();
         Collections.sort(inputList, mComparator);
         for (TvInputInfo input : inputList) {
+            if (!input.getId().contains(DROIDLOGIC_TVINPUT)) {
+                continue;
+            }
+
             Preference sourcePreference = new Preference(themedContext);
             sourcePreference.setKey(input.getId());
             sourcePreference.setPersistent(false);
