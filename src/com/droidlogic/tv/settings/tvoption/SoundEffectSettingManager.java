@@ -469,7 +469,7 @@ public class SoundEffectSettingManager {
             return DEFAULT_AGC_ENABLE;
         }
         int[] value = new int[1];
-        mBalance.getParameter(PARAM_AGC_ENABLE, value);
+        mAgc.getParameter(PARAM_AGC_ENABLE, value);
         saveresult = getSavedAudioParameters(SET_AGC_ENABLE);
         if (saveresult != value[0]) {
             Log.e(TAG, "getAgcEnableStatus erro get: " + value[0] + ", saved: " + saveresult);
@@ -486,7 +486,7 @@ public class SoundEffectSettingManager {
             return DEFAULT_AGC_MAX_LEVEL;
         }
         int[] value = new int[1];
-        mBalance.getParameter(PARAM_AGC_MAX_LEVEL, value);
+        mAgc.getParameter(PARAM_AGC_MAX_LEVEL, value);
         saveresult = getSavedAudioParameters(SET_AGC_MAX_LEVEL);
         if (saveresult != value[0]) {
             Log.e(TAG, "getAgcMaxLevelStatus erro get: " + value[0] + ", saved: " + saveresult);
@@ -503,7 +503,7 @@ public class SoundEffectSettingManager {
             return DEFAULT_AGC_ATTRACK_TIME;
         }
         int[] value = new int[1];
-        mBalance.getParameter(PARAM_AGC_ATTRACK_TIME, value);
+        mAgc.getParameter(PARAM_AGC_ATTRACK_TIME, value);
         saveresult = getSavedAudioParameters(SET_AGC_ATTRACK_TIME);
         if (saveresult != value[0] / 48) {
             Log.e(TAG, "getAgcAttrackTimeStatus erro get: " + value[0] + ", saved: " + saveresult);
@@ -520,7 +520,7 @@ public class SoundEffectSettingManager {
             return DEFAULT_AGC_RELEASE_TIME;
         }
         int[] value = new int[1];
-        mBalance.getParameter(PARAM_AGC_RELEASE_TIME, value);
+        mAgc.getParameter(PARAM_AGC_RELEASE_TIME, value);
         saveresult = getSavedAudioParameters(SET_AGC_RELEASE_TIME);
         if (saveresult != value[0]) {
             Log.e(TAG, "getAgcReleaseTimeStatus erro get: " + value[0] + ", saved: " + saveresult);
@@ -670,7 +670,6 @@ public class SoundEffectSettingManager {
     }
 
     public void setAgsEnable (int mode) {
-        Log.d(TAG, "setAgsEnable = " + mode);
         if (!creatAgcAudioEffects()) {
             Log.e(TAG, "setAgsEnable mAgc creat fail");
             return;
@@ -684,7 +683,6 @@ public class SoundEffectSettingManager {
     }
 
     public void setAgsMaxLevel (int step) {
-        Log.d(TAG, "setAgsMaxLevel = " + step);
         if (!creatAgcAudioEffects()) {
             Log.e(TAG, "setAgsMaxLevel mAgc creat fail");
             return;
@@ -698,7 +696,6 @@ public class SoundEffectSettingManager {
     }
 
     public void setAgsAttrackTime (int step) {
-        Log.d(TAG, "setAgsAttrackTime = " + step);
         if (!creatAgcAudioEffects()) {
             Log.e(TAG, "setAgsAttrackTime mAgc creat fail");
             return;
@@ -712,7 +709,6 @@ public class SoundEffectSettingManager {
     }
 
     public void setAgsReleaseTime (int step) {
-        Log.d(TAG, "setAgsReleaseTime = " + step);
         if (!creatAgcAudioEffects()) {
             Log.e(TAG, "setAgsReleaseTime mAgc creat fail");
             return;
