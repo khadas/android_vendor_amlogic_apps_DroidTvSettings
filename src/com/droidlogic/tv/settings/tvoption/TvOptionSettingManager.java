@@ -395,7 +395,12 @@ public class TvOptionSettingManager {
 
     public void setAutoBacklightStatus(int value) {
         if (CanDebug()) Log.d(TAG, "setAutoBacklightStatus = " + value);
-        SystemControlManager.Dynamic_Backlight_Mode mode = SystemControlManager.Dynamic_Backlight_Mode.values()[value];
+        SystemControlManager.Dynamic_Backlight_Mode mode;
+        if (value != 0) {
+            mode = SystemControlManager.Dynamic_Backlight_Mode.DYNAMIC_BACKLIGHT_HIGH;
+        } else {
+            mode = SystemControlManager.Dynamic_Backlight_Mode.DYNAMIC_BACKLIGHT_OFF;
+        }
         mSystemControlManager.SetDynamicBacklight(mode, 1);
     }
 
