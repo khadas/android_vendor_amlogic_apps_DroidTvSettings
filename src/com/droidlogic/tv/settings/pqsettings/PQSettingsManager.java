@@ -61,6 +61,7 @@ public class PQSettingsManager {
     public static final String STATUS_SOFT                          = "soft";
     public static final String STATUS_SPORT                         = "sport";
     public static final String STATUS_MONITOR                    = "monitor";
+    public static final String STATUS_GAME                          = "game";
     public static final String STATUS_USER                          = "user";
     public static final String STATUS_WARM                          = "warm";
     public static final String STATUS_MUSIC                          = "music";
@@ -153,6 +154,7 @@ public class PQSettingsManager {
     public static final int PIC_USER = 3;
     public static final int PIC_MOVIE = 4;
     public static final int PIC_MONITOR = 6;
+    public static final int PIC_GAME = 7;
     public static final int PIC_SPORT = 8;
 
     public String getPictureModeStatus () {
@@ -173,6 +175,8 @@ public class PQSettingsManager {
                 return STATUS_SPORT;
             case PIC_MOVIE:
                 return STATUS_MOVIE;
+            case PIC_GAME:
+                return STATUS_GAME;
             default:
                 return STATUS_STANDARD;
         }
@@ -249,6 +253,8 @@ public class PQSettingsManager {
             mSystemControlManager.SetPQMode(PIC_SPORT, 1, 0);
         } else if (mode.equals(STATUS_MOVIE)) {
             mSystemControlManager.SetPQMode(PIC_MOVIE, 1, 0);
+        } else if (mode.equals(STATUS_GAME)) {
+            mSystemControlManager.SetPQMode(PIC_GAME, 1, 0);
         }
     }
 
@@ -400,6 +406,7 @@ public class PQSettingsManager {
             case PIC_MONITOR:
             case PIC_SPORT:
             case PIC_MOVIE:
+            case PIC_GAME:
                 setPictureMode(STATUS_USER);
                 break;
         }
@@ -487,6 +494,13 @@ public class PQSettingsManager {
     public boolean isHdmiSource() {
         if (mTvSourceInput != null) {
             return mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_HDMI;
+        }
+        return false;
+    }
+
+    public boolean isAvSource() {
+        if (mTvSourceInput != null) {
+            return mTvSource == TvControlManager.SourceInput_Type.SOURCE_TYPE_AV;
         }
         return false;
     }

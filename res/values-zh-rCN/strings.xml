@@ -239,6 +239,7 @@
     <string name="pq_movie">电影</string>
     <string name="pq_sport">运动</string>
     <string name="pq_monitor">显示器</string>
+    <string name="pq_game">游戏</string>
     <string name="pq_user">用户</string>
 
     <string name="tv_channel">频道</string>

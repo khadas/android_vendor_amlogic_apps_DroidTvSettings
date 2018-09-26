@@ -266,6 +266,7 @@
     <string name="pq_movie">movie</string>
     <string name="pq_sport">sport</string>
     <string name="pq_monitor">monitor</string>
+    <string name="pq_game">game</string>
     <string name="pq_user">user</string>
     <string name="pq_warm">warm</string>
     <string name="pq_cool">cool</string>
