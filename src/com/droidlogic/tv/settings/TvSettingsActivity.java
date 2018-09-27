@@ -90,7 +90,8 @@ public abstract class TvSettingsActivity extends Activity {
                         }
                     });
         }
-        mStartMode = getIntent().getIntExtra("start_mode", MODE_LAUNCHER);
+        mStartMode = getIntent().getIntExtra("from_live_tv", MODE_LAUNCHER);
+        Log.d(TAG, "mStartMode : " + mStartMode);
         if (SettingsConstant.needDroidlogicCustomization(this)) {
             if (mStartMode == MODE_LIVE_TV) {
                 startShowActivityTimer();
@@ -151,15 +152,15 @@ public abstract class TvSettingsActivity extends Activity {
         handler.removeMessages(0);
 
         int seconds = Settings.System.getInt(getContentResolver(), TvOptionSettingManager.KEY_MENU_TIME, TvOptionSettingManager.DEFUALT_MENU_TIME);
-        if (seconds == 0) {
+        if (seconds == 1) {
             seconds = 15;
-        } else if (seconds == 1) {
-            seconds = 30;
         } else if (seconds == 2) {
-            seconds = 60;
+            seconds = 30;
         } else if (seconds == 3) {
-            seconds = 120;
+            seconds = 60;
         } else if (seconds == 4) {
+            seconds = 120;
+        } else if (seconds == 5) {
             seconds = 240;
         } else {
             seconds = 0;
