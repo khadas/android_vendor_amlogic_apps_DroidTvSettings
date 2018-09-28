@@ -96,7 +96,7 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
 
         if (DEBUG)  Log.d(TAG, "onCreatePreferences  intent= "+ intent);
         if (intent != null) {
-            mStartMode = intent.getIntExtra("start_mode", -1);
+            mStartMode = intent.getIntExtra("from_live_tv", -1);
         }
         updatePreferenceFragment();
     }

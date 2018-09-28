@@ -259,12 +259,12 @@
     </string-array>
 
     <string-array name="tv_menu_time_entries">
+        <item>off</item>
         <item>15s</item>
         <item>30s</item>
         <item>60s</item>
         <item>120s</item>
         <item>240s</item>
-        <item>off</item>
     </string-array>
 
     <string-array name="tv_menu_time_entry_values" translatable="false">
