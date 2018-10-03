@@ -48,7 +48,8 @@ public class SettingsConstant {
         return context.getResources().getBoolean(R.bool.display_need_screen_resolution);
     }
     public static boolean needDroidlogicHdmicecFeature(Context context){
-        return context.getResources().getBoolean(R.bool.display_need_hdmicec_function);
+        SystemControlManager sm = new SystemControlManager(context);
+        return sm.getPropertyBoolean("ro.platform.need.display.hdmicec", false);
     }
     public static boolean needDroidlogicPlaybackSetFeature(Context context){
         return context.getResources().getBoolean(R.bool.display_need_playback_set_function);
