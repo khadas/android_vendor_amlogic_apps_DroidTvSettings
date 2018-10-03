@@ -18,7 +18,6 @@ package com.droidlogic.tv.settings.tvoption;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.media.AudioSystem;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.provider.Settings;
@@ -85,8 +84,7 @@ public class Hdmi20SwitchFragment extends LeanbackPreferenceFragment implements 
         all.add(hdmi3);
         all.add(hdmi4);
         int no = mTvOptionSettingManager.getNumOfHdmi();
-        Log.d(TAG,"refresh:"+no+",total size:"+getPreferenceScreen().getPreferenceCount());
-        for (int i = no; i < getPreferenceScreen().getPreferenceCount(); i++) {
+        for (int i = no; i < 4; i++) {
             getPreferenceScreen().removePreference(all.get(i));
         }
     }
@@ -95,7 +93,7 @@ public class Hdmi20SwitchFragment extends LeanbackPreferenceFragment implements 
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_hdmi_switch, null);
         if (mTvOptionSettingManager == null) {
-            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity());
         }
         int[] fourhdmi = mTvOptionSettingManager.getFourHdmi20Status();
         final ListPreference hdmi1 = (ListPreference) findPreference(HDMI1_SWITCH);

@@ -25,33 +25,57 @@
         android:title="@string/tv_sound_mode"
         android:summary="%s" />
     <Preference
-        android:fragment="com.droidlogic.tv.settings.tvoption.TrebleBassSeekBarFragment"
-        android:key="treble_bass_effect_settings"
-        android:title="@string/tv_treble_bass_effect" />
-    <Preference
-        android:fragment="com.droidlogic.tv.settings.tvoption.BalanceSeekBarFragment"
-        android:key="balance_effect_settings"
-        android:title="@string/tv_balance_effect" />
-    <Preference
-        android:fragment="com.droidlogic.tv.settings.tvoption.AgcSeekBarFragment"
-        android:key="effect_agc"
-        android:title="@string/tv_sound_agc" />
-    <Preference
-        android:fragment="com.droidlogic.tv.settings.tvoption.DtsSoundSettingFragment"
-        android:key="dts_effect_settings"
-        android:title="@string/tv_dts_effect" />
-     <ListPreference
-        android:key="tv_sound_virtual_surround"
+        android:fragment="com.droidlogic.tv.settings.tvoption.MultiSoundSeekBarFragment"
+        android:key="multi_settings"
+        android:title="@string/multi_settings" />
+    <!--<ListPreference
+        android:key="tv_treble"
+        android:persistent="false"
+        android:title="@string/tv_treble"
+        android:summary="%s" />
+    <ListPreference
+        android:key="tv_bass"
+        android:persistent="false"
+        android:title="@string/tv_bass"
+        android:summary="%s" />
+    <ListPreference
+        android:key="tv_balance"
+        android:persistent="false"
+        android:title="@string/tv_balance"
+        android:summary="%s" />-->
+    <ListPreference
+        android:key="tv_spdif"
+        android:persistent="false"
+        android:entries="@array/tv_spdif_entries"
+        android:entryValues="@array/tv_spdif_entry_values"
+        android:title="@string/tv_spdif"
+        android:summary="%s" />
+    <ListPreference
+        android:key="tv_virtual_surround"
         android:persistent="false"
         android:entries="@array/tv_offon_entries"
         android:entryValues="@array/tv_offon_entry_values"
         android:title="@string/tv_virtual_surround"
         android:summary="%s" />
-     <ListPreference
-        android:key="tv_sound_output_device"
+    <ListPreference
+        android:key="tv_surround"
         android:persistent="false"
-        android:entries="@array/tv_sound_output_device_entries"
-        android:entryValues="@array/tv_sound_output_device_entry_values"
-        android:title="@string/tv_sound_output_device"
+        android:entries="@array/tv_offon_entries"
+        android:entryValues="@array/tv_offon_entry_values"
+        android:title="@string/tv_surround"
+        android:summary="%s" />
+    <ListPreference
+        android:key="tv_dialog_clarity"
+        android:persistent="false"
+        android:entries="@array/tv_offon_entries"
+        android:entryValues="@array/tv_offon_entry_values"
+        android:title="@string/tv_dialog_clarity"
+        android:summary="%s" />
+    <ListPreference
+        android:key="tv_bass_boost"
+        android:persistent="false"
+        android:entries="@array/tv_offon_entries"
+        android:entryValues="@array/tv_offon_entry_values"
+        android:title="@string/tv_bass_boost"
         android:summary="%s" />
 </PreferenceScreen>

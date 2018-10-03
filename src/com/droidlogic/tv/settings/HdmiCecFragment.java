@@ -82,8 +82,8 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 		}
 		switch (key) {
 		case KEY_CEC_SWITCH:
-			writeCecOption(Settings.Global.HDMI_CONTROL_ENABLED, mCecSwitchPref.isChecked());
-			boolean hdmiControlEnabled = readCecOption(Settings.Global.HDMI_CONTROL_ENABLED);
+			writeCecOption("hdmi_control_enabled"/*Settings.Global.HDMI_CONTROL_ENABLED*/, mCecSwitchPref.isChecked());
+			boolean hdmiControlEnabled = readCecOption("hdmi_control_enabled"/*Settings.Global.HDMI_CONTROL_ENABLED*/);
 			mCecOnekeyPlayPref.setEnabled(hdmiControlEnabled);
 			mCecOnekeyPoweroffPref.setEnabled(hdmiControlEnabled);
 			mCecAutoChangeLanguagePref.setEnabled(hdmiControlEnabled);
@@ -92,7 +92,7 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 			writeCecOption(HdmiCecManager.HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, mCecOnekeyPlayPref.isChecked());
 			return true;
 		case KEY_CEC_ONEKEY_POWEROFF:
-			writeCecOption(Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, mCecOnekeyPoweroffPref.isChecked());
+			writeCecOption("hdmi_control_auto_device_off_enabled"/*Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED*/, mCecOnekeyPoweroffPref.isChecked());
 			return true;
 		case KEY_CEC_AUTO_CHANGE_LANGUAGE:
 			writeCecOption(HdmiCecManager.HDMI_CONTROL_AUTO_CHANGE_LANGUAGE_ENABLED,
@@ -103,11 +103,11 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 	}
 
 	private void refresh() {
-		boolean hdmiControlEnabled = readCecOption(Settings.Global.HDMI_CONTROL_ENABLED);
+		boolean hdmiControlEnabled = readCecOption("hdmi_control_enabled"/*Settings.Global.HDMI_CONTROL_ENABLED*/);
 		mCecSwitchPref.setChecked(hdmiControlEnabled);
 		mCecOnekeyPlayPref.setChecked(readCecOption(HdmiCecManager.HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED));
 		mCecOnekeyPlayPref.setEnabled(hdmiControlEnabled);
-		mCecOnekeyPoweroffPref.setChecked(readCecOption(Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED));
+		mCecOnekeyPoweroffPref.setChecked(readCecOption("hdmi_control_auto_device_off_enabled"/*Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED*/));
 		mCecOnekeyPoweroffPref.setEnabled(hdmiControlEnabled);
 		mCecAutoChangeLanguagePref.setChecked(readCecOption(HdmiCecManager.HDMI_CONTROL_AUTO_CHANGE_LANGUAGE_ENABLED));
 		mCecAutoChangeLanguagePref.setEnabled(hdmiControlEnabled);

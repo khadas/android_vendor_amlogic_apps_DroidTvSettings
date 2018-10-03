@@ -30,33 +30,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.content.Context;
-import android.app.AlertDialog;
-import android.view.View.OnClickListener;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import android.os.SystemProperties;
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
 import com.droidlogic.tv.settings.MainFragment;
-import com.droidlogic.tv.settings.TvSettingsActivity;
 import com.droidlogic.tv.settings.R;
 
-public class SoundModeFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener, SeekBar.OnSeekBarChangeListener {
+public class SoundModeFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     private static final String TAG = "SoundModeFragment";
 
-    private static final String TV_EQ_MODE = "tv_sound_mode";
-    private static final String TV_TREBLE_BASS_SETTINGS = "treble_bass_effect_settings";
-    private static final String TV_BALANCE_SETTINGS = "balance_effect_settings";
-    private static final String TV_DTS_SETTINGS = "dts_effect_settings";
-    private static final String TV_VIRTUAL_SURROUND_SETTINGS = "tv_sound_virtual_surround";
-    private static final String TV_SOUND_OUT = "tv_sound_output_device";
-    private static final String TV_AGC = "effect_agc";
+    private static final String TV_SOUND_MODE = "tv_sound_mode";
+    private static final String TV_MULTI_SETTINGS = "multi_settings";
+    private static final String TV_TREBLE = "tv_treble";
+    private static final String TV_BASS = "tv_bass";
+    private static final String TV_BALANCE = "tv_balance";
+    private static final String TV_SPDIF = "tv_spdif";
+    private static final String TV_VIRTUAL_SURROUND = "tv_virtual_surround";
+    private static final String TV_SURROUND = "tv_surround";
+    private static final String TV_DIALOG_CLARITY = "tv_dialog_clarity";
+    private static final String TV_BASS_BOOST = "tv_bass_boost";
 
-    private SoundEffectSettingManager mSoundEffectSettingManager;
-    private SoundParameterSettingManager mSoundParameterSettingManager;
+    private TvOptionSettingManager mTvOptionSettingManager;
 
     public static SoundModeFragment newInstance() {
         return new SoundModeFragment();
@@ -69,20 +65,8 @@ public class SoundModeFragment extends LeanbackPreferenceFragment implements Pre
     @Override
     public void onResume() {
         super.onResume();
-        if (mSoundEffectSettingManager != null) {
-            final ListPreference eqmode = (ListPreference) findPreference(TV_EQ_MODE);
-            if (mSoundEffectSettingManager.getSoundModule() == SoundEffectSettingManager.DAP_MODULE) {
-                eqmode.setEntries(getArrayString(R.array.tv_sound_mode_extend_entries));
-                eqmode.setEntryValues(getArrayString(R.array.tv_sound_mode_extend_entry_values));
-            }
-            eqmode.setValueIndex(mSoundEffectSettingManager.getSoundModeStatus());
-            final Preference treblebass = (Preference) findPreference(TV_TREBLE_BASS_SETTINGS);
-            String treblebasssummary = getShowString(R.string.tv_treble, mSoundEffectSettingManager.getTrebleStatus()) + " " +
-                    getShowString(R.string.tv_bass, mSoundEffectSettingManager.getBassStatus());
-            treblebass.setSummary(treblebasssummary);
-            final Preference balance = (Preference) findPreference(TV_BALANCE_SETTINGS);
-            balance.setSummary(getShowString(R.string.tv_balance_effect, mSoundEffectSettingManager.getBalanceStatus()));
-        }
+        final ListPreference soundmode = (ListPreference) findPreference(TV_SOUND_MODE);
+        soundmode.setValueIndex(mTvOptionSettingManager.getSoundModeStatus());
     }
 
     @Override
@@ -104,39 +88,28 @@ public class SoundModeFragment extends LeanbackPreferenceFragment implements Pre
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_sound_mode, null);
-        if (mSoundEffectSettingManager == null) {
-            mSoundEffectSettingManager = ((TvSettingsActivity)getActivity()).getSoundEffectSettingManager();
+        if (mTvOptionSettingManager == null) {
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity());
         }
-        if (mSoundParameterSettingManager == null) {
-            mSoundParameterSettingManager = new SoundParameterSettingManager(getActivity());
-        }
-        if (mSoundEffectSettingManager == null) {
-            Log.e(TAG, "onCreatePreferences mSoundEffectSettingManager == null");
-            return;
-        }
-        final ListPreference eqmode = (ListPreference) findPreference(TV_EQ_MODE);
-        if (mSoundEffectSettingManager.getSoundModule() == SoundEffectSettingManager.DAP_MODULE) {
-            eqmode.setEntries(getArrayString(R.array.tv_sound_mode_extend_entries));
-            eqmode.setEntryValues(getArrayString(R.array.tv_sound_mode_extend_entry_values));
-        }
-        eqmode.setValueIndex(mSoundEffectSettingManager.getSoundModeStatus());
-        eqmode.setOnPreferenceChangeListener(this);
-
-        final ListPreference virtualsurround = (ListPreference) findPreference(TV_VIRTUAL_SURROUND_SETTINGS);
-        virtualsurround.setValueIndex(mSoundParameterSettingManager.getVirtualSurroundStatus());
+        final ListPreference soundmode = (ListPreference) findPreference(TV_SOUND_MODE);
+        //soundmode.setDialogLayoutResource(int dialogLayoutResId)
+        soundmode.setValueIndex(mTvOptionSettingManager.getSoundModeStatus());
+        soundmode.setOnPreferenceChangeListener(this);
+        final ListPreference spdifmode = (ListPreference) findPreference(TV_SPDIF);
+        spdifmode.setValueIndex(mTvOptionSettingManager.getSpdifStatus());
+        spdifmode.setOnPreferenceChangeListener(this);
+        final ListPreference virtualsurround = (ListPreference) findPreference(TV_VIRTUAL_SURROUND);
+        virtualsurround.setValueIndex(mTvOptionSettingManager.getVirtualSurroundStatus());
         virtualsurround.setOnPreferenceChangeListener(this);
-
-        final ListPreference soundout = (ListPreference) findPreference(TV_SOUND_OUT);
-        soundout.setValueIndex(mSoundParameterSettingManager.getSoundOutputStatus());
-        soundout.setOnPreferenceChangeListener(this);
-
-        final Preference treblebass = (Preference) findPreference(TV_TREBLE_BASS_SETTINGS);
-        String treblebasssummary = getShowString(R.string.tv_treble, mSoundEffectSettingManager.getTrebleStatus()) + " " +
-                getShowString(R.string.tv_bass, mSoundEffectSettingManager.getBassStatus());
-        treblebass.setSummary(treblebasssummary);
-
-        final Preference balance = (Preference) findPreference(TV_BALANCE_SETTINGS);
-        balance.setSummary(getShowString(R.string.tv_balance_effect, mSoundEffectSettingManager.getBalanceStatus()));
+        final ListPreference surround = (ListPreference) findPreference(TV_SURROUND);
+        surround.setValueIndex(mTvOptionSettingManager.getSurroundStatus());
+        surround.setOnPreferenceChangeListener(this);
+        final ListPreference dialogclarity = (ListPreference) findPreference(TV_DIALOG_CLARITY);
+        dialogclarity.setValueIndex(mTvOptionSettingManager.getDialogClarityStatus());
+        dialogclarity.setOnPreferenceChangeListener(this);
+        final ListPreference bassboost = (ListPreference) findPreference(TV_BASS_BOOST);
+        bassboost.setValueIndex(mTvOptionSettingManager.getBassBoostStatus());
+        bassboost.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -149,161 +122,19 @@ public class SoundModeFragment extends LeanbackPreferenceFragment implements Pre
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (CanDebug()) Log.d(TAG, "[onPreferenceChange] preference.getKey() = " + preference.getKey() + ", newValue = " + newValue);
         final int selection = Integer.parseInt((String)newValue);
-        if (TextUtils.equals(preference.getKey(), TV_EQ_MODE)) {
-            mSoundEffectSettingManager.setSoundMode(selection);
-            if (selection == SoundEffectSettingManager.MODE_CUSTOM) {
-                createUiDialog();
-            }
-        } else if (TextUtils.equals(preference.getKey(), TV_VIRTUAL_SURROUND_SETTINGS)) {
-            mSoundParameterSettingManager.setVirtualSurround(selection);
-        }else if (TextUtils.equals(preference.getKey(), TV_SOUND_OUT)) {
-            mSoundParameterSettingManager.setSoundOutputStatus(selection);
+        if (TextUtils.equals(preference.getKey(), TV_SOUND_MODE)) {
+            mTvOptionSettingManager.setSoundMode(selection);
+        } else if (TextUtils.equals(preference.getKey(), TV_SPDIF)) {
+            mTvOptionSettingManager.setSpdif(selection);
+        } else if (TextUtils.equals(preference.getKey(), TV_VIRTUAL_SURROUND)) {
+            mTvOptionSettingManager.setVirtualSurround(selection);
+        } else if (TextUtils.equals(preference.getKey(), TV_SURROUND)) {
+            mTvOptionSettingManager.setSurround(selection);
+        } else if (TextUtils.equals(preference.getKey(), TV_DIALOG_CLARITY)) {
+            mTvOptionSettingManager.setDialogClarity(selection);
+        } else if (TextUtils.equals(preference.getKey(), TV_BASS_BOOST)) {
+            mTvOptionSettingManager.setBassBoost(selection);
         }
         return true;
-    }
-
-    private void createUiDialog () {
-        Context context = (Context) (getActivity());
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.xml.tv_sound_effect_ui, null);//tv_sound_effect_ui
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        final AlertDialog mAlertDialog = builder.create();
-        mAlertDialog.show();
-        mAlertDialog.getWindow().setContentView(view);
-        //mAlertDialog.getWindow().setLayout(150, 320);
-        initSeekBar(view);
-    }
-
-    private boolean isSeekBarInited = false;
-    private SeekBar mBand1Seekbar;
-    private TextView mBand1Text;
-    private SeekBar mBand2Seekbar;
-    private TextView mBand2Text;
-    private SeekBar mBand3Seekbar;
-    private TextView mBand3Text;
-    private SeekBar mBand4Seekbar;
-    private TextView mBand4Text;
-    private SeekBar mBand5Seekbar;
-    private TextView mBand5Text;
-
-    private void initSeekBar(View view) {
-        if (mSoundEffectSettingManager == null) {
-            mSoundEffectSettingManager = ((TvSettingsActivity)getActivity()).getSoundEffectSettingManager();
-        }
-        int status = -1;
-        mBand1Seekbar = (SeekBar) view.findViewById(R.id.seekbar_tv_audio_effect_band1);
-        mBand1Text = (TextView) view.findViewById(R.id.text_tv_audio_effect_band1);
-        status = mSoundEffectSettingManager.getParameters(SoundEffectSettingManager.SET_EFFECT_BAND1);
-        mBand1Seekbar.setOnSeekBarChangeListener(this);
-        mBand1Seekbar.setProgress(status);
-        setShow(SoundEffectSettingManager.SET_EFFECT_BAND1, status);
-        mBand1Seekbar.requestFocus();
-        mBand2Seekbar = (SeekBar) view.findViewById(R.id.seekbar_tv_audio_effect_band2);
-        mBand2Text = (TextView) view.findViewById(R.id.text_tv_audio_effect_band2);
-        status = mSoundEffectSettingManager.getParameters(SoundEffectSettingManager.SET_EFFECT_BAND2);
-        mBand2Seekbar.setOnSeekBarChangeListener(this);
-        mBand2Seekbar.setProgress(status);
-        setShow(SoundEffectSettingManager.SET_EFFECT_BAND2, status);
-        mBand3Seekbar = (SeekBar) view.findViewById(R.id.seekbar_tv_audio_effect_band3);
-        mBand3Text = (TextView) view.findViewById(R.id.text_tv_audio_effect_band3);
-        status = mSoundEffectSettingManager.getParameters(SoundEffectSettingManager.SET_EFFECT_BAND3);
-        mBand3Seekbar.setOnSeekBarChangeListener(this);
-        mBand3Seekbar.setProgress(status);
-        setShow(SoundEffectSettingManager.SET_EFFECT_BAND3, status);
-        mBand4Seekbar = (SeekBar) view.findViewById(R.id.seekbar_tv_audio_effect_band4);
-        mBand4Text = (TextView) view.findViewById(R.id.text_tv_audio_effect_band4);
-        status = mSoundEffectSettingManager.getParameters(SoundEffectSettingManager.SET_EFFECT_BAND4);
-        mBand4Seekbar.setOnSeekBarChangeListener(this);
-        mBand4Seekbar.setProgress(status);
-        setShow(SoundEffectSettingManager.SET_EFFECT_BAND4, status);
-        mBand5Seekbar = (SeekBar) view.findViewById(R.id.seekbar_tv_audio_effect_band5);
-        mBand5Text = (TextView) view.findViewById(R.id.text_tv_audio_effect_band5);
-        status = mSoundEffectSettingManager.getParameters(SoundEffectSettingManager.SET_EFFECT_BAND5);
-        mBand5Seekbar.setOnSeekBarChangeListener(this);
-        mBand5Seekbar.setProgress(status);
-        setShow(SoundEffectSettingManager.SET_EFFECT_BAND5, status);
-        isSeekBarInited = true;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (!isSeekBarInited) {
-            return;
-        }
-        ((TvSettingsActivity)getActivity()).startShowActivityTimer();
-        switch (seekBar.getId()) {
-            case R.id.seekbar_tv_audio_effect_band1:{
-                setShow(SoundEffectSettingManager.SET_EFFECT_BAND1, progress);
-                mSoundEffectSettingManager.setParameters(SoundEffectSettingManager.SET_EFFECT_BAND1, progress);
-                break;
-            }
-            case R.id.seekbar_tv_audio_effect_band2:{
-                setShow(SoundEffectSettingManager.SET_EFFECT_BAND2, progress);
-                mSoundEffectSettingManager.setParameters(SoundEffectSettingManager.SET_EFFECT_BAND2, progress);
-                break;
-            }
-            case R.id.seekbar_tv_audio_effect_band3:{
-                setShow(SoundEffectSettingManager.SET_EFFECT_BAND3, progress);
-                mSoundEffectSettingManager.setParameters(SoundEffectSettingManager.SET_EFFECT_BAND3, progress);
-                break;
-            }
-            case R.id.seekbar_tv_audio_effect_band4:{
-                setShow(SoundEffectSettingManager.SET_EFFECT_BAND4, progress);
-                mSoundEffectSettingManager.setParameters(SoundEffectSettingManager.SET_EFFECT_BAND4, progress);
-                break;
-            }
-            case R.id.seekbar_tv_audio_effect_band5:{
-                setShow(SoundEffectSettingManager.SET_EFFECT_BAND5, progress);
-                mSoundEffectSettingManager.setParameters(SoundEffectSettingManager.SET_EFFECT_BAND5, progress);
-                break;
-            }
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    private void setShow(int id, int value) {
-        switch (id) {
-            case SoundEffectSettingManager.SET_EFFECT_BAND1:{
-                mBand1Text.setText(getShowString(R.string.tv_audio_effect_band1, value));
-                break;
-            }
-            case SoundEffectSettingManager.SET_EFFECT_BAND2:{
-                mBand2Text.setText(getShowString(R.string.tv_audio_effect_band2, value));
-                break;
-            }
-            case SoundEffectSettingManager.SET_EFFECT_BAND3:{
-                mBand3Text.setText(getShowString(R.string.tv_audio_effect_band3, value));
-                break;
-            }
-            case SoundEffectSettingManager.SET_EFFECT_BAND4:{
-                mBand4Text.setText(getShowString(R.string.tv_audio_effect_band4, value));
-                break;
-            }
-            case SoundEffectSettingManager.SET_EFFECT_BAND5:{
-                mBand5Text.setText(getShowString(R.string.tv_audio_effect_band5, value));
-                break;
-            }
-            default:
-                break;
-        }
-    }
-
-    private String getShowString(int resid, int value) {
-        return getActivity().getResources().getString(resid) + " " + value + "%";
-    }
-
-    private String[] getArrayString(int resid) {
-        return getActivity().getResources().getStringArray(resid);
     }
 }

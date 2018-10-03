@@ -31,7 +31,6 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 
 	private static final String TAG = "DisplayFragment";
 
-	private static final String KEY_POSITION = "position";
 	private static final String KEY_OUTPUTMODE = "outputmode";
 	private static final String KEY_HDR = "hdr";
 	private static final String KEY_SDR = "sdr";
@@ -58,9 +57,6 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 		final Preference outputmodePref = findPreference(KEY_OUTPUTMODE);
 		outputmodePref.setVisible(SettingsConstant.needScreenResolutionFeture(getContext()) && !tvFlag);
 
-		final Preference screenPositionPref = findPreference(KEY_POSITION);
-		screenPositionPref.setVisible(!tvFlag);
-
 		final Preference sdrPref = findPreference(KEY_SDR);
 		sdrPref.setVisible(SettingsConstant.needDroidlogicSdrFeature(getContext()) && !tvFlag);
 
@@ -68,7 +64,7 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 		hdrPref.setVisible(SettingsConstant.needDroidlogicHdrFeature(getContext()) && !tvFlag);
 
 		final Preference dvPref =(Preference) findPreference(KEY_DOLBY_VISION);
-		dvPref.setVisible((SystemProperties.getBoolean("ro.platform.support.dolbyvision", false) == true)
+		dvPref.setVisible((SystemProperties.getBoolean("ro.vendor.platform.support.dolbyvision", false) == true)
 			&& tvFlag);
 	}
 }

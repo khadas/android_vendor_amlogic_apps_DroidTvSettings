@@ -82,18 +82,5 @@
         android:entryValues="@array/pq_dnr_entry_values"
         android:title="@string/pq_dnr"
         android:summary="%s" />
-    <Preference
-        android:fragment="com.droidlogic.tv.settings.pqsettings.AdjustBaclLightFragment"
-        android:key="pq_backlight"
-        android:persistent="false"
-        android:title="@string/pq_backlight"
-        android:summary="%s" />
-    <ListPreference
-        android:key="pq_hdmi_color_range"
-        android:persistent="false"
-        android:entries="@array/pq_hdmi_color_entries"
-        android:entryValues="@array/pq_hdmi_color_entry_values"
-        android:title="@string/pq_hdmi_color"
-        android:summary="%s" />
 
 </PreferenceScreen>

@@ -11,7 +11,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass.Device;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.bluetooth.BluetoothHidHost;
 import android.bluetooth.BluetoothProfile;
 import android.content.IntentFilter;
 import android.os.SystemProperties;
@@ -35,7 +34,7 @@ public class BluetoothAutoPairService extends IntentService {
     private String mBtNamePrefix;
     private String mBtClass;
     private String mBtCallback;
-    private BluetoothHidHost mService = null;
+    private BluetoothProfile mService = null;
     private Context mContext = null;
     private static final boolean DEBUG = false;
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -204,14 +203,21 @@ public class BluetoothAutoPairService extends IntentService {
     private void connected(BluetoothDevice device) throws Exception {
         if ( mService != null && device != null ) {
             Log("Connecting to target: " + device.getAddress());
-            if (mService.connect(device)) {
-                mService.setPriority( device, BluetoothProfile.PRIORITY_AUTO_CONNECT );
-                timer.cancel();
-                showToast(CONNECTING_TO_REMOTE);
-                Log("connect ok and show toast!");
-            } else {
-                Log("connect no!");
-            }
+            try{
+                Class clz = Class.forName("android.bluetooth.BluetoothHidHost");
+                if (clz.cast(mService) == null) return;
+                Method connect = clz.getMethod("connect",BluetoothDevice.class);
+                Method setPriority = clz.getMethod("setPriority",BluetoothDevice.class, int.class);
+                boolean ret = (boolean)connect.invoke(clz.cast(mService),device);
+                if (ret) {
+                    setPriority.invoke(clz.cast(mService),device,1000/*BluetoothProfile.PRIORITY_AUTO_CONNECT*/);
+                    timer.cancel();
+                    showToast(CONNECTING_TO_REMOTE);
+                    Log("connect ok and show toast!");
+                } else {
+                    Log("connect no!");
+                }
+            } catch(Exception ex) {ex.printStackTrace();}
         } else {
             Log("mService or device no work!");
         }
@@ -234,7 +240,7 @@ public class BluetoothAutoPairService extends IntentService {
             }
         }
         if (!mBluetoothAdapter.getProfileProxy(mContext, mServiceConnection,
-                BluetoothProfile.HID_HOST)) {
+                4/*BluetoothProfile.HID_HOST*/)) {
             Log("Bluetooth getProfileProxy failed!");
         }
         return true;
@@ -252,7 +258,7 @@ public class BluetoothAutoPairService extends IntentService {
             if (DEBUG) {
                 Log("Bluetooth service proxy connected");
             }
-            mService = (BluetoothHidHost)proxy;
+            mService = proxy;
         }
     };
 

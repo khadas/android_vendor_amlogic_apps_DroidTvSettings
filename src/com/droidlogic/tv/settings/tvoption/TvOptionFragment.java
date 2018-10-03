@@ -18,7 +18,6 @@ package com.droidlogic.tv.settings.tvoption;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.media.AudioSystem;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.provider.Settings;

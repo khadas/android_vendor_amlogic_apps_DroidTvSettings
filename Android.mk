@@ -17,7 +17,6 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_PROGUARD_ENABLED := disabled
 LOCAL_PACKAGE_NAME := DroidTvSettings
-
 LOCAL_CERTIFICATE := platform
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
@@ -30,7 +29,7 @@ LOCAL_PRIVILEGED_MODULE := true
 endif
 
 LOCAL_JAVA_LIBRARIES := droidlogic droidlogic-tv
-include frameworks/base/packages/SettingsLib/common.mk
+#include frameworks/base/packages/SettingsLib/common.mk
 
 LOCAL_STATIC_ANDROID_LIBRARIES := \
     android-support-v7-recyclerview \
@@ -50,11 +49,12 @@ LOCAL_RESOURCE_DIR := \
 LOCAL_SRC_FILES := \
     $(call all-java-files-under, src) \
     $(call all-Iaidl-files-under, src)
-include frameworks/opt/setupwizard/library/common-gingerbread.mk
-include frameworks/base/packages/SettingsLib/common.mk
+#include frameworks/opt/setupwizard/library/common-gingerbread.mk
+#include frameworks/base/packages/SettingsLib/common.mk
 
-LOCAL_PRIVATE_PLATFORM_APIS := true
+#LOCAL_PRIVATE_PLATFORM_APIS := true
 FILE := device/*/$(TARGET_PRODUCT)/files/DroidTvSettings/AndroidManifest-common.xml
+
 FILES := $(foreach v,$(wildcard $(FILE)),$(v))
 
 ifeq ($(FILES), $(wildcard $(FILE)))
@@ -62,4 +62,5 @@ LOCAL_FULL_LIBS_MANIFEST_FILES := $(FILES)
 LOCAL_JACK_COVERAGE_INCLUDE_FILTER := com.droidlogic.tv.settings*
 endif
 
+# cannot build with target shipping api level =28
 include $(BUILD_PACKAGE)

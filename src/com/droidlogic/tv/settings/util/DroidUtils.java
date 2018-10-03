@@ -31,11 +31,11 @@ public final class DroidUtils {
 	}
 
 	public static boolean hasTvUiMode() {
-		return SystemProperties.getBoolean("ro.platform.has.tvuimode", false);
+		return SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false);
 	}
 
 	public static boolean hasMboxUiMode() {
-		return SystemProperties.getBoolean("ro.platform.has.mboxuimode", false);
+		return SystemProperties.getBoolean("ro.vendor.platform.has.mboxuimode", false);
 	}
 
 	public static void invisiblePreference(Preference preference, boolean tvUiMode) {

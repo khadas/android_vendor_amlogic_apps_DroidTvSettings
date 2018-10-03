@@ -16,7 +16,6 @@
 
 package com.droidlogic.tv.settings;
 
-import android.app.ActivityManagerNative;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -107,7 +106,7 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 				.checked(checkedKey == 0).build());
 		actions.add(new Action.Builder().key(POWER_KEY_SHUTDOWN).title(getString(R.string.power_action_shutdown))
 				.checked(checkedKey == 1).build());
-		if (!SystemProperties.getBoolean("ro.platform.has.tvuimode", false)) {
+		if (!SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false)) {
 			actions.add(new Action.Builder().key(POWER_KEY_RESTART).title(getString(R.string.power_action_restart))
 					.checked(checkedKey == 2).build());
 		}
@@ -129,7 +128,7 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 
 	private int whichPowerKeyDefinition() {
 		int default_value = 0;
-		if (SystemProperties.getBoolean("ro.platform.has.tvuimode", false)) {
+		if (SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false)) {
 			default_value = 1;
 		}
 		return Settings.System.getInt(mContext.getContentResolver(), POWER_KEY_DEFINITION, default_value);

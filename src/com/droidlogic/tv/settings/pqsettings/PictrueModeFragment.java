@@ -18,7 +18,6 @@ package com.droidlogic.tv.settings.pqsettings;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.media.AudioSystem;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.provider.Settings;
@@ -60,7 +59,6 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
     private static final String PQ_COLOR_TEMPRATURE = "pq_color_temprature";
     private static final String PQ_ASPECT_RATIO = "pq_aspect_ratio";
     private static final String PQ_DNR = "pq_dnr";
-    private static final String PQ_HDMI_COLOR = "pq_hdmi_color_range";
     private static final String PQ_CUSTOM = "pq_custom";
 
     private static final String CURRENT_DEVICE_ID = "current_device_id";
@@ -88,23 +86,11 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
     public void onResume() {
         super.onResume();
         final ListPreference picturemodePref = (ListPreference) findPreference(PQ_PICTRUE_MODE);
-        if (mPQSettingsManager == null) {
-            mPQSettingsManager = new PQSettingsManager(getActivity());
-        }
-        if (mPQSettingsManager.isHdmiSource()) {
+        if (TvInputInfo.TYPE_HDMI == getInputType()) {
             picturemodePref.setEntries(setHdmiPicEntries());
             picturemodePref.setEntryValues(setHdmiPicEntryValues());
         }
         picturemodePref.setValue(mPQSettingsManager.getPictureModeStatus());
-
-        final Preference backlightPref = (Preference) findPreference(PQ_BACKLIGHT);
-        boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
-        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_backlight)) ||
-                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_backlight))) {
-            backlightPref.setSummary(mPQSettingsManager.getBacklightStatus() + "%");
-        } else {
-            backlightPref.setVisible(false);
-        }
     }
 
     @Override
@@ -129,7 +115,7 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
         boolean hasMboxFeature = SettingsConstant.hasMboxFeature(getActivity());
         final ListPreference picturemodePref = (ListPreference) findPreference(PQ_PICTRUE_MODE);
-        if (mPQSettingsManager.isHdmiSource()) {
+        if (TvInputInfo.TYPE_HDMI == getInputType()) {
             picturemodePref.setEntries(setHdmiPicEntries());
             picturemodePref.setEntryValues(setHdmiPicEntryValues());
         }
@@ -183,21 +169,6 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         } else {
             dnrPref.setVisible(false);
         }
-        final Preference backlightPref = (Preference) findPreference(PQ_BACKLIGHT);
-        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_backlight)) ||
-                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_backlight))) {
-            backlightPref.setSummary(mPQSettingsManager.getBacklightStatus() + "%");
-        } else {
-            backlightPref.setVisible(false);
-        }
-        final ListPreference hdmicolorPref = (ListPreference) findPreference(PQ_HDMI_COLOR);
-        if (mPQSettingsManager.isHdmiSource() && ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_hdmicolor)) ||
-                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_hdmicolor)))) {
-            hdmicolorPref.setValueIndex(mPQSettingsManager.getHdmiColorRangeStatus());
-            hdmicolorPref.setOnPreferenceChangeListener(this);
-        } else {
-            hdmicolorPref.setVisible(false);
-        }
     }
 
     @Override
@@ -221,23 +192,17 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         } else if (TextUtils.equals(preference.getKey(), PQ_ASPECT_RATIO)) {
             final int selection = Integer.parseInt((String)newValue);
             mPQSettingsManager.setAspectRatio(selection);
-        } else if (TextUtils.equals(preference.getKey(), PQ_HDMI_COLOR)) {
-            final int selection = Integer.parseInt((String)newValue);
-            mPQSettingsManager.setHdmiColorRangeValue(selection);
         }
         return true;
     }
 
-    private final int[] HDMI_PIC_RES = {R.string.pq_standard, R.string.pq_vivid, R.string.pq_soft, R.string.pq_sport, R.string.pq_movie, R.string.pq_monitor,R.string.pq_user};
+    private final int[] HDMI_PIC_RES = {R.string.pq_standard, R.string.pq_vivid, R.string.pq_soft, R.string.pq_monitor,R.string.pq_user};
     private final String[] HDMI_PIC_MODE = {PQSettingsManager.STATUS_STANDARD, PQSettingsManager.STATUS_VIVID, PQSettingsManager.STATUS_SOFT,
-        PQSettingsManager.STATUS_SPORT, PQSettingsManager.STATUS_MOVIE, PQSettingsManager.STATUS_MONITOR, PQSettingsManager.STATUS_USER};
+        PQSettingsManager.STATUS_MONITOR, PQSettingsManager.STATUS_USER};
 
     private String[] setHdmiPicEntries() {
         String[] temp = new String[HDMI_PIC_RES.length];
-        if (mPQSettingsManager == null) {
-            mPQSettingsManager = new PQSettingsManager(getActivity());
-        }
-        if (mPQSettingsManager.isHdmiSource()) {
+        if (TvInputInfo.TYPE_HDMI == getInputType()) {
             for (int i = 0; i < HDMI_PIC_RES.length; i++) {
                 temp[i] = getString(HDMI_PIC_RES[i]);
             }
@@ -247,14 +212,16 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
 
     private String[] setHdmiPicEntryValues() {
         String[] temp = new String[HDMI_PIC_MODE.length];
-        if (mPQSettingsManager == null) {
-            mPQSettingsManager = new PQSettingsManager(getActivity());
-        }
-        if (mPQSettingsManager.isHdmiSource()) {
+        if (TvInputInfo.TYPE_HDMI == getInputType()) {
             for (int i = 0; i < HDMI_PIC_MODE.length; i++) {
                 temp[i] = HDMI_PIC_MODE[i];
             }
         }
         return temp;
+    }
+
+    private int getInputType() {
+        final int DEFAULT = -1;
+        return Settings.System.getInt(getActivity().getContentResolver(), "current_input_type", DEFAULT);
     }
 }

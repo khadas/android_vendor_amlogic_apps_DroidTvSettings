@@ -36,13 +36,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.provider.Settings;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-import android.content.ComponentName;
-
+import java.lang.reflect.Method;
 import com.droidlogic.tv.settings.tvoption.TvOptionSettingManager;
-import com.droidlogic.tv.settings.tvoption.AudioEffectsSettingManagerService;
-import com.droidlogic.tv.settings.tvoption.SoundEffectSettingManager;
 
 public abstract class TvSettingsActivity extends Activity {
 
@@ -91,14 +86,11 @@ public abstract class TvSettingsActivity extends Activity {
                     });
         }
         mStartMode = getIntent().getIntExtra("from_live_tv", MODE_LAUNCHER);
-        Log.d(TAG, "mStartMode : " + mStartMode);
         if (SettingsConstant.needDroidlogicCustomization(this)) {
             if (mStartMode == MODE_LIVE_TV) {
                 startShowActivityTimer();
             }
         }
-        Intent intent = new Intent(this, AudioEffectsSettingManagerService.class);
-        bindService(intent, mConn, Context.BIND_AUTO_CREATE);
     }
 
     public BroadcastReceiver mMenuTimeReceiver = new BroadcastReceiver() {
@@ -110,33 +102,6 @@ public abstract class TvSettingsActivity extends Activity {
             }
         }
     };
-
-    private boolean mBounded = false;
-    private AudioEffectsSettingManagerService mAudioEffectsSettingManager;
-
-    private ServiceConnection mConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(TAG, "onServiceConnected name = " + name);
-            mBounded = true;
-            AudioEffectsSettingManagerService.MyBinder myBinder = (AudioEffectsSettingManagerService.MyBinder)binder;
-            mAudioEffectsSettingManager = myBinder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected name = " + name);
-            mBounded = false;
-        }
-    };
-
-    public SoundEffectSettingManager getSoundEffectSettingManager() {
-        if (mBounded) {
-            return mAudioEffectsSettingManager.getSoundEffectSettingManager();
-        } else {
-            return null;
-        }
-    }
 
     public void registerMenuTimeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
@@ -152,24 +117,16 @@ public abstract class TvSettingsActivity extends Activity {
         handler.removeMessages(0);
 
         int seconds = Settings.System.getInt(getContentResolver(), TvOptionSettingManager.KEY_MENU_TIME, TvOptionSettingManager.DEFUALT_MENU_TIME);
-        if (seconds == 1) {
-            seconds = 15;
+        if (seconds == 0) {
+            seconds = 10;
+        } else if (seconds == 1) {
+            seconds = 20;
         } else if (seconds == 2) {
-            seconds = 30;
+            seconds = 40;
         } else if (seconds == 3) {
             seconds = 60;
-        } else if (seconds == 4) {
-            seconds = 120;
-        } else if (seconds == 5) {
-            seconds = 240;
-        } else {
-            seconds = 0;
         }
-        if (seconds > 0) {
-            handler.sendEmptyMessageDelayed(0, seconds * 1000);
-        } else {
-            handler.removeMessages(0);
-        }
+        handler.sendEmptyMessageDelayed(0, seconds * 1000);
     }
 
     Handler handler = new Handler() {
@@ -200,7 +157,6 @@ public abstract class TvSettingsActivity extends Activity {
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_BACK:
                     if (mStartMode == MODE_LIVE_TV) {
-                        Log.d(TAG, "dispatchKeyEvent");
                         startShowActivityTimer();
                     }
                     break;
@@ -216,14 +172,19 @@ public abstract class TvSettingsActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         unregisterMenuTimeReceiver();
-        unbindService(mConn);
-        Log.d(TAG, "onDestroy");
     }
 
     @Override
     public void finish() {
         final Fragment fragment = getFragmentManager().findFragmentByTag(SETTINGS_FRAGMENT_TAG);
-        if (isResumed() && fragment != null) {
+        boolean isresumed = true;
+        Method isResumedMethod = null;
+        try {
+            isResumedMethod = Activity.class.getMethod("isResumed()");
+            isresumed = (boolean)isResumedMethod.invoke(TvSettingsActivity.this);
+        }catch (Exception ex){
+        }
+        if (isresumed && fragment != null) {
             final ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
             final Scene scene = new Scene(root);
             scene.setEnterAction(new Runnable() {
@@ -235,8 +196,8 @@ public abstract class TvSettingsActivity extends Activity {
                 }
             });
             final Slide slide = new Slide(Gravity.END);
-            slide.setSlideFraction(
-                    getResources().getDimension(R.dimen.lb_settings_pane_width) / root.getWidth());
+           /* slide.setSlideFraction(
+                    getResources().getDimension(R.dimen.lb_settings_pane_width) / root.getWidth());*/
             slide.addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {

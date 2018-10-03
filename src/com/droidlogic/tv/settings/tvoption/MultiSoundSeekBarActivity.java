@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,33 @@
  * limitations under the License.
  */
 
-package com.droidlogic.tv.settings;
-import android.app.FragmentTransaction;
-import android.os.Bundle;
-import android.content.Intent;
-import android.app.Fragment;
-import android.support.v17.preference.LeanbackPreferenceFragment;
-import android.view.View;
-import android.util.Log;
+package com.droidlogic.tv.settings.tvoption;
 
-public class CryptKeeperActivity extends TvSettingsActivity{
+import com.droidlogic.tv.settings.BaseSettingsFragment;
+import com.droidlogic.tv.settings.TvSettingsActivity;
+
+import android.app.Fragment;
+
+/**
+ * Activity to display displaymode and hdr.
+ */
+public class MultiSoundSeekBarActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
         return SettingsFragment.newInstance();
     }
-	@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-		Log.d("CryptKeeper","xxxonActivityResult"+requestCode);
-	}
 
     public static class SettingsFragment extends BaseSettingsFragment {
 
         public static SettingsFragment newInstance() {
             return new SettingsFragment();
         }
+
         @Override
         public void onPreferenceStartInitialScreen() {
-            final CryptKeeperFragment fragment = new CryptKeeperFragment();
+            final MultiSoundSeekBarFragment fragment = MultiSoundSeekBarFragment.newInstance();
             startPreferenceFragment(fragment);
         }
     }
-
 }

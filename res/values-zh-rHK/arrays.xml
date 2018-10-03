@@ -27,14 +27,4 @@
     <item>LINE</item>
     <item>RF</item>
   </string-array>
-
-  <string-array name="tv_sound_output_device_entries">
-    <item>"喇叭"</item>
-    <item>"外接音箱"</item>
-  </string-array>
-
-  <string-array name="tv_offon_entries">
-    <item>"關閉"</item>
-    <item>"啟用"</item>
-  </string-array>
 </resources>
