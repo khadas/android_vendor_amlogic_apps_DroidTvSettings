@@ -264,13 +264,6 @@
         <service
             android:name = ".BluetoothAutoPairService" >
         </service>
-        <receiver android:name=".display.dolbyvision.DvReceiver">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
-        <service android:name=".display.dolbyvision.DolbyVisionService" />
         <provider
             android:name=".database.TvControlDataProvider"
             android:authorities="com.droidlogic.tv.settings"
