@@ -33,6 +33,7 @@ import android.app.AlertDialog;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.media.tv.TvInputManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -54,7 +55,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     private static final String DYNAMIC_BACKLIGHT = "tv_dynamic_backlight";
     private static final String RESTORE_FACTORY= "tv_restore_factory";
     private static final String FBC_UPGRADE = "tv_fbc_upgrade";
-    private static final String PIP= "pip";
+    private static final String PIP= "tv_pip";
     private static final String CLOSED_CAPTIONS = "tv_closed_captions";
     private static final String AV_PARENTAL_CONTROLS = "parental_controls";
     private static final String MENU_TIME = "tv_menu_time";
@@ -100,12 +101,17 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         if (mTvInputManager == null) {
             mTvInputManager = (TvInputManager)getActivity().getSystemService(Context.TV_INPUT_SERVICE);
         }
+
+        final Preference pip = (Preference) findPreference(PIP);
+        pip.setVisible(false);
+
         final Preference avParentalControls = (Preference) findPreference(AV_PARENTAL_CONTROLS);
-        int mSourceInput = mTvControlManager.GetCurrentSourceInput();
-        Log.d(TAG, "mSourceInput: " + mSourceInput);
+        int deviceId = Settings.System.getInt(getContext().getContentResolver(),
+                DroidLogicTvUtils.TV_CURRENT_DEVICE_ID, 0);
+        Log.d(TAG, "mSourceInput: " + deviceId);
         boolean isParentControlEnabled = mTvInputManager.isParentalControlsEnabled();
-        if (mSourceInput == DroidLogicTvUtils.DEVICE_ID_AV1
-            || mSourceInput == DroidLogicTvUtils.DEVICE_ID_AV2) {
+        if (deviceId == DroidLogicTvUtils.DEVICE_ID_AV1
+            || deviceId == DroidLogicTvUtils.DEVICE_ID_AV2) {
             avParentalControls.setVisible(true);
         } else {
             avParentalControls.setVisible(false);

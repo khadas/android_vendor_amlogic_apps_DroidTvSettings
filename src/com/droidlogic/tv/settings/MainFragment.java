@@ -40,6 +40,7 @@ import android.os.Binder;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.Preference;
@@ -173,11 +174,12 @@ public class MainFragment extends LeanbackPreferenceFragment {
             mTvOption.setVisible(false);
             moreSettingsPref.setVisible(false);
             TvControlManager tvControlManager = TvControlManager.getInstance();
-            int sourceinputtype = tvControlManager.GetCurrentSourceInput();
-            if (sourceinputtype != DroidLogicTvUtils.DEVICE_ID_ADTV
-                && sourceinputtype != DroidLogicTvUtils.DEVICE_ID_ATV
-                && sourceinputtype != DroidLogicTvUtils.DEVICE_ID_DTV) {
-                if (sourceinputtype == -1) {
+            int deviceId = Settings.System.getInt(getContext().getContentResolver(),
+                    DroidLogicTvUtils.TV_CURRENT_DEVICE_ID, 0);
+            if (deviceId != DroidLogicTvUtils.DEVICE_ID_ADTV
+                && deviceId != DroidLogicTvUtils.DEVICE_ID_ATV
+                && deviceId != DroidLogicTvUtils.DEVICE_ID_DTV) {
+                if (deviceId == -1) {
                     channelPref.setVisible(true);
                 } else {
                     channelPref.setVisible(false);
