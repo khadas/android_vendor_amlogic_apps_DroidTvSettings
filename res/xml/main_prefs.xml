@@ -38,7 +38,7 @@
         android:fragment="com.droidlogic.tv.settings.tvoption.SoundModeFragment"
         android:icon="@drawable/ic_volume_up"
         android:key="sound_effects"
-        android:title="@string/device_sound" />
+        android:title="@string/tv_sound" />
     <Preference
         android:fragment="com.droidlogic.tv.settings.SoundFragment"
         android:icon="@drawable/ic_volume_up"
@@ -88,4 +88,9 @@
         android:key="tv_settings"
         android:title="@string/system_setting"
         android:fragment="com.droidlogic.tv.settings.tvoption.DroidSettingsModeFragment" />
+    <Preference
+        android:key="encrypt"
+        android:icon="@drawable/ic_settings_more"
+        android:title="@string/crypt_keeper_settings_title"
+        android:fragment="com.droidlogic.tv.settings.CryptKeeperFragment"/>
 </PreferenceScreen>

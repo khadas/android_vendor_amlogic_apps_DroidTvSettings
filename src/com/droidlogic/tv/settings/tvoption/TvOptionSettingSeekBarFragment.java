@@ -65,7 +65,7 @@ public class TvOptionSettingSeekBarFragment extends LeanbackPreferenceFragment i
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
         if (mTvOptionSettingManager == null) {
-            mTvOptionSettingManager = new TvOptionSettingManager(getActivity());
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
         }
         initSeekBar(view);
     }

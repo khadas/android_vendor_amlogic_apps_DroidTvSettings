@@ -42,14 +42,14 @@ public class AdjustValueFragment extends LeanbackPreferenceFragment implements S
 
     private SeekBar seekbar_brightness;
     private SeekBar seekbar_contrast;
-    private SeekBar seekbar_color;
+    private SeekBar seekbar_saturation;
     private SeekBar seekbar_sharpness;
-    private SeekBar seekbar_tone;
+    private SeekBar seekbar_hue;
     private TextView text_brightness;
     private TextView text_contrast;
-    private TextView text_color;
+    private TextView text_saturation;
     private TextView text_sharpness;
-    private TextView text_tone;
+    private TextView text_hue;
     private PQSettingsManager mPQSettingsManager;
     private boolean isSeekBarInited = false;
 
@@ -115,21 +115,21 @@ public class AdjustValueFragment extends LeanbackPreferenceFragment implements S
             seekbar_contrast.setVisibility(View.GONE);
             text_contrast.setVisibility(View.GONE);
         }
-        seekbar_color = (SeekBar) view.findViewById(R.id.seekbar_color);
-        text_color = (TextView) view.findViewById(R.id.text_color);
-        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_color)) ||
-                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_color))) {
+        seekbar_saturation = (SeekBar) view.findViewById(R.id.seekbar_saturation);
+        text_saturation = (TextView) view.findViewById(R.id.text_saturation);
+        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_saturation)) ||
+                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_saturation))) {
             status = mPQSettingsManager.getColorStatus();
-            seekbar_color.setOnSeekBarChangeListener(this);
-            seekbar_color.setProgress(status);
-            setShow(R.id.seekbar_color, status);
+            seekbar_saturation.setOnSeekBarChangeListener(this);
+            seekbar_saturation.setProgress(status);
+            setShow(R.id.seekbar_saturation, status);
             if (!hasfocused) {
-                seekbar_color.requestFocus();
+                seekbar_saturation.requestFocus();
                 hasfocused = true;
             }
         } else {
-            seekbar_color.setVisibility(View.GONE);
-            text_color.setVisibility(View.GONE);
+            seekbar_saturation.setVisibility(View.GONE);
+            text_saturation.setVisibility(View.GONE);
         }
         seekbar_sharpness = (SeekBar) view.findViewById(R.id.seekbar_sharpness);
         text_sharpness = (TextView) view.findViewById(R.id.text_sharpness);
@@ -147,21 +147,21 @@ public class AdjustValueFragment extends LeanbackPreferenceFragment implements S
             seekbar_sharpness.setVisibility(View.GONE);
             text_sharpness.setVisibility(View.GONE);
         }
-        seekbar_tone= (SeekBar) view.findViewById(R.id.seekbar_tone);
-        text_tone= (TextView) view.findViewById(R.id.text_tone);
-        if (((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_tone)) ||
-                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_tone))) && mPQSettingsManager.isNtscSignalOrNot()) {
+        seekbar_hue= (SeekBar) view.findViewById(R.id.seekbar_hue);
+        text_hue= (TextView) view.findViewById(R.id.text_hue);
+        if (((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_hue)) ||
+                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_hue))) && mPQSettingsManager.isNtscSignalOrNot()) {
             status = mPQSettingsManager.getToneStatus();
-            seekbar_tone.setOnSeekBarChangeListener(this);
-            seekbar_tone.setProgress(status);
-            setShow(R.id.seekbar_tone, status);
+            seekbar_hue.setOnSeekBarChangeListener(this);
+            seekbar_hue.setProgress(status);
+            setShow(R.id.seekbar_hue, status);
             if (!hasfocused) {
-                seekbar_tone.requestFocus();
+                seekbar_hue.requestFocus();
                 hasfocused = true;
             }
         } else {
-            seekbar_tone.setVisibility(View.GONE);
-            text_tone.setVisibility(View.GONE);
+            seekbar_hue.setVisibility(View.GONE);
+            text_hue.setVisibility(View.GONE);
         }
         isSeekBarInited = true;
     }
@@ -182,8 +182,8 @@ public class AdjustValueFragment extends LeanbackPreferenceFragment implements S
                 mPQSettingsManager.setContrast(progress - mPQSettingsManager.getContrastStatus());
                 break;
             }
-            case R.id.seekbar_color:{
-                setShow(R.id.seekbar_color, progress);
+            case R.id.seekbar_saturation:{
+                setShow(R.id.seekbar_saturation, progress);
                 mPQSettingsManager.setColor(progress - mPQSettingsManager.getColorStatus());
                 break;
             }
@@ -192,8 +192,8 @@ public class AdjustValueFragment extends LeanbackPreferenceFragment implements S
                 mPQSettingsManager.setSharpness(progress - mPQSettingsManager.getSharpnessStatus());
                 break;
             }
-            case R.id.seekbar_tone:{
-                setShow(R.id.seekbar_tone, progress);
+            case R.id.seekbar_hue:{
+                setShow(R.id.seekbar_hue, progress);
                 mPQSettingsManager.setTone(progress - mPQSettingsManager.getToneStatus());
                 break;
             }
@@ -222,16 +222,16 @@ public class AdjustValueFragment extends LeanbackPreferenceFragment implements S
                 text_contrast.setText(getShowString(R.string.pq_contrast, value));
                 break;
             }
-            case R.id.seekbar_color:{
-                text_color.setText(getShowString(R.string.pq_color, value));
+            case R.id.seekbar_saturation:{
+                text_saturation.setText(getShowString(R.string.pq_saturation, value));
                 break;
             }
             case R.id.seekbar_sharpness:{
                 text_sharpness.setText(getShowString(R.string.pq_sharpness, value));
                 break;
             }
-            case R.id.seekbar_tone:{
-                text_tone.setText(getShowString(R.string.pq_tone, value));
+            case R.id.seekbar_hue:{
+                text_hue.setText(getShowString(R.string.pq_hue, value));
                 break;
             }
             default:

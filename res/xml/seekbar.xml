@@ -53,17 +53,17 @@
         android:layout_marginBottom="@dimen/pq_seekbar_item_marginBottom"
         />
     <TextView
-        android:id="@+id/text_color"
+        android:id="@+id/text_saturation"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/pq_color"
+        android:text="@string/pq_saturation"
         android:focusable="false"
         android:layout_marginTop="@dimen/pq_seekbar_item_marginTop"
         android:layout_marginBottom="@dimen/pq_seekbar_item_marginBottom"
         android:layout_marginLeft="@dimen/pq_seekbar_item_marginLeft"
         />
     <SeekBar
-        android:id="@+id/seekbar_color"
+        android:id="@+id/seekbar_saturation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100"
@@ -89,17 +89,17 @@
         android:layout_marginBottom="@dimen/pq_seekbar_item_marginBottom"
         />
     <TextView
-        android:id="@+id/text_tone"
+        android:id="@+id/text_hue"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/pq_tone"
+        android:text="@string/pq_hue"
         android:focusable="false"
         android:layout_marginTop="@dimen/pq_seekbar_item_marginTop"
         android:layout_marginBottom="@dimen/pq_seekbar_item_marginBottom"
         android:layout_marginLeft="@dimen/pq_seekbar_item_marginLeft"
         />
     <SeekBar
-        android:id="@+id/seekbar_tone"
+        android:id="@+id/seekbar_hue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100"

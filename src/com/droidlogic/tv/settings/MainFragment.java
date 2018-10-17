@@ -48,6 +48,7 @@ import android.util.Log;
 
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
+import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
@@ -118,8 +119,8 @@ public class MainFragment extends LeanbackPreferenceFragment {
         final Preference netflixesnPref = findPreference(KEY_NETFLIX_ESN);
 
         mUpgradeBluetoothRemote.setVisible(is_from_live_tv ? false : (SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag));
-        hdmicecPref.setVisible(is_from_live_tv ? false : (getContext().getPackageManager().hasSystemFeature("android.hardware.hdmi.cec"/*PackageManager.FEATURE_HDMI_CEC*/)
-                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext()) && !tvFlag));
+        hdmicecPref.setVisible(is_from_live_tv ? false : (getContext().getPackageManager().hasSystemFeature("android.hardware.hdmi.cec")
+                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext())));
         playbackPref.setVisible(is_from_live_tv ? false : (SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()) && !tvFlag));
         if (netflixesnPref != null) {
             if (is_from_live_tv) {
@@ -167,7 +168,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
             }
         } else {
             picturePref.setVisible(!SettingsConstant.needDroidlogicTvFeature(getContext()));
-            mTvOption.setVisible(tvFlag);
+            mTvOption.setVisible(SettingsConstant.needDroidlogicTvFeature(getContext()));
             mSoundsPref.setVisible(false);
             channelPref.setVisible(false);
             settingsPref.setVisible(false);
@@ -220,7 +221,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
             return;
         }
 
-        mSoundsPref.setIcon(SoundFragment.getSoundEffectsEnabled(getContext().getContentResolver())
+        mSoundsPref.setIcon(SoundParameterSettingManager.getSoundEffectsEnabled(getContext().getContentResolver())
                 ? R.drawable.ic_volume_up : R.drawable.ic_volume_off);
     }
 

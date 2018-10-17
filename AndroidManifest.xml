@@ -17,6 +17,7 @@
     <uses-permission android:name="droidlogic.permission.SYSTEM_CONTROL" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="com.netflix.ninja.permission.ESN" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
 
     <application
         android:banner="@drawable/ic_launcher_banner_settings"
@@ -151,37 +152,64 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="pqsettings.PictrueModeActivity"
+            android:name=".TvSourceActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Settings.Transparent" />
+        <activity
+            android:name=".pqsettings.PictrueModeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="tvoption.TvOptionActivity"
+            android:name=".tvoption.TvOptionActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="tvoption.SoundModeActivity"
+            android:name=".tvoption.SoundModeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="tvoption.SettingsModeActivity"
+            android:name=".tvoption.SettingsModeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="pqsettings.AdjustValueActivity"
+            android:name=".pqsettings.AdjustValueActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="tvoption.MultiSoundSeekBarActivity"
+            android:name=".pqsettings.AdjustBaclLightActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="tvoption.TvOptionSettingSeekBarActivity"
+            android:name=".tvoption.TvOptionSettingSeekBarActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+        <activity
+            android:name=".tvoption.Hdmi20SwitchActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+        <activity
+            android:name=".tvoption.TrebleBassSeekBarActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+         <activity
+            android:name=".tvoption.BalanceSeekBarActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+         <activity
+            android:name=".tvoption.DtsSoundSettingActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
@@ -190,6 +218,13 @@
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
+        <activity
+            android:name=".tvoption.AgcSeekBarActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+        <service android:name=".tvoption.AudioEffectsSettingManagerService" />
+
         <receiver
             android:exported="true"
             android:name=".BluetoothAutoPairReceiver"
@@ -210,13 +245,6 @@
         <grant-uri-permission android:pathPattern="/tv_control_pppoe" />
         <grant-uri-permission android:pathPattern="/tv_control_others" />
         </provider>
-        <receiver android:name=".display.dolbyvision.DvReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
-        <service android:name=".display.dolbyvision.DolbyVisionService" />
     </application>
 
 </manifest>

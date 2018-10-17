@@ -17,6 +17,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_PROGUARD_ENABLED := disabled
 LOCAL_PACKAGE_NAME := DroidTvSettings
+
 LOCAL_CERTIFICATE := platform
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
@@ -54,7 +55,6 @@ LOCAL_SRC_FILES := \
 
 #LOCAL_PRIVATE_PLATFORM_APIS := true
 FILE := device/*/$(TARGET_PRODUCT)/files/DroidTvSettings/AndroidManifest-common.xml
-
 FILES := $(foreach v,$(wildcard $(FILE)),$(v))
 
 ifeq ($(FILES), $(wildcard $(FILE)))
@@ -62,5 +62,4 @@ LOCAL_FULL_LIBS_MANIFEST_FILES := $(FILES)
 LOCAL_JACK_COVERAGE_INCLUDE_FILTER := com.droidlogic.tv.settings*
 endif
 
-# cannot build with target shipping api level =28
 include $(BUILD_PACKAGE)

@@ -137,11 +137,12 @@ public class OutputmodeFragment extends LeanbackPreferenceFragment implements On
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(mIntentReceiver);
-        if (task != null)
-            task.cancel();
-		if (mAlertDialog != null) {
+        if (mAlertDialog != null) {
+            Log.d(LOG_TAG, "onPause dismiss AlertDialog");
             mAlertDialog.dismiss();
         }
+        if (task != null)
+            task.cancel();
         mHandler.removeMessages(MSG_COUNT_DOWN);
     }
 

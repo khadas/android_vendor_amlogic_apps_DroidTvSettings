@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.droidlogic.tv.settings.tvoption;
+package com.droidlogic.tv.settings.pqsettings;
 
 import com.droidlogic.tv.settings.BaseSettingsFragment;
 import com.droidlogic.tv.settings.TvSettingsActivity;
@@ -22,9 +22,9 @@ import com.droidlogic.tv.settings.TvSettingsActivity;
 import android.app.Fragment;
 
 /**
- * Activity to display displaymode and hdr.
+ * Activity to adjust multi picture option.
  */
-public class MultiSoundSeekBarActivity extends TvSettingsActivity {
+public class AdjustBaclLightActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
@@ -39,7 +39,7 @@ public class MultiSoundSeekBarActivity extends TvSettingsActivity {
 
         @Override
         public void onPreferenceStartInitialScreen() {
-            final MultiSoundSeekBarFragment fragment = MultiSoundSeekBarFragment.newInstance();
+            final AdjustBaclLightFragment fragment = AdjustBaclLightFragment.newInstance();
             startPreferenceFragment(fragment);
         }
     }

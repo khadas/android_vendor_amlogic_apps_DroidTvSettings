@@ -208,26 +208,52 @@ public class DolbyVisionService extends Service
     public  String readVfmMap() {
         File file = null;
         file = new File(VFM_MAP_PATH);
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-            Log.e(TAG, "readVfmMap fileInputStream erro: " + e1.getMessage());
+        if (!file.exists()) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+
         InputStreamReader inputStreamReader = null;
-        inputStreamReader = new InputStreamReader(fileInputStream);
-        BufferedReader reader = new BufferedReader(inputStreamReader);
-        String line;
+        FileInputStream fileInputStream = null;
+        StringBuffer sb = new StringBuffer();
+        BufferedReader reader = null;
+        String line = null;
         try {
+            fileInputStream = new FileInputStream(file);
+            inputStreamReader = new InputStreamReader(fileInputStream);
+            reader = new BufferedReader(inputStreamReader);
             while ((line = reader.readLine()) != null) {
                 sb.append(line+" ");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            //close separately
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (inputStreamReader != null) {
+                    inputStreamReader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            fileInputStream = null;
+            inputStreamReader = null;
+            reader = null;
         }
+
         return sb.toString();
     }
 
