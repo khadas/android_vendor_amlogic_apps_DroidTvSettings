@@ -16,7 +16,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_PROGUARD_ENABLED := disabled
-LOCAL_PACKAGE_NAME := DroidTvSettings
+LOCAL_PACKAGE_NAME := TempDroidTvSettings
 
 LOCAL_CERTIFICATE := platform
 LOCAL_MODULE_TAGS := optional
@@ -30,7 +30,7 @@ LOCAL_PRIVILEGED_MODULE := true
 endif
 
 LOCAL_JAVA_LIBRARIES := droidlogic droidlogic-tv
-#include frameworks/base/packages/SettingsLib/common.mk
+include frameworks/base/packages/SettingsLib/common.mk
 
 LOCAL_STATIC_ANDROID_LIBRARIES := \
     android-support-v7-recyclerview \
@@ -50,8 +50,8 @@ LOCAL_RESOURCE_DIR := \
 LOCAL_SRC_FILES := \
     $(call all-java-files-under, src) \
     $(call all-Iaidl-files-under, src)
-#include frameworks/opt/setupwizard/library/common-gingerbread.mk
-#include frameworks/base/packages/SettingsLib/common.mk
+include frameworks/opt/setupwizard/library/common-gingerbread.mk
+include frameworks/base/packages/SettingsLib/common.mk
 
 ifndef PRODUCT_SHIPPING_API_LEVEL
 LOCAL_PRIVATE_PLATFORM_APIS := true
@@ -66,5 +66,3 @@ LOCAL_JACK_COVERAGE_INCLUDE_FILTER := com.droidlogic.tv.settings*
 endif
 
 include $(BUILD_PACKAGE)
-
-include $(call all-makefiles-under,$(LOCAL_PATH))
