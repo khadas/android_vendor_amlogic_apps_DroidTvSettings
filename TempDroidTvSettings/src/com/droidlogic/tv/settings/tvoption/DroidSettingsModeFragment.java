@@ -63,6 +63,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     private static final String DAYLIGHT_SAVING_TIME = "tv_daylight_saving_time";
     private static final String AUTOSYNC_TVTIME = "tv_autosync_tvtime";
     private static final String FACTORY_MENU =  "tv_factory_menu";
+    private static final String HDMI_SWITCH =  "tv_hdmi_switch";
 
     private static final String AV_PARENTAL_CONTROLS_ON = "On";
     private static final String AV_PARENTAL_CONTROLS_OFF = "Off";
@@ -105,6 +106,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         final Preference pip = (Preference) findPreference(PIP);
         pip.setVisible(false);
 
+        final Preference hdmiSwitch = (Preference) findPreference(HDMI_SWITCH);
         final Preference avParentalControls = (Preference) findPreference(AV_PARENTAL_CONTROLS);
         int deviceId = Settings.System.getInt(getContext().getContentResolver(),
                 DroidLogicTvUtils.TV_CURRENT_DEVICE_ID, 0);
@@ -115,6 +117,12 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
             avParentalControls.setVisible(true);
         } else {
             avParentalControls.setVisible(false);
+        }
+        if (deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI1
+            && deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI2
+            && deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI3
+            && deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI4) {
+            hdmiSwitch.setEnabled(false);
         }
         if (isParentControlEnabled) {
             avParentalControls.setSummary(AV_PARENTAL_CONTROLS_ON);
