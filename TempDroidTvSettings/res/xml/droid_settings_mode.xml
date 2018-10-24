@@ -70,19 +70,8 @@
         android:key="tv_restore_factory"
         android:persistent="false"
         android:title="@string/tv_restore_factory" />
-    <ListPreference
-        android:key="tv_autosync_tvtime"
-        android:persistent="false"
-        android:entries="@array/tv_autosync_tvtime_entries"
-        android:entryValues="@array/tv_autosync_tvtime_entry_values"
-        android:title="@string/tv_autosync_tvtime"
-        android:summary="%s" />
     <Preference
         android:key="tv_fbc_upgrade"
         android:persistent="false"
         android:title="@string/tv_fbc_upgrade" />
-    <Preference
-        android:key="tv_factory_menu"
-        android:persistent="false"
-        android:title="@string/tv_factory_menu" />
 </PreferenceScreen>

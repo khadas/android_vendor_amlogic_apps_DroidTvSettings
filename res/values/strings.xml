@@ -350,10 +350,9 @@
     <string name="tv_audio_ad_mix_level">Audio AD Mix Level</string>
     <string name="tv_restore_factory">TV Restore Factory</string>
     <string name="tv_daylight_saving_time">Daylight Saving Time</string>
-    <string name="tv_autosync_tvtime">AutoSync TVTime</string>
     <string name="tv_fbc_upgrade">FBC Upgrade</string>
     <string name="tv_hdmi_switch">HDMI 2.0</string>
-    <string name="tv_startup_lancher">luncher</string>
+    <string name="tv_startup_lancher">launcher</string>
     <string name="tv_factory_menu">Factory Menu</string>
     <string name="tv_startup_tv">TV</string>
     <string name="tv_settins_on">on</string>

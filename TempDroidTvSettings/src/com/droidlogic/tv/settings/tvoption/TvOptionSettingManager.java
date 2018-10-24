@@ -75,7 +75,6 @@ public class TvOptionSettingManager {
 
     public static final String STRING_NAME = "name";
     public static final String STRING_STATUS = "status";
-    public static final String DTV_AUTOSYNC_TVTIME = "autosync_tvtime";
 
     public static final String TAG = "TvOptionSettingManager";
 
@@ -226,15 +225,6 @@ public class TvOptionSettingManager {
         return type;
     }
 
-    public int getAutoSyncTVTimeStatus () {
-        int type = Settings.System.getInt(mContext.getContentResolver(), DTV_AUTOSYNC_TVTIME, 0);
-        if (CanDebug()) Log.d(TAG, "getAutoSyncTVTimeStatus = " + type);
-        if (type != 0) {
-            type = 1;
-        }
-        return type;
-    }
-
     // 0 1 ~ off on
     public int getDynamicBacklightStatus () {
         int switchVal = mSystemControlManager.GetDynamicBacklight();
@@ -352,18 +342,6 @@ public class TvOptionSettingManager {
         Settings.System.putInt(mContext.getContentResolver(), DroidLogicTvUtils.TV_START_UP_ENTER_APP, type);
     }
 
-    public void setAutoSyncTVTime (int type) {
-        if (CanDebug()) Log.d(TAG, "setAutoSyncTVTime = " + type);
-        Settings.System.putInt(mContext.getContentResolver(), DTV_AUTOSYNC_TVTIME, type);
-        if (type == 0) {
-            mSystemControlManager.setProperty("persist.sys.getdtvtime.isneed", "false");
-            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.AUTO_TIME, 0);
-            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.AUTO_TIME, 1);
-        } else if (type == 1) {
-            mSystemControlManager.setProperty("persist.sys.getdtvtime.isneed", "true");
-        }
-    }
-
     public void setMenuTime (int type) {
         if (CanDebug()) Log.d(TAG, "setMenuTime = " + type);
         Settings.System.putInt(mContext.getContentResolver(), KEY_MENU_TIME, type);
@@ -459,7 +437,6 @@ public class TvOptionSettingManager {
         resetAudioSettings();
         setStartupSetting(0);
         setAudioADSwitch(0);
-        setAutoSyncTVTime(0);
         setAutoBacklightStatus(0);
         setMenuTime(0);
         setSleepTimer(0);

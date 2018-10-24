@@ -257,9 +257,8 @@
     <string name="tv_dynamic_backlight">自动背光</string>
     <string name="tv_default_language">默认语言</string>
     <string name="tv_daylight_saving_time">夏令时</string>
-    <string name="tv_autosync_tvtime">自动同步码流时间</string>
     <string name="tv_fbc_upgrade">FBC升级</string>
-	<string name="tv_factory_menu">工厂菜单</string>
+    <string name="tv_factory_menu">工厂菜单</string>
 
     <string name="tv_sound_agc">"自动增益控制"</string>
     <string name="tv_sound_agc_enable">"自动增益控制"</string>

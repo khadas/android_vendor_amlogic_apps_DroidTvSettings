@@ -61,7 +61,6 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     private static final String MENU_TIME = "tv_menu_time";
     private static final String SLEEP_TIMER = "sleep_timer";
     private static final String DAYLIGHT_SAVING_TIME = "tv_daylight_saving_time";
-    private static final String AUTOSYNC_TVTIME = "tv_autosync_tvtime";
     private static final String FACTORY_MENU =  "tv_factory_menu";
     private static final String HDMI_SWITCH =  "tv_hdmi_switch";
 
@@ -143,9 +142,6 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         dynamicbacklightPref.setEntryValues(initSwitchEntryValue());
         dynamicbacklightPref.setValueIndex(mTvOptionSettingManager.getDynamicBacklightStatus());
         dynamicbacklightPref.setOnPreferenceChangeListener(this);
-        final ListPreference autoSyncTVTime = (ListPreference) findPreference(AUTOSYNC_TVTIME);
-        autoSyncTVTime.setValueIndex(mTvOptionSettingManager.getAutoSyncTVTimeStatus());
-        autoSyncTVTime.setOnPreferenceChangeListener(this);
         final Preference fbcupgrade = (Preference) findPreference(FBC_UPGRADE);
         fbcupgrade.setVisible(false);
 
@@ -173,8 +169,6 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
             startUiInLiveTv(CLOSED_CAPTIONS);
         } else if (TextUtils.equals(preference.getKey(), PIP)) {
             startUiInLiveTv(PIP);
-        } else if (TextUtils.equals(preference.getKey(), FACTORY_MENU)) {
-            startFactoryMenu();
         }
         return super.onPreferenceTreeClick(preference);
     }
@@ -207,8 +201,6 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
             mTvOptionSettingManager.setSleepTimer(selection);
         } else if (TextUtils.equals(preference.getKey(), DAYLIGHT_SAVING_TIME)) {
             mTvOptionSettingManager.setDaylightSavingTime(selection);
-        } else if (TextUtils.equals(preference.getKey(), AUTOSYNC_TVTIME)) {
-            mTvOptionSettingManager.setAutoSyncTVTime(selection);
         }
 
         Intent intent = new Intent();
