@@ -97,10 +97,12 @@ public class SoundEffectSettingManager {
     public static final int PARAM_AGC_MAX_LEVEL = 1;
     public static final int PARAM_AGC_ATTRACK_TIME = 4;
     public static final int PARAM_AGC_RELEASE_TIME = 5;
+    public static final int PARAM_AGC_SOURCE_ID = 6;
     public static final boolean DEFAULT_AGC_ENABLE = true;//enable 1, disable 0
     public static final int DEFAULT_AGC_MAX_LEVEL = -18;//db
     public static final int DEFAULT_AGC_ATTRACK_TIME = 10;//ms
     public static final int DEFAULT_AGC_RELEASE_TIME = 2;//s
+    public static final int DEFAULT_AGC_SOURCE_ID = 3;
 
     /* Modes of sound effects */
     public static final int MODE_STANDARD = 0;
@@ -187,6 +189,7 @@ public class SoundEffectSettingManager {
     public static final int SET_AGC_MAX_LEVEL = 13;
     public static final int SET_AGC_ATTRACK_TIME = 14;
     public static final int SET_AGC_RELEASE_TIME = 15;
+    public static final int SET_AGC_SOURCE_ID = 16;
 
     //definition off and on
     private static final int PARAMETERS_SWITCH_OFF = 1;
@@ -513,6 +516,23 @@ public class SoundEffectSettingManager {
         return saveresult;
     }
 
+    public int getAgcSourceIdStatus () {
+        int saveresult = -1;
+        if (!creatAgcAudioEffects()) {
+            Log.e(TAG, "getAgcSourceIdStatus mAgc creat fail");
+            return DEFAULT_AGC_RELEASE_TIME;
+        }
+        int[] value = new int[1];
+        mAgc.getParameter(PARAM_AGC_SOURCE_ID, value);
+        saveresult = getSavedAudioParameters(SET_AGC_SOURCE_ID);
+        if (saveresult != value[0]) {
+            Log.e(TAG, "getAgcSourceIdStatus erro get: " + value[0] + ", saved: " + saveresult);
+        } else if (CanDebug()) {
+            Log.d(TAG, "getAgcSourceIdStatus = " + saveresult);
+        }
+        return saveresult;
+    }
+
     //set sound mode except customed one
     public void setSoundMode (int mode) {
         if (!creatSoundModeAudioEffects()) {
@@ -704,6 +724,19 @@ public class SoundEffectSettingManager {
         }
     }
 
+    public void setSourceIdForAvl (int step) {
+        if (!creatAgcAudioEffects()) {
+            Log.e(TAG, "setSourceIdForAvl mAgc creat fail");
+            return;
+        }
+        int result = mAgc.setEnabled(true);
+        if (result == AudioEffect.SUCCESS) {
+            if (CanDebug()) Log.d(TAG, "setSourceIdForAvl = " + step);
+            mAgc.setParameter(PARAM_AGC_SOURCE_ID, step);
+            saveAudioParameters(SET_AGC_SOURCE_ID, step);
+        }
+    }
+
     public void setParameters(int order, int value) {
         switch (order) {
             case SET_BASS:
@@ -746,6 +779,9 @@ public class SoundEffectSettingManager {
             case SET_AGC_RELEASE_TIME:
                 setAgsReleaseTime(value);
                 break;
+            case SET_AGC_SOURCE_ID:
+                setSourceIdForAvl(value);
+                break;
             default:
                 break;
         }
@@ -753,7 +789,7 @@ public class SoundEffectSettingManager {
 
     public int getParameters(int order) {
         int value = -1;
-        if (order < SET_BASS || order > SET_EFFECT_BAND5) {
+        if (order < SET_BASS || order > SET_AGC_SOURCE_ID) {
             Log.e(TAG, "getParameters order erro");
             return value;
         }
@@ -811,6 +847,9 @@ public class SoundEffectSettingManager {
             case SET_AGC_RELEASE_TIME:
                 Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_RELEASE_TIME, value);
                 break;
+            case SET_AGC_SOURCE_ID:
+                Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_SOURCE_ID, value);
+                break;
             default:
                 break;
         }
@@ -867,6 +906,9 @@ public class SoundEffectSettingManager {
             case SET_AGC_RELEASE_TIME:
                 result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_RELEASE_TIME, DEFAULT_AGC_RELEASE_TIME);
                 break;
+            case SET_AGC_SOURCE_ID:
+                result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_SOURCE_ID, DEFAULT_AGC_SOURCE_ID);
+                break;
             default:
                 break;
         }
@@ -913,7 +955,7 @@ public class SoundEffectSettingManager {
             setParameters(i, value);
             Log.d(TAG, "initSoundEffectSettings NO." + i + "=" + value);
         }
-        for (int i = SET_AGC_ENABLE; i < SET_AGC_RELEASE_TIME + 1; i++) {
+        for (int i = SET_AGC_ENABLE; i < SET_AGC_SOURCE_ID + 1; i++) {
             int value = getSavedAudioParameters(i);
             setParameters(i, value);
             Log.d(TAG, "initSoundEffectSettings NO." + i + "=" + value);
@@ -947,6 +989,7 @@ public class SoundEffectSettingManager {
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_MAX_LEVEL, DEFAULT_AGC_MAX_LEVEL);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_ATTRACK_TIME, DEFAULT_AGC_ATTRACK_TIME);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_RELEASE_TIME, DEFAULT_AGC_RELEASE_TIME);
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_SOURCE_ID, DEFAULT_AGC_SOURCE_ID);
         initSoundEffectSettings();
     }
 

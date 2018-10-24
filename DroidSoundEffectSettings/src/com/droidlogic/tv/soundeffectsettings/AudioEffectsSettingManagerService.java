@@ -108,10 +108,12 @@ public class AudioEffectsSettingManagerService extends PersistentService {
     }
 
     private static final String RESET_ACTION = "droid.action.resetsoundeffect";
+    private static final String AVL_SOURCE_ACTION = "droid.action.avlmodule";
 
     private void registerCommandReceiver(Context context) {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(RESET_ACTION);
+        intentFilter.addAction(AVL_SOURCE_ACTION);
         context.registerReceiver(mSoundEffectSettingsReceiver, intentFilter);
     }
 
@@ -126,6 +128,8 @@ public class AudioEffectsSettingManagerService extends PersistentService {
             if (intent != null) {
                 if (RESET_ACTION.equals(intent.getAction())) {
                     mSoundEffectSettingManager.resetSoundEffectSettings();
+                } else if (AVL_SOURCE_ACTION.equals(intent.getAction())) {
+                    mSoundEffectSettingManager.setSourceIdForAvl(intent.getIntExtra("source_id", SoundEffectSettingManager.DEFAULT_AGC_SOURCE_ID));
                 }
             }
         }

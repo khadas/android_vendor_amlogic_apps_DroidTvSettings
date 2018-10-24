@@ -96,6 +96,7 @@ public class OutputModeManager {
     public static final String SOUND_EFFECT_AGC_MAX_LEVEL       = "sound_effect_agc_level";
     public static final String SOUND_EFFECT_AGC_ATTRACK_TIME       = "sound_effect_agc_attrack";
     public static final String SOUND_EFFECT_AGC_RELEASE_TIME       = "sound_effect_agc_release";
+    public static final String SOUND_EFFECT_AGC_SOURCE_ID          = "sound_avl_source_id";
 
     public static final String DIGITAL_SOUND                = "digital_sound";
     public static final String PCM                          = "PCM";
