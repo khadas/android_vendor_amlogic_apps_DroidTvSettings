@@ -210,7 +210,7 @@ public class TvOptionSettingManager {
 
     public int getSleepTimerStatus () {
         String ret = "";
-        int time = mSystemControlManager.getPropertyInt("persist.sys.tv.sleep_timer", 0);
+        int time = mSystemControlManager.getPropertyInt("persist.vendor.tv.sleep_timer", 0);
         Log.d(TAG, "getSleepTimerStatus:" + time);
         return time;
     }
@@ -355,7 +355,7 @@ public class TvOptionSettingManager {
                 intent, 0);
         alarm.cancel(pendingIntent);
 
-        mSystemControlManager.setProperty("persist.sys.tv.sleep_timer", mode+"");
+        mSystemControlManager.setProperty("persist.vendor.tv.sleep_timer", mode+"");
 
         long timeout = 0;
         if (mode == 0) {

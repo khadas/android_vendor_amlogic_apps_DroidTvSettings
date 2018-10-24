@@ -49,31 +49,6 @@ public class OptionParameterManager {
         return DEBUG;
     }
 
-    public String getDtsDrcScale() {
-        //return getString("persist.vendor.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE);
-        return getString("persist.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE);
-    }
-
-    public boolean getSurportDolby() {
-       //return getBoolean("ro.vendor.platform.support.dolby", false);
-       return getBoolean("ro.platform.support.dolby", false);
-    }
-
-    public boolean getSurportDts() {
-       //return getBoolean("ro.vendor.platform.support.dts", false);
-       return getBoolean("ro.platform.support.dts", false);
-    }
-
-    public boolean getSurportDtsDrcCustom() {
-       //return getBoolean("persist.vendor.sys.dtsdrccustom", false);
-       return getBoolean("persist.sys.dtsdrccustom", false);
-    }
-
-    public boolean isDroidlogicTvFeature() {
-       //return getBoolean("ro.vendor.platform.has.tvuimode", false);
-       return getBoolean("ro.platform.has.tvuimode", false);
-    }
-
     public static boolean getBoolean(String key, boolean defaultValue) {
         try {
             final Class<?> systemProperties = Class.forName("android.os.SystemProperties");

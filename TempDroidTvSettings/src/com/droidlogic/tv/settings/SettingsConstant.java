@@ -28,12 +28,12 @@ public class SettingsConstant {
 
     public static boolean needDroidlogicMboxFeature(Context context){
         SystemControlManager sm = new SystemControlManager(context);
-        return sm.getPropertyBoolean("ro.platform.has.mbxuimode", false);
+        return sm.getPropertyBoolean("ro.vendor.platform.has.mbxuimode", false);
     }
 
     public static boolean needDroidlogicTvFeature(Context context){
         SystemControlManager sm = new SystemControlManager(context);
-        return sm.getPropertyBoolean("ro.platform.has.tvuimode", false);
+        return sm.getPropertyBoolean("ro.vendor.platform.has.tvuimode", false);
     }
     public static boolean needDroidlogicHdrFeature(Context context){
         return context.getResources().getBoolean(R.bool.display_need_hdr_function);
