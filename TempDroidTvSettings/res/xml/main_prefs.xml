@@ -35,7 +35,6 @@
         android:key="playback_settings"
         android:title="@string/playback_settings" />
     <Preference
-        android:fragment="com.droidlogic.tv.settings.tvoption.SoundModeFragment"
         android:icon="@drawable/ic_volume_up"
         android:key="sound_effects"
         android:title="@string/tv_sound" />

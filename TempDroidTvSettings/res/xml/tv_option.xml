@@ -19,8 +19,7 @@
         android:title="@string/tv_name">
         <Preference
             android:key="tv_sound"
-            android:title="@string/tv_sound"
-            android:fragment="com.droidlogic.tv.settings.tvoption.SoundModeFragment"/>
+            android:title="@string/tv_sound"/>
         <Preference
             android:key="settings_mode"
             android:title="@string/settings_mode"

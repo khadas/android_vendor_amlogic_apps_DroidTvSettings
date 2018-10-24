@@ -483,14 +483,17 @@ public class TvOptionSettingManager {
     }
 
     private void resetAudioSettings() {
-        SoundEffectSettingManager soundefect = ((TvSettingsActivity)mContext).getSoundEffectSettingManager();
         SoundParameterSettingManager soundparameter = new SoundParameterSettingManager(mContext);
-        if (soundefect != null) {
-            soundefect.resetSoundEffectSettings();
-        }
+        sendResetSoundEffectBroadcast();
         if (soundparameter != null) {
             soundparameter.resetParameter();
         }
+    }
+
+    private void sendResetSoundEffectBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction("droid.action.resetsoundeffect");
+        mContext.sendBroadcast(intent);
     }
 
     private  void ClearPackageData(String packageName) {

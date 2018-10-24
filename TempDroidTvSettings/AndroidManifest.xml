@@ -197,11 +197,6 @@
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name=".tvoption.SoundModeActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation"
-            android:excludeFromRecents="true"
-            android:exported="false" />
-        <activity
             android:name=".tvoption.SettingsModeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
@@ -227,32 +222,10 @@
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name=".tvoption.TrebleBassSeekBarActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation"
-            android:excludeFromRecents="true"
-            android:exported="false" />
-         <activity
-            android:name=".tvoption.BalanceSeekBarActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation"
-            android:excludeFromRecents="true"
-            android:exported="false" />
-         <activity
-            android:name=".tvoption.DtsSoundSettingActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation"
-            android:excludeFromRecents="true"
-            android:exported="false" />
-        <activity
             android:name="tvoption.Hdmi20SwitchActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
-        <activity
-            android:name=".tvoption.AgcSeekBarActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation"
-            android:excludeFromRecents="true"
-            android:exported="false" />
-        <service android:name=".tvoption.AudioEffectsSettingManagerService" />
-
         <receiver
             android:exported="true"
             android:name=".BluetoothAutoPairReceiver"
@@ -273,6 +246,14 @@
         <grant-uri-permission android:pathPattern="/tv_control_pppoe" />
         <grant-uri-permission android:pathPattern="/tv_control_others" />
         </provider>
+        <receiver
+            android:exported="true"
+            android:name=".tvoption.SoundSetReceiver"
+            android:enabled="true" >
+            <intent-filter android:priority="1000" >
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -32,11 +32,13 @@ import android.util.Log;
 
 import com.droidlogic.app.OutputModeManager;
 import com.droidlogic.tv.settings.SettingsConstant;
+import com.droidlogic.tv.settings.MainFragment;
 import com.droidlogic.tv.settings.R;
 
 public class TvOptionFragment extends LeanbackPreferenceFragment {
 
     private static final String TAG = "TvOptionFragment";
+    private static final String KEY_SOUNDS = "tv_sound";
 
     public static TvOptionFragment newInstance() {
         return new TvOptionFragment();
@@ -54,5 +56,14 @@ public class TvOptionFragment extends LeanbackPreferenceFragment {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_option, null);
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        super.onPreferenceTreeClick(preference);
+        if (TextUtils.equals(preference.getKey(), KEY_SOUNDS)) {
+            MainFragment.startSoundEffectSettings(getActivity());
+        }
+        return false;
     }
 }

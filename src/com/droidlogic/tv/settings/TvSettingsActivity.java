@@ -41,8 +41,6 @@ import android.os.IBinder;
 import android.content.ComponentName;
 import java.lang.reflect.Method;
 import com.droidlogic.tv.settings.tvoption.TvOptionSettingManager;
-import com.droidlogic.tv.settings.tvoption.AudioEffectsSettingManagerService;
-import com.droidlogic.tv.settings.tvoption.SoundEffectSettingManager;
 
 public abstract class TvSettingsActivity extends Activity {
 
@@ -97,8 +95,6 @@ public abstract class TvSettingsActivity extends Activity {
                 startShowActivityTimer();
             }
         }
-        Intent intent = new Intent(this, AudioEffectsSettingManagerService.class);
-        bindService(intent, mConn, Context.BIND_AUTO_CREATE);
     }
 
     public BroadcastReceiver mMenuTimeReceiver = new BroadcastReceiver() {
@@ -110,33 +106,6 @@ public abstract class TvSettingsActivity extends Activity {
             }
         }
     };
-
-    private boolean mBounded = false;
-    private AudioEffectsSettingManagerService mAudioEffectsSettingManager;
-
-    private ServiceConnection mConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(TAG, "onServiceConnected name = " + name);
-            mBounded = true;
-            AudioEffectsSettingManagerService.MyBinder myBinder = (AudioEffectsSettingManagerService.MyBinder)binder;
-            mAudioEffectsSettingManager = myBinder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected name = " + name);
-            mBounded = false;
-        }
-    };
-
-    public SoundEffectSettingManager getSoundEffectSettingManager() {
-        if (mBounded) {
-            return mAudioEffectsSettingManager.getSoundEffectSettingManager();
-        } else {
-            return null;
-        }
-    }
 
     public void registerMenuTimeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
@@ -216,7 +185,6 @@ public abstract class TvSettingsActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         unregisterMenuTimeReceiver();
-        unbindService(mConn);
         Log.d(TAG, "onDestroy");
     }
 
