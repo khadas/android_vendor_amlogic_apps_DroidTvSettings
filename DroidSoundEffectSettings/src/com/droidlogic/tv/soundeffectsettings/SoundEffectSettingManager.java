@@ -479,7 +479,7 @@ public class SoundEffectSettingManager {
         } else if (CanDebug()) {
             Log.d(TAG, "getAgcMaxLevelStatus = " + saveresult);
         }
-        return saveresult;
+        return value[0];
     }
 
     public int getAgcAttrackTimeStatus () {
@@ -496,7 +496,8 @@ public class SoundEffectSettingManager {
         } else if (CanDebug()) {
             Log.d(TAG, "getAgcAttrackTimeStatus = " + saveresult);
         }
-        return saveresult;
+        //value may be changed realtime
+        return value[0] / 48;
     }
 
     public int getAgcReleaseTimeStatus () {
@@ -513,7 +514,8 @@ public class SoundEffectSettingManager {
         } else if (CanDebug()) {
             Log.d(TAG, "getAgcReleaseTimeStatus = " + saveresult);
         }
-        return saveresult;
+        //value may be changed realtime
+        return value[0];
     }
 
     public int getAgcSourceIdStatus () {
@@ -530,7 +532,8 @@ public class SoundEffectSettingManager {
         } else if (CanDebug()) {
             Log.d(TAG, "getAgcSourceIdStatus = " + saveresult);
         }
-        return saveresult;
+        //value may be changed realtime
+        return value[0];
     }
 
     //set sound mode except customed one
