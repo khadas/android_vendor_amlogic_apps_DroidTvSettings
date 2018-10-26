@@ -50,6 +50,7 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 	private static final int POWERKEY_SET_DELAY_MS = 500;
 	private final Handler mDelayHandler = new Handler();
 	private String mNewKeyDefinition;
+	private boolean mIsTv;
 	private final Runnable mSetPowerKeyActionRunnable = new Runnable() {
 		@Override
 		public void run() {
@@ -72,6 +73,7 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		final Context themedContext = getPreferenceManager().getContext();
 		mContext = themedContext;
+		mIsTv = SettingsConstant.needDroidlogicTvFeature(mContext);
 		final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(themedContext);
 		screen.setTitle(R.string.system_powerkeyaction);
 		String currentPowerKeyMode = null;
@@ -106,7 +108,7 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 				.checked(checkedKey == 0).build());
 		actions.add(new Action.Builder().key(POWER_KEY_SHUTDOWN).title(getString(R.string.power_action_shutdown))
 				.checked(checkedKey == 1).build());
-		if (!SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false)) {
+		if (!mIsTv) {
 			actions.add(new Action.Builder().key(POWER_KEY_RESTART).title(getString(R.string.power_action_restart))
 					.checked(checkedKey == 2).build());
 		}
@@ -128,7 +130,7 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 
 	private int whichPowerKeyDefinition() {
 		int default_value = 0;
-		if (SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false)) {
+		if (mIsTv) {
 			default_value = 1;
 		}
 		return Settings.System.getInt(mContext.getContentResolver(), POWER_KEY_DEFINITION, default_value);
