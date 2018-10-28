@@ -51,7 +51,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
 
     private OutputModeManager mOutputModeManager;
     private SoundParameterSettingManager mSoundParameterSettingManager;
-    private SystemControlManager sm;
+    private SystemControlManager mSystemControlManager;
     public static SoundFragment newInstance() {
         return new SoundFragment();
     }
@@ -88,23 +88,24 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         final ListPreference tvspeaker = (ListPreference) findPreference(KEY_TV_SPEAKER);
         final ListPreference tvarc = (ListPreference) findPreference(KEY_TV_ARC);
 
+        mSystemControlManager = new SystemControlManager(getContext());
+
         drcmodePref.setValue(mSoundParameterSettingManager.getDrcModePassthroughSetting());
         drcmodePref.setOnPreferenceChangeListener(this);
         digitalsoundPref.setValueIndex(mSoundParameterSettingManager.getDigitalAudioFormat());
         digitalsoundPref.setOnPreferenceChangeListener(this);
-        dtsdrcmodePref.setValue(SystemProperties.get("persist.vendor.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
+        dtsdrcmodePref.setValue(mSystemControlManager.getPropertyString("persist.vendor.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
         boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext());
-        sm = new SystemControlManager(getContext());
-        if (!sm.getPropertyBoolean("ro.vendor.platform.support.dolby", false)) {
+        if (!mSystemControlManager.getPropertyBoolean("ro.vendor.platform.support.dolby", false)) {
             drcmodePref.setVisible(false);
             Log.d(TAG, "platform doesn't support dolby");
         }
-        if (!sm.getPropertyBoolean("ro.vendor.platform.support.dts", false)) {
+        if (!mSystemControlManager.getPropertyBoolean("ro.vendor.platform.support.dts", false)) {
             dtsdrcmodePref.setVisible(false);
             dtsdrccustommodePref.setVisible(false);
             Log.d(TAG, "platform doesn't support dts");
-        } else if (SystemProperties.getBoolean("persist.vendor.sys.dtsdrccustom", false)) {
+        } else if (mSystemControlManager.getPropertyBoolean("persist.vendor.sys.dtsdrccustom", false)) {
             dtsdrcmodePref.setVisible(false);
         } else {
             dtsdrccustommodePref.setVisible(false);
