@@ -209,6 +209,15 @@
         <service
             android:name = ".BluetoothAutoPairService" >
         </service>
+	<activity
+	    android:name = ".BtSetupActivity"
+	    android:excludeFromRecents="true"
+	    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"     >
+	    <intent-filter  >
+		<action android:name="com.android.setupwizard.action.HOOK_BEGIN" />
+	        <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <provider
             android:name=".database.TvControlDataProvider"
             android:authorities="com.droidlogic.tv.settings"
