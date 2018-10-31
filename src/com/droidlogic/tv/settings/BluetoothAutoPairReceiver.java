@@ -31,7 +31,7 @@ public class BluetoothAutoPairReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             Log("Received ACTION_BOOT_COMPLETED");
-            if (SystemProperties.get("ro.autoconnectbt.isneed").equals("true")) {
+            if (SystemProperties.get("ro.vendor.autoconnectbt.isneed", "false").equals("true")) {
                 Log("Need autoconnectBT!");
                 Intent serviceintent = new Intent(context, BluetoothAutoPairService.class);
                 context.startService(serviceintent);

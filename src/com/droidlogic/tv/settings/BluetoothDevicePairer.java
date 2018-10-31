@@ -227,17 +227,13 @@ public class BluetoothDevicePairer {
 
 
     private boolean getSpecialDeviceInfo() {
-        //mBtMacPrefix = SystemProperties.get("ro.autoconnectbt.macprefix");
-	mBtMacPrefix = "00:CD:FF";
+        mBtMacPrefix = SystemProperties.get("ro.vendor.autoconnectbt.macprefix", "00:CD:FF");
         Log("getSpecialDeviceInfo mBtMacPrefix:" + mBtMacPrefix);
-        //mBtClass = SystemProperties.get("ro.autoconnectbt.btclass");
-	mBtClass = "50c";
+        mBtClass = SystemProperties.get("ro.vendor.autoconnectbt.btclass", "50c");
         Log("getSpecialDeviceInfo mBtClass:" + mBtClass);
-        //mBtNamePrefix = SystemProperties.get("ro.autoconnectbt.nameprefix");
-	mBtNamePrefix = "Amlogic_RC";
+        mBtNamePrefix = SystemProperties.get("ro.vendor.autoconnectbt.nameprefix", "Amlogic_RC");
         Log("getSpecialDeviceInfo mBtNamePrefix:" + mBtNamePrefix);
-        //mRssiLimit = Integer.parseInt(SystemProperties.get("ro.autoconnectbt.rssilimit","60"));
-	mRssiLimit = 70;
+        mRssiLimit = Integer.parseInt(SystemProperties.get("ro.vendor.autoconnectbt.rssilimit","70"));
         Log("getSpecialDeviceInfo mRssiLimit:" + mRssiLimit);
         return (!mBtNamePrefix.isEmpty() && !mBtClass.isEmpty());
     }
