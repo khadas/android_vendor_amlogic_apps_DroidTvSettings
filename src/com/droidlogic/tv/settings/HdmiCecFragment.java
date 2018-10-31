@@ -31,7 +31,7 @@ import com.droidlogic.tv.settings.R;
 
 import java.util.Map;
 import java.util.Set;
-
+import android.os.SystemProperties;
 /**
  * Fragment to control HDMI Cec settings.
  */
@@ -67,11 +67,14 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 	@Override
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		setPreferencesFromResource(R.xml.hdmicec, null);
-
+    boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
+        && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
 		mCecSwitchPref = (TwoStatePreference) findPreference(KEY_CEC_SWITCH);
 		mCecOnekeyPlayPref = (TwoStatePreference) findPreference(KEY_CEC_ONEKEY_PLAY);
 		mCecOnekeyPoweroffPref = (TwoStatePreference) findPreference(KEY_CEC_ONEKEY_POWEROFF);
 		mCecAutoChangeLanguagePref = (TwoStatePreference) findPreference(KEY_CEC_AUTO_CHANGE_LANGUAGE);
+		mCecOnekeyPlayPref.setVisible(!tvFlag);
+		mCecOnekeyPoweroffPref.setVisible(!tvFlag);
 	}
 
 	@Override
