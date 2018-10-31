@@ -143,7 +143,7 @@ public class SoundModeFragment extends LeanbackPreferenceFragment implements Pre
         eqmode.setOnPreferenceChangeListener(this);
 
         final ListPreference virtualsurround = (ListPreference) findPreference(TV_VIRTUAL_SURROUND_SETTINGS);
-        virtualsurround.setValueIndex(mSoundParameterSettingManager.getVirtualSurroundStatus());
+        virtualsurround.setValueIndex(mSoundEffectSettingManager.getVirtualSurroundStatus());
         virtualsurround.setOnPreferenceChangeListener(this);
 
         final ListPreference soundout = (ListPreference) findPreference(TV_SOUND_OUT);
@@ -176,7 +176,7 @@ public class SoundModeFragment extends LeanbackPreferenceFragment implements Pre
                 createUiDialog();
             }
         } else if (TextUtils.equals(preference.getKey(), TV_VIRTUAL_SURROUND_SETTINGS)) {
-            mSoundParameterSettingManager.setVirtualSurround(selection);
+            mSoundEffectSettingManager.setVirtualSurround(selection);
         }else if (TextUtils.equals(preference.getKey(), TV_SOUND_OUT)) {
             mSoundParameterSettingManager.setSoundOutputStatus(selection);
         }

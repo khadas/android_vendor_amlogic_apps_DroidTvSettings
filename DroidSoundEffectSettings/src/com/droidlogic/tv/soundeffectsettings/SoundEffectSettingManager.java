@@ -58,6 +58,7 @@ public class SoundEffectSettingManager {
     private AudioEffect mTrebleBass;
     private AudioEffect mSoundMode;
     private AudioEffect mAgc;
+    private AudioEffect mVirtualSurround;
 
     //soundmode set by eq or dap module, first use dap if exist
     public static final  int DAP_MODULE = 0;
@@ -70,6 +71,7 @@ public class SoundEffectSettingManager {
     private static final UUID EFFECT_TYPE_DAP = UUID.fromString("3337b21d-c8e6-4bbd-8f24-698ade8491b9");
     private static final UUID EFFECT_TYPE_EQ = UUID.fromString("ce2c14af-84df-4c36-acf5-87e428ed05fc");
     private static final UUID EFFECT_TYPE_AGC = UUID.fromString("4a959f5c-e33a-4df2-8c3f-3066f9275edf");
+    private static final UUID EFFECT_TYPE_VIRTUAL_SURROUND = UUID.fromString("c656ec6f-d6be-4e7f-854b-1218077f3915");
 
     //SoundMode mode.  Parameter ID
     public static final int PARAM_SOUND_MODE = 0;
@@ -103,6 +105,8 @@ public class SoundEffectSettingManager {
     public static final int DEFAULT_AGC_ATTRACK_TIME = 10;//ms
     public static final int DEFAULT_AGC_RELEASE_TIME = 2;//s
     public static final int DEFAULT_AGC_SOURCE_ID = 3;
+    //virtual surround
+    public static final int PARAM_VIRTUALSURROUND = 0;
 
     /* Modes of sound effects */
     public static final int MODE_STANDARD = 0;
@@ -190,6 +194,7 @@ public class SoundEffectSettingManager {
     public static final int SET_AGC_ATTRACK_TIME = 14;
     public static final int SET_AGC_RELEASE_TIME = 15;
     public static final int SET_AGC_SOURCE_ID = 16;
+    public static final int SET_VIRTUAL_URROUND = 17;
 
     //definition off and on
     private static final int PARAMETERS_SWITCH_OFF = 1;
@@ -217,6 +222,7 @@ public class SoundEffectSettingManager {
         creatBalanceAudioEffects();
         creatTrebleBassAudioEffects();
         creatSoundModeAudioEffects();
+        creatVirtualSurroundAudioEffects();
     }
 
     private boolean creatTruSurroundAudioEffects() {
@@ -314,6 +320,19 @@ public class SoundEffectSettingManager {
             return true;
         } catch (RuntimeException e) {
             Log.e(TAG, "Unable to create Agc audio effect", e);
+            return false;
+        }
+    }
+
+    private boolean creatVirtualSurroundAudioEffects() {
+        try {
+            if (mVirtualSurround == null) {
+                if (CanDebug()) Log.d(TAG, "creatVirtualSurroundAudioEffects");
+                mVirtualSurround = new AudioEffect(EFFECT_TYPE_VIRTUAL_SURROUND, AudioEffect.EFFECT_TYPE_NULL, 0, 0);
+            }
+            return true;
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Unable to create VirtualSurround audio effect", e);
             return false;
         }
     }
@@ -536,6 +555,24 @@ public class SoundEffectSettingManager {
         return value[0];
     }
 
+    // 0 1 ~ off on
+    public int getVirtualSurroundStatus() {
+        int saveresult = -1;
+        if (!creatVirtualSurroundAudioEffects()) {
+            Log.e(TAG, "getVirtualSurroundStatus mVirtualSurround creat fail");
+            return OutputModeManager.VIRTUAL_SURROUND_OFF;
+        }
+        int[] value = new int[1];
+        mVirtualSurround.getParameter(PARAM_VIRTUALSURROUND, value);
+        saveresult = getSavedAudioParameters(SET_VIRTUAL_URROUND);
+        if (saveresult != value[0]) {
+            Log.e(TAG, "getVirtualSurroundStatus erro get: " + value[0] + ", saved: " + saveresult);
+        } else if (CanDebug()) {
+            Log.d(TAG, "getVirtualSurroundStatus = " + saveresult);
+        }
+        return saveresult;
+    }
+
     //set sound mode except customed one
     public void setSoundMode (int mode) {
         if (!creatSoundModeAudioEffects()) {
@@ -740,6 +777,19 @@ public class SoundEffectSettingManager {
         }
     }
 
+    public void setVirtualSurround (int mode) {
+        if (!creatVirtualSurroundAudioEffects()) {
+            Log.e(TAG, "setVirtualSurround mVirtualSurround creat fail");
+            return;
+        }
+        int result = mVirtualSurround.setEnabled(true);
+        if (result == AudioEffect.SUCCESS) {
+            if (CanDebug()) Log.d(TAG, "setVirtualSurround = " + mode);
+            mVirtualSurround.setParameter(PARAM_VIRTUALSURROUND, mode);
+            saveAudioParameters(SET_VIRTUAL_URROUND, mode);
+        }
+    }
+
     public void setParameters(int order, int value) {
         switch (order) {
             case SET_BASS:
@@ -785,6 +835,9 @@ public class SoundEffectSettingManager {
             case SET_AGC_SOURCE_ID:
                 setSourceIdForAvl(value);
                 break;
+            case SET_VIRTUAL_URROUND:
+                setVirtualSurround(value);
+                break;
             default:
                 break;
         }
@@ -792,7 +845,7 @@ public class SoundEffectSettingManager {
 
     public int getParameters(int order) {
         int value = -1;
-        if (order < SET_BASS || order > SET_AGC_SOURCE_ID) {
+        if (order < SET_BASS || order > SET_VIRTUAL_URROUND) {
             Log.e(TAG, "getParameters order erro");
             return value;
         }
@@ -853,6 +906,9 @@ public class SoundEffectSettingManager {
             case SET_AGC_SOURCE_ID:
                 Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_SOURCE_ID, value);
                 break;
+            case SET_VIRTUAL_URROUND:
+                Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.VIRTUAL_SURROUND, value);
+                break;
             default:
                 break;
         }
@@ -912,6 +968,9 @@ public class SoundEffectSettingManager {
             case SET_AGC_SOURCE_ID:
                 result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_SOURCE_ID, DEFAULT_AGC_SOURCE_ID);
                 break;
+            case SET_VIRTUAL_URROUND:
+                result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.VIRTUAL_SURROUND, OutputModeManager.VIRTUAL_SURROUND_OFF);
+                break;
             default:
                 break;
         }
@@ -944,6 +1003,11 @@ public class SoundEffectSettingManager {
             mAgc.release();
             mAgc = null;
         }
+        if (mVirtualSurround != null) {
+            mVirtualSurround.setEnabled(false);
+            mVirtualSurround.release();
+            mVirtualSurround = null;
+        }
     }
 
     public void initSoundEffectSettings() {
@@ -958,7 +1022,7 @@ public class SoundEffectSettingManager {
             setParameters(i, value);
             Log.d(TAG, "initSoundEffectSettings NO." + i + "=" + value);
         }
-        for (int i = SET_AGC_ENABLE; i < SET_AGC_SOURCE_ID + 1; i++) {
+        for (int i = SET_AGC_ENABLE; i < SET_VIRTUAL_URROUND + 1; i++) {
             int value = getSavedAudioParameters(i);
             setParameters(i, value);
             Log.d(TAG, "initSoundEffectSettings NO." + i + "=" + value);
@@ -993,6 +1057,7 @@ public class SoundEffectSettingManager {
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_ATTRACK_TIME, DEFAULT_AGC_ATTRACK_TIME);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_RELEASE_TIME, DEFAULT_AGC_RELEASE_TIME);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_AGC_SOURCE_ID, DEFAULT_AGC_SOURCE_ID);
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.VIRTUAL_SURROUND, OutputModeManager.VIRTUAL_SURROUND_OFF);
         initSoundEffectSettings();
     }
 
