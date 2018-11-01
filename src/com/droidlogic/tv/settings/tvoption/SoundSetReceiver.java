@@ -8,7 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 
 import com.droidlogic.app.tv.TvControlDataManager;
-
+import com.droidlogic.app.SystemControlManager;
 import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 
 public class SoundSetReceiver extends BroadcastReceiver {
@@ -22,7 +22,11 @@ public class SoundSetReceiver extends BroadcastReceiver {
         if (intent.getAction().equalsIgnoreCase(ACTION)) {
             SoundParameterSettingManager sound = new SoundParameterSettingManager(context);
             sound.initParameterAfterBoot();
-            checkTvControlDataProvider(context);
+            SystemControlManager mSystenControlManager = SystemControlManager.getInstance();
+            final boolean istv = mSystenControlManager.getPropertyBoolean("ro.vendor.platform.has.tvuimode", false);
+            if (istv) {
+                checkTvControlDataProvider(context);
+            }
             //set sound effect in com.droidlogic.tv.soundeffectsettings
         }
     }

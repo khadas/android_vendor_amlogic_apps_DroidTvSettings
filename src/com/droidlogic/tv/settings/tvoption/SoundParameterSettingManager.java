@@ -57,7 +57,8 @@ public class SoundParameterSettingManager {
     }
 
     static public boolean CanDebug() {
-        return SystemProperties.getBoolean("sys.soundparameter.debug", false);
+        SystemControlManager mSystemControlManager = SystemControlManager.getInstance();
+        return mSystemControlManager.getPropertyBoolean("sys.vendor.soundparameter.debug", false);
     }
 
     // 0 1 ~ off on
@@ -206,9 +207,31 @@ public class SoundParameterSettingManager {
     public void initParameterAfterBoot() {
         Log.d(TAG, "initParameterAfterBoot");
         setDigitalAudioFormat(getDigitalAudioFormat());
+        setDrcModePassthrough();
         mOutputModeManager.initSoundParametersAfterBoot();
     }
 
+    public void setDrcModePassthrough() {
+        final int value = Settings.Global.getInt(mContext.getContentResolver(),
+                OutputModeManager.DRC_MODE, OutputModeManager.IS_DRC_LINE);
+
+        switch (value) {
+        case OutputModeManager.IS_DRC_OFF:
+            mOutputModeManager.enableDobly_DRC(false);
+            mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
+            break;
+        case OutputModeManager.IS_DRC_LINE:
+            mOutputModeManager.enableDobly_DRC(true);
+            mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
+            break;
+        case OutputModeManager.IS_DRC_RF:
+            mOutputModeManager.enableDobly_DRC(false);
+            mOutputModeManager.setDoblyMode(OutputModeManager.RF_DRCMODE);
+            break;
+        default:
+            return;
+        }
+    }
     public void resetParameter() {
         Log.d(TAG, "resetParameter");
         mOutputModeManager.resetSoundParameters();
