@@ -361,12 +361,12 @@
     <string name="tv_hdmi2_switch">HDMI2</string>
     <string name="tv_hdmi3_switch">HDMI3</string>
     <string name="tv_hdmi4_switch">HDMI4</string>
-    <string name="tv_ensure_restore">ensure restore</string>
+    <string name="tv_ensure_restore">Ensure restore</string>
     <string name="tv_ok">OK</string>
-    <string name="tv_warning">warning</string>
-    <string name="tv_prompt_def_set">restore default settings will restore the settings menu data to factory condition</string>
-    <string name="tv_prompt2">restore default settings.</string>
-    <string name="tv_cancel">cancel</string>
-    <string name="tv_ensure_fbc_update">ensure fbc update</string>
-    <string name="tv_fbc_upgrade_detail">please make sure to upgrade now</string>
+    <string name="tv_warning">Warning</string>
+    <string name="tv_prompt_def_set">Restore default settings will restore the settings menu data to factory condition.</string>
+    <string name="tv_prompt2">Restore default settings.</string>
+    <string name="tv_cancel">Cancel</string>
+    <string name="tv_ensure_fbc_update">Ensure FBC Update</string>
+    <string name="tv_fbc_upgrade_detail">Please make sure to upgrade now.</string>
 </resources>

@@ -19,6 +19,7 @@ package com.droidlogic.tv.settings.tvoption;
 import android.os.Bundle;
 import android.os.Handler;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.ListPreference;
@@ -226,6 +227,43 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
 
     private void createUiDialog (int type) {
         Context context = (Context) (getActivity());
+        AlertDialog.Builder uiDialog = new AlertDialog.Builder(getActivity());
+        String dialogtitle = "";
+        String dialogdetails = "";
+        if (RESTORE == type) {
+            dialogtitle = getActivity().getResources().getString(R.string.tv_ensure_restore);
+            dialogdetails = getActivity().getResources().getString(R.string.tv_prompt_def_set);
+        } else if (FBC == type) {
+            dialogtitle = getActivity().getResources().getString(R.string.tv_ensure_fbc_update);
+            dialogdetails = getActivity().getResources().getString(R.string.tv_fbc_upgrade_detail);
+        }
+        uiDialog.setTitle(dialogtitle);
+        uiDialog.setMessage(dialogdetails);
+        uiDialog.setPositiveButton(getString(R.string.tv_ok)
+            , new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (RESTORE == type) {
+                        mTvOptionSettingManager.doFactoryReset();
+                    } else if (FBC == type) {
+                        mTvOptionSettingManager.doFbcUpgrade();
+                    }
+                    dialog.dismiss();
+                    ((PowerManager) context.getSystemService(Context.POWER_SERVICE)).reboot("");
+                }
+            });
+        uiDialog.setNegativeButton(getString(R.string.tv_cancel)
+            , new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        uiDialog.create().show();
+    }
+
+    /*private void createUiDialog (int type) {
+        Context context = (Context) (getActivity());
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.xml.layout_dialog, null);
 
@@ -265,5 +303,5 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
                 ((PowerManager) context.getSystemService(Context.POWER_SERVICE)).reboot("");
             }
         });
-    }
+    }*/
 }
