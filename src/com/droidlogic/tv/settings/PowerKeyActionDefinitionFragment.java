@@ -46,6 +46,9 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 	private static final String POWER_KEY_SUSPEND = "power_key_suspend";
 	private static final String POWER_KEY_SHUTDOWN = "power_key_shutdown";
 	private static final String POWER_KEY_RESTART = "power_key_restart";
+       private static final int SUSPEND = 0;
+       private static final int SHUTDOWN = 1;
+       private static final int RESTART = 2;
 	private Context mContext;
 	private static final int POWERKEY_SET_DELAY_MS = 500;
 	private final Handler mDelayHandler = new Handler();
@@ -56,11 +59,11 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 		public void run() {
 			PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
 			if (POWER_KEY_SUSPEND.equals(mNewKeyDefinition)) {
-				setPowerKeyActionDefinition(0);
+				setPowerKeyActionDefinition(SUSPEND);
 			} else if (POWER_KEY_SHUTDOWN.equals(mNewKeyDefinition)) {
-				setPowerKeyActionDefinition(1);
+				setPowerKeyActionDefinition(SHUTDOWN);
 			} else if (POWER_KEY_RESTART.equals(mNewKeyDefinition)) {
-				setPowerKeyActionDefinition(2);
+				setPowerKeyActionDefinition(RESTART);
 			}
 		}
 	};
@@ -105,12 +108,12 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 		ArrayList<Action> actions = new ArrayList<Action>();
 		int checkedKey = whichPowerKeyDefinition();
 		actions.add(new Action.Builder().key(POWER_KEY_SUSPEND).title(getString(R.string.power_action_suspend))
-				.checked(checkedKey == 0).build());
+				.checked(checkedKey == SUSPEND).build());
 		actions.add(new Action.Builder().key(POWER_KEY_SHUTDOWN).title(getString(R.string.power_action_shutdown))
-				.checked(checkedKey == 1).build());
+				.checked(checkedKey == SHUTDOWN).build());
 		if (!mIsTv) {
 			actions.add(new Action.Builder().key(POWER_KEY_RESTART).title(getString(R.string.power_action_restart))
-					.checked(checkedKey == 2).build());
+					.checked(checkedKey == RESTART).build());
 		}
 		return actions;
 	}
@@ -129,16 +132,11 @@ public class PowerKeyActionDefinitionFragment extends LeanbackPreferenceFragment
 	}
 
 	private int whichPowerKeyDefinition() {
-		int default_value = 0;
-		if (mIsTv) {
-			default_value = 1;
-		}
+		int default_value = SUSPEND;
 		return Settings.System.getInt(mContext.getContentResolver(), POWER_KEY_DEFINITION, default_value);
 	}
 
 	private void setPowerKeyActionDefinition(int keyValue) {
-		Settings.System.putInt(mContext.getContentResolver(), POWER_KEY_DEFINITION, keyValue);// supend:0,shutdown
-																								// 1,restart
-																								// 2
+		Settings.System.putInt(mContext.getContentResolver(), POWER_KEY_DEFINITION, keyValue);
 	}
 }
