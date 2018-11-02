@@ -55,15 +55,10 @@
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
-        <service android:name=".AudioEffectsSettingManagerService" />
-        <receiver
+        <service
+            android:name=".AudioEffectsSettingManagerService"
             android:exported="true"
-            android:name=".SetEffectReceiver"
-            android:enabled="true" >
-            <intent-filter android:priority="1024" >
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+            />
     </application>
 
 </manifest>
