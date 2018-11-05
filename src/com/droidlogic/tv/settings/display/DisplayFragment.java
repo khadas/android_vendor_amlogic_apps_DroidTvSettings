@@ -54,7 +54,7 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 		mTvUiMode = DroidUtils.hasTvUiMode();
 
 		boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
-			&& (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
+			&& (SystemProperties.getBoolean("tv.soc.as.mbox", false) == false);
 		final Preference outputmodePref = findPreference(KEY_OUTPUTMODE);
 		outputmodePref.setVisible(SettingsConstant.needScreenResolutionFeture(getContext()) && !tvFlag);
 

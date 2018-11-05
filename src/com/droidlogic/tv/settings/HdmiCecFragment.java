@@ -68,7 +68,7 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		setPreferencesFromResource(R.xml.hdmicec, null);
     boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
-        && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
+        && (SystemProperties.getBoolean("tv.soc.as.mbox", false) == false);
 		mCecSwitchPref = (TwoStatePreference) findPreference(KEY_CEC_SWITCH);
 		mCecOnekeyPlayPref = (TwoStatePreference) findPreference(KEY_CEC_ONEKEY_PLAY);
 		mCecOnekeyPoweroffPref = (TwoStatePreference) findPreference(KEY_CEC_ONEKEY_POWEROFF);

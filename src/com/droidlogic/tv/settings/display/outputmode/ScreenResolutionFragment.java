@@ -214,7 +214,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         //T962E as TV and T962X, display in Settings-->Display list.
         if ((SystemProperties.getBoolean("ro.vendor.platform.support.dolbyvision", false) == true) &&
                 (!SettingsConstant.needDroidlogicTvFeature(getContext())
-                     || (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == true))) {
+                     || (SystemProperties.getBoolean("tv.soc.as.mbox", false) == true))) {
             if (isHdmiMode()) {
                 mDolbyVisionPref.setVisible(true);
                 mGraphicsPriorityPref.setVisible(

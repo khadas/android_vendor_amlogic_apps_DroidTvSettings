@@ -60,7 +60,7 @@ public class SettingsConstant {
 
     public static boolean hasMboxFeature(Context context){
         SystemControlManager sm = new SystemControlManager(context);
-        return sm.getPropertyBoolean("ro.tvsoc.as.mbox", false);
+        return sm.getPropertyBoolean("tv.soc.as.mbox", false);
     }
 
     public static boolean needDroidlogicCustomization(Context context){

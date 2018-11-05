@@ -106,7 +106,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
         mTvUiMode = DroidUtils.hasTvUiMode();
         //tvFlag, is true when TV and T962E as TV, false when Mbox and T962E as Mbox.
         boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
-                && (SystemProperties.getBoolean("ro.tvsoc.as.mbox", false) == false);
+                && (SystemProperties.getBoolean("tv.soc.as.mbox", false) == false);
 
         final Preference mainPref = findPreference(KEY_MAIN_MENU);
         final Preference displayPref = findPreference(KEY_DISPLAY);
