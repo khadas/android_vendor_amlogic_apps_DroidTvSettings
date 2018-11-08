@@ -52,10 +52,12 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
     private static final int MODE_GLOBAL = 0;
     private static final int MODE_LIVE_TV = 1;
     private int mStartMode = -1;
+    private String mStartPackage = null;
     private boolean needDTV = false;
 
     private final String COMMANDACTION = "action.startlivetv.settingui";
     private static final String DROIDLOGIC_TVINPUT = "com.droidlogic.tvinput";
+    private static final int RESULT_OK = -1;
 
     private TvInputManager mTvInputManager;
     private TvControlManager mTvControlManager;
@@ -96,6 +98,7 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
         if (DEBUG)  Log.d(TAG, "onCreatePreferences  intent= "+ intent);
         if (intent != null) {
             mStartMode = intent.getIntExtra("from_live_tv", -1);
+            mStartPackage = intent.getStringExtra("requestpackage");
         }
         updatePreferenceFragment();
     }
@@ -128,7 +131,11 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
                         Intent intent = new Intent(TvInputManager.ACTION_SETUP_INPUTS);
                         intent.putExtra("from_tv_source", true);
                         intent.putExtra(TvInputInfo.EXTRA_INPUT_ID, input.getId());
-                        getPreferenceManager().getContext().startActivity(intent);
+                        if (mStartPackage != null && mStartPackage.equals("com.droidlogic.mboxlauncher")) {
+                            ((Activity)mContext).setResult(RESULT_OK, intent);
+                        } else {
+                            getPreferenceManager().getContext().startActivity(intent);
+                        }
                     }
                    /* if (mStartMode == MODE_LIVE_TV) {
                         ((Activity)mContext).setResult(Activity.RESULT_OK, intent);

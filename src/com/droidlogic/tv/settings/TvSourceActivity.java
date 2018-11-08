@@ -18,6 +18,8 @@ package com.droidlogic.tv.settings;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.util.Log;
+import android.view.KeyEvent;
 
 import com.droidlogic.tv.settings.BaseSettingsFragment;
 import com.droidlogic.tv.settings.TvSettingsActivity;
@@ -26,6 +28,8 @@ import com.droidlogic.tv.settings.TvSettingsActivity;
  * Activity that allows the enabling and disabling of sound effects.
  */
 public class TvSourceActivity extends TvSettingsActivity {
+
+    private static final String TAG = "TvSourceActivity";
 
     @Override
     protected Fragment createSettingsFragment() {
@@ -44,6 +48,16 @@ public class TvSourceActivity extends TvSettingsActivity {
         public void onPreferenceStartInitialScreen() {
             final TvSourceFragment fragment = TvSourceFragment.newInstance(mContext);
             startPreferenceFragment(fragment);
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent (KeyEvent event) {
+        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_TV_INPUT) {
+            Log.d(TAG, "consume KeyEvent.KEYCODE_TV_INPUT here");
+            return true;
+        } else {
+            return super.dispatchKeyEvent(event);
         }
     }
 }
