@@ -32,7 +32,7 @@ import com.droidlogic.tv.settings.R;
 import com.droidlogic.app.SystemControlManager;
 import com.droidlogic.app.OutputModeManager;
 
-import com.droidlogic.tv.settings.TvSettingsActivity;
+import com.droidlogic.tv.settings.SettingsConstant;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -207,7 +207,9 @@ public class SoundParameterSettingManager {
     public void initParameterAfterBoot() {
         Log.d(TAG, "initParameterAfterBoot");
         setDigitalAudioFormat(getDigitalAudioFormat());
-        setDrcModePassthrough();
+        if (!SettingsConstant.needDroidlogicTvFeature(mContext)) {
+            setDrcModePassthrough();
+        }
         mOutputModeManager.initSoundParametersAfterBoot();
     }
 
