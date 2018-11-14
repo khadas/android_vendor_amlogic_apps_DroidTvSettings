@@ -86,10 +86,9 @@ public class SoundParameterSettingManager {
         if (CanDebug()) Log.d(TAG, "setSoundOutputStatus = " + mode);
         mOutputModeManager.setSoundOutputStatus(mode);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_OUTPUT_DEVICE, mode);
-        //need to add control in framework code
-        /*Settings.Global.putInt(mContext.getContentResolver(),
-                Settings.Global.HDMI_SYSTEM_AUDIO_STATUS_ENABLED,
-                mode == OutputModeManager.SOUND_OUTPUT_DEVICE_ARC ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);*/
+        Settings.Global.putInt(mContext.getContentResolver(),
+                "hdmi_system_audio_status_enabled" /* Settings.Global.HDMI_SYSTEM_AUDIO_STATUS_ENABLED */,
+                mode == OutputModeManager.SOUND_OUTPUT_DEVICE_ARC ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);
     }
 
     public void setDigitalAudioFormat (int mode) {
@@ -164,9 +163,9 @@ public class SoundParameterSettingManager {
         mOutputModeManager.enableTvArcAudio(mode);
         Settings.Global.putInt(mContext.getContentResolver(),
                 OutputModeManager.TV_ARC, mode ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);
-        //need to add control in framework code
-        /*Settings.Global.putInt(mContext.getContentResolver(),
-                Settings.Global.HDMI_SYSTEM_AUDIO_STATUS_ENABLED, mode ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);*/
+        Settings.Global.putInt(mContext.getContentResolver(),
+                "hdmi_system_audio_status_enabled" /* Settings.Global.HDMI_SYSTEM_AUDIO_STATUS_ENABLED */,
+                mode ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);
     }
 
     public int getArcAudioStatus() {
