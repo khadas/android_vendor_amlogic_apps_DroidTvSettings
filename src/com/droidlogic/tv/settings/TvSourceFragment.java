@@ -43,7 +43,6 @@ import java.util.List;
 
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
-import java.util.ArrayList;
 
 public class TvSourceFragment extends LeanbackPreferenceFragment {
 
@@ -160,7 +159,6 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
 
         List<TvInputInfo> inputList = mTvInputManager.getTvInputList();
         Collections.sort(inputList, mComparator);
-        List<Preference> preferenceList = new ArrayList<Preference>();;
         for (TvInputInfo input : inputList) {
             if (!input.getId().contains(DROIDLOGIC_TVINPUT)) {
                 continue;
@@ -171,28 +169,11 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
             sourcePreference.setPersistent(false);
             sourcePreference.setIcon(getIcon(input, isInputEnabled(input)));
             if (input.isPassthroughInput()) {
-                if (input.isHidden(themedContext)) {
+                if (input.isHidden(themedContext) || input.getParentId() != null) {
                     continue;
                 }
-                CharSequence label = input.loadLabel(themedContext);
                 CharSequence customLabel = input.loadCustomLabel(themedContext);
-                if (input.getParentId() == null) {
-                    for (TvInputInfo inputInfo : inputList) {
-                        HdmiDeviceInfo hdmiDeviceInfo = inputInfo.getHdmiDeviceInfo();
-                        String parentId = inputInfo.getParentId();
-                        if (parentId != null && hdmiDeviceInfo != null) {
-                            int phyAddress = hdmiDeviceInfo.getPhysicalAddress();
-                            //cascade exists, rename using device name connect directly
-                            if ((input.getId().equals(parentId))&& (phyAddress != 0) && (phyAddress & 0xfff) == 0) {
-                                customLabel = inputInfo.loadCustomLabel(themedContext);
-                                label = inputInfo.loadLabel(themedContext);
-                                Log.d(TAG, "HdmiCecDevice connected,set customLable: " + customLabel + " to its parent.");
-                            }
-                        }
-                    }
-                } else {
-                    continue;
-                }
+                CharSequence label = input.loadLabel(themedContext);
                 if (TextUtils.isEmpty(customLabel) || customLabel.equals(label)) {
                     sourcePreference.setTitle(label);
                 } else {
@@ -203,22 +184,17 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
                 sourcePreference.setTitle(DroidLogicTvUtils.isChina(themedContext) ? R.string.input_atv : R.string.input_long_label_for_tuner);
                 needDTV = true;
             }
-            preferenceList.add(sourcePreference);
-        }
-        for (Preference sourcePreference : preferenceList) {
+
             screen.addPreference(sourcePreference);
 
             if (DroidLogicTvUtils.isChina(themedContext) && needDTV) {
                 Preference sourcePreferenceDtv = new Preference(themedContext);
-                sourcePreferenceDtv.setKey(sourcePreference.getKey());
+                sourcePreferenceDtv.setKey(input.getId());
                 sourcePreferenceDtv.setPersistent(false);
                 sourcePreferenceDtv.setIcon(R.drawable.ic_dtv_connected);
                 sourcePreferenceDtv.setTitle(R.string.input_dtv);
                 if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
-                    for (TvInputInfo input : inputList) {
-                        if (sourcePreference.getKey().equals(input.getId()))
-                        sourcePreferenceDtv.setEnabled(isInputEnabled(input));
-                    }
+                    sourcePreferenceDtv.setEnabled(isInputEnabled(input));
                 }
                 screen.addPreference(sourcePreferenceDtv);
             }
