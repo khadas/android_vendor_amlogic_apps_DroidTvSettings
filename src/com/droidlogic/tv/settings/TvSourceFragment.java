@@ -43,6 +43,10 @@ import java.util.List;
 
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
+import android.hardware.hdmi.HdmiControlManager;
+import android.hardware.hdmi.HdmiTvClient;
+import android.media.tv.TvInputHardwareInfo;
+import java.util.ArrayList;
 
 public class TvSourceFragment extends LeanbackPreferenceFragment {
 
@@ -58,9 +62,12 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
     private final String COMMANDACTION = "action.startlivetv.settingui";
     private static final String DROIDLOGIC_TVINPUT = "com.droidlogic.tvinput";
     private static final int RESULT_OK = -1;
+    private int DEV_TYPE_AUDIO_SYSTEM = 5;
 
     private TvInputManager mTvInputManager;
     private TvControlManager mTvControlManager;
+    private HdmiControlManager mHdmiControlManager;
+    private HdmiTvClient mTvClient;
     private final InputsComparator mComparator = new InputsComparator();
     private Context mContext;
 
@@ -76,6 +83,9 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
         mContext = context;
         mTvInputManager = (TvInputManager)context.getSystemService(Context.TV_INPUT_SERVICE);
         mTvControlManager = TvControlManager.getInstance();
+        mHdmiControlManager = (HdmiControlManager) context.getSystemService(Context.HDMI_CONTROL_SERVICE);
+        if (mHdmiControlManager != null)
+            mTvClient = mHdmiControlManager.getTvClient();
     }
 
     static public boolean CanDebug() {
@@ -159,6 +169,9 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
 
         List<TvInputInfo> inputList = mTvInputManager.getTvInputList();
         Collections.sort(inputList, mComparator);
+        List<Preference> preferenceList = new ArrayList<Preference>();
+        needDTV = false;
+        TvInputInfo dtvInputInfo = null;
         for (TvInputInfo input : inputList) {
             if (!input.getId().contains(DROIDLOGIC_TVINPUT)) {
                 continue;
@@ -169,36 +182,81 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
             sourcePreference.setPersistent(false);
             sourcePreference.setIcon(getIcon(input, isInputEnabled(input)));
             if (input.isPassthroughInput()) {
-                if (input.isHidden(themedContext) || input.getParentId() != null) {
+                if (input.isHidden(themedContext)) {
                     continue;
                 }
-                CharSequence customLabel = input.loadCustomLabel(themedContext);
                 CharSequence label = input.loadLabel(themedContext);
+                CharSequence customLabel = input.loadCustomLabel(themedContext);
+                if (input.getParentId() == null) {
+                    for (TvInputInfo inputInfo : inputList) {
+                        HdmiDeviceInfo hdmiDeviceInfo = inputInfo.getHdmiDeviceInfo();
+                        String parentId = inputInfo.getParentId();
+                        if (parentId != null && hdmiDeviceInfo != null) {
+                            int phyAddress = hdmiDeviceInfo.getPhysicalAddress();
+                            //cascade exists, rename using device name connect directly
+                            if ((input.getId().equals(parentId))&& (phyAddress != 0) && (phyAddress & 0xfff) == 0) {
+                                customLabel = inputInfo.loadCustomLabel(themedContext);
+                                label = inputInfo.loadLabel(themedContext);
+                                Log.d(TAG, "HdmiCecDevice connected,set customLable: " + customLabel + " to its parent.");
+                            }
+                        }
+                    }
+                    HdmiDeviceInfo avrDeviceInfo = getHdmiAvrDevIfConnected(input);
+                    if (avrDeviceInfo != null) {
+                        customLabel = avrDeviceInfo.getDisplayName();
+                        Log.d(TAG, "using HdmiCecDevice customLebel " + customLabel +" if avr connected.");
+                    }
+                } else {
+                    continue;
+                }
                 if (TextUtils.isEmpty(customLabel) || customLabel.equals(label)) {
                     sourcePreference.setTitle(label);
                 } else {
                     sourcePreference.setTitle(customLabel);
                 }
-                needDTV = false;
             } else {
                 sourcePreference.setTitle(DroidLogicTvUtils.isChina(themedContext) ? R.string.input_atv : R.string.input_long_label_for_tuner);
                 needDTV = true;
+                dtvInputInfo = input;
             }
-
+            preferenceList.add(sourcePreference);
+        }
+        for (Preference sourcePreference : preferenceList) {
             screen.addPreference(sourcePreference);
+        }
+        if (DroidLogicTvUtils.isChina(themedContext) && needDTV && dtvInputInfo != null) {
+            Preference sourcePreferenceDtv = new Preference(themedContext);
+            sourcePreferenceDtv.setKey(dtvInputInfo.getId());
+            sourcePreferenceDtv.setPersistent(false);
+            sourcePreferenceDtv.setIcon(R.drawable.ic_dtv_connected);
+            sourcePreferenceDtv.setTitle(R.string.input_dtv);
+            if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
+                sourcePreferenceDtv.setEnabled(isInputEnabled(dtvInputInfo));
+            }
+            screen.addPreference(sourcePreferenceDtv);
+        }
+    }
 
-            if (DroidLogicTvUtils.isChina(themedContext) && needDTV) {
-                Preference sourcePreferenceDtv = new Preference(themedContext);
-                sourcePreferenceDtv.setKey(input.getId());
-                sourcePreferenceDtv.setPersistent(false);
-                sourcePreferenceDtv.setIcon(R.drawable.ic_dtv_connected);
-                sourcePreferenceDtv.setTitle(R.string.input_dtv);
-                if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
-                    sourcePreferenceDtv.setEnabled(isInputEnabled(input));
-                }
-                screen.addPreference(sourcePreferenceDtv);
+    private HdmiDeviceInfo getHdmiAvrDevIfConnected(TvInputInfo input) {
+        if (mTvInputManager == null ||  mTvClient == null) {
+            Log.d(TAG, "mTvInputManager or mTvClient maybe null");
+        }
+        HdmiDeviceInfo avrDeviceInfo = null;
+        int portId = 0;
+        int deviceId = DroidLogicTvUtils.getHardwareDeviceId(input);
+        for (TvInputHardwareInfo tvInputHardwareInfo : mTvInputManager.getHardwareList()) {
+            if ((deviceId >= DroidLogicTvUtils.DEVICE_ID_HDMI1) && (deviceId <= DroidLogicTvUtils.DEVICE_ID_HDMI4) && (tvInputHardwareInfo.getDeviceId() == deviceId)) {
+                portId = tvInputHardwareInfo.getHdmiPortId();
+                break;
             }
         }
+        for (HdmiDeviceInfo info : mTvClient.getDeviceList()) {
+            if (portId == ((int)info.getPortId()) && (info.getLogicalAddress() == DEV_TYPE_AUDIO_SYSTEM)) {
+                avrDeviceInfo = info;
+                break;
+            }
+        }
+        return avrDeviceInfo;
     }
 
     private boolean isInputEnabled(TvInputInfo input) {
