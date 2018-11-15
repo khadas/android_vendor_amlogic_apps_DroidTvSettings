@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright (c) 2014 Amlogic, Inc. All rights reserved.
  *
- * PROPRIETARY/CONFIDENTIAL
+ * This source code is subject to the terms and conditions defined in the
+ * file 'LICENSE' which is part of this source code package.
  *
- * Use is subject to license terms.
+ * Description:
+ *     AMLOGIC AudioEffectsSettingManagerService
  */
+
 package com.droidlogic.tv.soundeffectsettings;
 
 import android.content.Context;
