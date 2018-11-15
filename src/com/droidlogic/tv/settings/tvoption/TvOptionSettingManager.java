@@ -347,6 +347,7 @@ public class TvOptionSettingManager {
     public void setSleepTimer (int mode) {
         AlarmManager alarm = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent("droidlogic.intent.action.TIMER_SUSPEND");
+        intent.addFlags(0x01000000/*Intent.FLAG_RECEIVER_INCLUDE_BACKGROUND*/);
         intent.putExtra(DroidLogicTvUtils.KEY_ENABLE_SUSPEND_TIMEOUT, true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0,
                 intent, 0);
