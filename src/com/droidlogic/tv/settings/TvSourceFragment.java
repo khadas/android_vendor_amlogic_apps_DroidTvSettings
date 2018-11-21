@@ -170,7 +170,6 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
         List<TvInputInfo> inputList = mTvInputManager.getTvInputList();
         Collections.sort(inputList, mComparator);
         List<Preference> preferenceList = new ArrayList<Preference>();
-        needDTV = false;
         TvInputInfo dtvInputInfo = null;
         for (TvInputInfo input : inputList) {
             if (!input.getId().contains(DROIDLOGIC_TVINPUT)) {
@@ -214,26 +213,27 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
                 } else {
                     sourcePreference.setTitle(customLabel);
                 }
+                needDTV = false;
             } else {
                 sourcePreference.setTitle(DroidLogicTvUtils.isChina(themedContext) ? R.string.input_atv : R.string.input_long_label_for_tuner);
                 needDTV = true;
                 dtvInputInfo = input;
             }
             preferenceList.add(sourcePreference);
+            if (DroidLogicTvUtils.isChina(themedContext) && needDTV && dtvInputInfo != null) {
+                Preference sourcePreferenceDtv = new Preference(themedContext);
+                sourcePreferenceDtv.setKey(dtvInputInfo.getId());
+                sourcePreferenceDtv.setPersistent(false);
+                sourcePreferenceDtv.setIcon(R.drawable.ic_dtv_connected);
+                sourcePreferenceDtv.setTitle(R.string.input_dtv);
+                if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
+                    sourcePreferenceDtv.setEnabled(isInputEnabled(dtvInputInfo));
+                }
+                preferenceList.add(sourcePreferenceDtv);
+            }
         }
         for (Preference sourcePreference : preferenceList) {
             screen.addPreference(sourcePreference);
-        }
-        if (DroidLogicTvUtils.isChina(themedContext) && needDTV && dtvInputInfo != null) {
-            Preference sourcePreferenceDtv = new Preference(themedContext);
-            sourcePreferenceDtv.setKey(dtvInputInfo.getId());
-            sourcePreferenceDtv.setPersistent(false);
-            sourcePreferenceDtv.setIcon(R.drawable.ic_dtv_connected);
-            sourcePreferenceDtv.setTitle(R.string.input_dtv);
-            if (mTvControlManager.GetHotPlugDetectEnableStatus()) {
-                sourcePreferenceDtv.setEnabled(isInputEnabled(dtvInputInfo));
-            }
-            screen.addPreference(sourcePreferenceDtv);
         }
     }
 
