@@ -97,24 +97,30 @@ public abstract class TvSettingsActivity extends Activity {
         }
     }
 
-    public BroadcastReceiver mMenuTimeReceiver = new BroadcastReceiver() {
+    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "intent = " + intent);
-            if (intent.getAction().equals(INTENT_ACTION_FINISH_FRAGMENT)) {
-                startShowActivityTimer();
+            switch (intent.getAction()) {
+                case INTENT_ACTION_FINISH_FRAGMENT:
+                    startShowActivityTimer();
+                    break;
+                case Intent.ACTION_CLOSE_SYSTEM_DIALOGS:
+                    finish();
+                    break;
             }
         }
     };
 
-    public void registerMenuTimeReceiver() {
+    public void registerSomeReceivers() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_FINISH_FRAGMENT);
-        registerReceiver(mMenuTimeReceiver, intentFilter);
+        intentFilter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        registerReceiver(mReceiver, intentFilter);
     }
 
-    public void unregisterMenuTimeReceiver() {
-        unregisterReceiver(mMenuTimeReceiver);
+    public void unregisterSomeReceivers() {
+        unregisterReceiver(mReceiver);
     }
 
     public void startShowActivityTimer () {
@@ -149,7 +155,7 @@ public abstract class TvSettingsActivity extends Activity {
 
     @Override
     public void onResume() {
-        registerMenuTimeReceiver();
+        registerSomeReceivers();
         if (SettingsConstant.needDroidlogicCustomization(this)) {
             if (mStartMode == MODE_LIVE_TV) {
                 startShowActivityTimer();
@@ -184,7 +190,7 @@ public abstract class TvSettingsActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterMenuTimeReceiver();
+        unregisterSomeReceivers();
         Log.d(TAG, "onDestroy");
     }
 
