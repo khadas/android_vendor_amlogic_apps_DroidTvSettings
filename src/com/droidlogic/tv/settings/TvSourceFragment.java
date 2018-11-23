@@ -240,6 +240,7 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
     private HdmiDeviceInfo getHdmiAvrDevIfConnected(TvInputInfo input) {
         if (mTvInputManager == null ||  mTvClient == null) {
             Log.d(TAG, "mTvInputManager or mTvClient maybe null");
+            return null;
         }
         HdmiDeviceInfo avrDeviceInfo = null;
         int portId = 0;
