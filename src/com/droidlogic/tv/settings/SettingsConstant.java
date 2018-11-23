@@ -27,12 +27,12 @@ public class SettingsConstant {
     public static String PACKAGE = "com.droidlogic.tv.settings";
 
     public static boolean needDroidlogicMboxFeature(Context context){
-        SystemControlManager sm = new SystemControlManager(context);
+        SystemControlManager sm = SystemControlManager.getInstance();
         return sm.getPropertyBoolean("ro.vendor.platform.has.mbxuimode", false);
     }
 
     public static boolean needDroidlogicTvFeature(Context context){
-        SystemControlManager sm = new SystemControlManager(context);
+        SystemControlManager sm = SystemControlManager.getInstance();
         return sm.getPropertyBoolean("ro.vendor.platform.has.tvuimode", false);
     }
     public static boolean needDroidlogicHdrFeature(Context context){
@@ -48,7 +48,7 @@ public class SettingsConstant {
         return context.getResources().getBoolean(R.bool.display_need_screen_resolution);
     }
     public static boolean needDroidlogicHdmicecFeature(Context context){
-        SystemControlManager sm = new SystemControlManager(context);
+        SystemControlManager sm = SystemControlManager.getInstance();
         return sm.getPropertyBoolean("ro.vendor.platform.need.display.hdmicec", false);
     }
     public static boolean needDroidlogicPlaybackSetFeature(Context context){
@@ -59,12 +59,12 @@ public class SettingsConstant {
     }
 
     public static boolean hasMboxFeature(Context context){
-        SystemControlManager sm = new SystemControlManager(context);
+        SystemControlManager sm = SystemControlManager.getInstance();
         return sm.getPropertyBoolean("tv.soc.as.mbox", false);
     }
 
     public static boolean needDroidlogicCustomization(Context context){
-        SystemControlManager sm = new SystemControlManager(context);
+        SystemControlManager sm = SystemControlManager.getInstance();
         return sm.getPropertyBoolean("ro.vendor.platform.customize_tvsetting", false);
     }
 }

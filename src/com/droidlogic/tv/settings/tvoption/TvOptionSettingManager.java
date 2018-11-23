@@ -90,7 +90,7 @@ public class TvOptionSettingManager {
     public TvOptionSettingManager (Context context, boolean isothercontext) {
         mContext = context;
         mResources = mContext.getResources();
-        mSystemControlManager = new SystemControlManager(mContext);
+        mSystemControlManager = SystemControlManager.getInstance();
         mAudioManager = (AudioManager) context.getSystemService(context.AUDIO_SERVICE);
 
         if (SystemProperties.getBoolean("persist.sys.daylight.control", false)) {
@@ -440,7 +440,7 @@ public class TvOptionSettingManager {
         setSleepTimer(0);
         setDefAudioStreamVolume();
         clearHdmi20Mode();
-        // SystemControlManager mSystemControlManager = new SystemControlManager(mContext);
+        // SystemControlManager mSystemControlManager = SystemControlManager.getInstance();
         // mSystemControlManager.setBootenv("ubootenv.var.upgrade_step", "1");
         final String[] tvPackages = {"com.android.providers.tv"};
         for (int i = 0; i < tvPackages.length; i++) {

@@ -88,7 +88,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         final ListPreference tvspeaker = (ListPreference) findPreference(KEY_TV_SPEAKER);
         final ListPreference tvarc = (ListPreference) findPreference(KEY_TV_ARC);
 
-        mSystemControlManager = new SystemControlManager(getContext());
+        mSystemControlManager = SystemControlManager.getInstance();
 
         drcmodePref.setValue(mSoundParameterSettingManager.getDrcModePassthroughSetting());
         drcmodePref.setOnPreferenceChangeListener(this);

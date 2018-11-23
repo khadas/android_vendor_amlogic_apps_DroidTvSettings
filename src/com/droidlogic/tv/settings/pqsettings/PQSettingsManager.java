@@ -110,7 +110,7 @@ public class PQSettingsManager {
         mDeviceId = mTvSettingsActivity.getIntent().getIntExtra(TV_CURRENT_DEVICE_ID, -1);
         mChannelId = mTvSettingsActivity.getIntent().getLongExtra(CURRENT_CHANNEL_ID, -1);
         mResources = mContext.getResources();
-        mSystemControlManager = new SystemControlManager(context);
+        mSystemControlManager = SystemControlManager.getInstance();
         if (SettingsConstant.needDroidlogicTvFeature(mContext)) {
             ChannelInfo currentChannel;
             if (mTvControlManager == null) {
