@@ -18,6 +18,8 @@ package com.droidlogic.tv.settings;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.provider.Settings;
@@ -25,10 +27,17 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.support.v7.preference.TwoStatePreference;
 import android.text.TextUtils;
 import android.util.Log;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.lang.reflect.Method;
 
 import com.droidlogic.app.OutputModeManager;
 import com.droidlogic.app.SystemControlManager;
@@ -39,6 +48,8 @@ import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 public class SoundFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener {
     public static final String TAG = "SoundFragment";
     private static final String KEY_DRCMODE_PASSTHROUGH = "drc_mode";
+    private static final String KEY_DIGITALSOUND_CATEGORY = "surround_sound_category";
+    private static final String KEY_DIGITALSOUND_PREFIX = "digital_subformat_";
     private static final String KEY_DIGITALSOUND_PASSTHROUGH = "digital_sound";
     private static final String KEY_DTSDRCMODE_PASSTHROUGH = "dtsdrc_mode";
     private static final String KEY_DTSDRCCUSTOMMODE_PASSTHROUGH = "dtsdrc_custom_mode";
@@ -50,14 +61,33 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
     private static final String KEY_TV_ARC = "tv_arc";
 
     private OutputModeManager mOutputModeManager;
-    private SoundParameterSettingManager mSoundParameterSettingManager;
     private SystemControlManager mSystemControlManager;
+    private SoundParameterSettingManager mSoundParameterSettingManager;
+    private PreferenceCategory mCategoryPref;
+    private Map<Integer, Boolean> mFormats;
     public static SoundFragment newInstance() {
         return new SoundFragment();
     }
 
     private boolean CanDebug() {
         return SystemProperties.getBoolean("sys.sound.debug", false);
+    }
+
+    private String[] getArrayString(int resid) {
+        return getActivity().getResources().getStringArray(resid);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        AudioManager am = context.getSystemService(AudioManager.class);
+        try {
+            Method getSurroundFormats = AudioManager.class.getMethod("getSurroundFormats");
+            mFormats = (Map<Integer, Boolean>)getSurroundFormats.invoke(am);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        super.onAttach(context);
     }
 
     @Override
@@ -92,8 +122,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
 
         drcmodePref.setValue(mSoundParameterSettingManager.getDrcModePassthroughSetting());
         drcmodePref.setOnPreferenceChangeListener(this);
-        digitalsoundPref.setValueIndex(mSoundParameterSettingManager.getDigitalAudioFormat());
-        digitalsoundPref.setOnPreferenceChangeListener(this);
         dtsdrcmodePref.setValue(mSystemControlManager.getPropertyString("persist.vendor.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
         boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext());
@@ -110,7 +138,9 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         } else {
             dtsdrccustommodePref.setVisible(false);
         }
+
         if (tvFlag) {
+            int itemToFormat[] = { 0, 0, 1, 2, };
             boxlineout.setVisible(false);
             boxhdmi.setVisible(false);
             tvspeaker.setValueIndex(mSoundParameterSettingManager.getSpeakerAudioStatus());
@@ -119,6 +149,13 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             tvarc.setValueIndex(mSoundParameterSettingManager.getArcAudioStatus());
             tvarc.setOnPreferenceChangeListener(this);
             tvarc.setVisible(false);//tv hide this as setting conflict
+            digitalsoundPref.setEntries(
+                    getArrayString(R.array.digital_sounds_tv_entries));
+            digitalsoundPref.setEntryValues(
+                    getArrayString(R.array.digital_sounds_tv_entry_values));
+            digitalsoundPref.setValueIndex(
+                    itemToFormat[mSoundParameterSettingManager.getDigitalAudioFormat()]);
+            digitalsoundPref.setOnPreferenceChangeListener(this);
         } else {
             tvspeaker.setVisible(false);
             tvarc.setVisible(false);
@@ -126,11 +163,117 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             boxlineout.setOnPreferenceChangeListener(this);
             boxhdmi.setValueIndex(mSoundParameterSettingManager.getHdmiAudioStatus());
             boxhdmi.setOnPreferenceChangeListener(this);
+            digitalsoundPref.setEntries(
+                    getArrayString(R.array.digital_sounds_box_entries));
+            digitalsoundPref.setEntryValues(getArrayString(
+                    R.array.digital_sounds_box_entry_values));
+            digitalsoundPref.setValueIndex(
+                    mSoundParameterSettingManager.getDigitalAudioFormat());
+            digitalsoundPref.setOnPreferenceChangeListener(this);
+        }
+
+        mCategoryPref =
+            (PreferenceCategory) findPreference(KEY_DIGITALSOUND_CATEGORY);
+        createFormatPreferences();
+        updateFormatPreferencesStates();
+    }
+
+    /** Creates and adds switches for each surround sound format. */
+    private void createFormatPreferences() {
+        for (Map.Entry<Integer, Boolean> format : mFormats.entrySet()) {
+            int formatId = format.getKey();
+            boolean enabled = format.getValue();
+            SwitchPreference pref = new SwitchPreference(
+                    getPreferenceManager().getContext()) {
+                @Override
+                public void onBindViewHolder(PreferenceViewHolder holder) {
+                    super.onBindViewHolder(holder);
+                    // Enabling the view will ensure that the preference is focusable even if it
+                    // the preference is disabled. This allows the user to scroll down over the
+                    // disabled surround sound formats and see them all.
+                    holder.itemView.setEnabled(true);
+                }
+            };
+            pref.setTitle(getFormatDisplayName(formatId));
+            pref.setKey(KEY_DIGITALSOUND_PREFIX + formatId);
+            pref.setChecked(enabled);
+            mCategoryPref.addPreference(pref);
+        }
+    }
+
+    /**
+     * @return the display name for each surround sound format.
+     */
+    private String getFormatDisplayName(int formatId) {
+        switch (formatId) {
+            case AudioFormat.ENCODING_AC3:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_ac3);
+            case AudioFormat.ENCODING_E_AC3:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_e_ac3);
+            case AudioFormat.ENCODING_DTS:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_dts);
+            case AudioFormat.ENCODING_DTS_HD:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_dts_hd);
+            case AudioFormat.ENCODING_AAC_LC:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_aac_lc);
+            case AudioFormat.ENCODING_DOLBY_TRUEHD:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_truehd);
+            case AudioFormat.ENCODING_E_AC3_JOC:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_e_ac3_joc);
+            case AudioFormat.ENCODING_AC4:
+                return getContext().getResources().getString(
+                        R.string.surround_sound_format_ac4);
+            default:
+                return "Unknown surround sound format";
+        }
+    }
+
+    private void updateFormatPreferencesStates() {
+        boolean show = (mSoundParameterSettingManager.getDigitalAudioFormat()
+                == OutputModeManager.DIGITAL_MANUAL);
+        HashSet<Integer> fmts = new HashSet<>();
+        if (show) {
+            String enable = mSoundParameterSettingManager.getAudioManualFormats();
+            if (!enable.isEmpty()) {
+                try {
+                    Arrays.stream(enable.split(",")).mapToInt(Integer::parseInt)
+                        .forEach(fmts::add);
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "DIGITAL_AUDIO_SUBFORMAT misformatted.", e);
+                }
+            }
+        }
+
+        for (Map.Entry<Integer, Boolean> format : mFormats.entrySet()) {
+            int formatId = format.getKey();
+            String key = KEY_DIGITALSOUND_PREFIX+formatId;
+            SwitchPreference preference =
+                    (SwitchPreference)mCategoryPref.findPreference(key);
+            preference.setVisible(show);
+            if (show) {
+                if (fmts.contains(formatId))
+                    preference.setChecked(true);
+                else
+                    preference.setChecked(false);
+            }
         }
     }
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
+        String key = preference.getKey();
+        if (key.startsWith(KEY_DIGITALSOUND_PREFIX)) {
+            mSoundParameterSettingManager.setAudioManualFormats(
+                    Integer.parseInt(key.substring(KEY_DIGITALSOUND_PREFIX.length())),
+                    ((SwitchPreference) preference).isChecked());
+        }
         return super.onPreferenceTreeClick(preference);
     }
 
@@ -160,14 +303,28 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DIGITALSOUND_PASSTHROUGH)) {
             final int selection = Integer.parseInt((String)newValue);
-            switch (selection) {
-            case OutputModeManager.DIGITAL_PCM:
-            case OutputModeManager.DIGITAL_AUTO:
-                mSoundParameterSettingManager.setDigitalAudioFormat(selection);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown digital audio format value");
+            boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext());
+            if (tvFlag) {
+                final int items = 3;
+                int itemToFormat[] = {OutputModeManager.DIGITAL_PCM,
+                                         OutputModeManager.DIGITAL_AUTO,
+                                         OutputModeManager.DIGITAL_MANUAL};
+                if (selection >= items)
+                    throw new IllegalArgumentException("Unknown digital audio format value");
+                else
+                    mSoundParameterSettingManager.setDigitalAudioFormat(itemToFormat[selection]);
+            } else {
+                final int items = 4;
+                int itemToFormat[] = {OutputModeManager.DIGITAL_PCM,
+                                         OutputModeManager.DIGITAL_SPDIF,
+                                         OutputModeManager.DIGITAL_AUTO,
+                                         OutputModeManager.DIGITAL_MANUAL};
+                if (selection >= items)
+                    throw new IllegalArgumentException("Unknown digital audio format value");
+                else
+                    mSoundParameterSettingManager.setDigitalAudioFormat(itemToFormat[selection]);
             }
+            updateFormatPreferencesStates();
             return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DTSDRCMODE_PASSTHROUGH)) {
             final String selection = (String) newValue;

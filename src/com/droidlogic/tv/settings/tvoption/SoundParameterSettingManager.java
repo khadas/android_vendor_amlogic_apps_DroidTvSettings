@@ -34,9 +34,11 @@ import com.droidlogic.app.OutputModeManager;
 
 import com.droidlogic.tv.settings.SettingsConstant;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TimeZone;
 import java.util.SimpleTimeZone;
 
@@ -95,18 +97,19 @@ public class SoundParameterSettingManager {
         if (CanDebug()) Log.d(TAG, "setDigitalAudioFormat = " + mode);
         switch (mode) {
             case OutputModeManager.DIGITAL_PCM:
+            case OutputModeManager.DIGITAL_SPDIF:
             case OutputModeManager.DIGITAL_AUTO:
-                setDigitalAudioFormatMode(mode);
+                mOutputModeManager.setDigitalAudioFormatOut(mode);
+                break;
+            case OutputModeManager.DIGITAL_MANUAL:
+                mOutputModeManager.setDigitalAudioFormatOut(mode,
+                        getAudioManualFormats());
                 break;
             default:
-                setDigitalAudioFormatMode(OutputModeManager.DIGITAL_PCM);
+                mOutputModeManager.setDigitalAudioFormatOut(
+                        OutputModeManager.DIGITAL_PCM);
+                break;
         }
-    }
-
-    public void setDigitalAudioFormatMode(int mode) {
-        mOutputModeManager.setDigitalAudioFormatOut(mode);
-        Settings.Global.putInt(mContext.getContentResolver(),
-                OutputModeManager.DIGITAL_AUDIO_FORMAT, mode);
     }
 
     public int getDigitalAudioFormat() {
@@ -114,6 +117,35 @@ public class SoundParameterSettingManager {
                 OutputModeManager.DIGITAL_AUDIO_FORMAT, OutputModeManager.DIGITAL_PCM);
         if (CanDebug()) Log.d(TAG, "getDigitalAudioFormat value = " + value);
         return value;
+    }
+
+    public void setAudioManualFormats(int id, boolean enabled) {
+        HashSet<Integer> fmts = new HashSet<>();
+        String enable = getAudioManualFormats();
+        if (!enable.isEmpty()) {
+            try {
+                Arrays.stream(enable.split(",")).mapToInt(Integer::parseInt)
+                    .forEach(fmts::add);
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "DIGITAL_AUDIO_SUBFORMAT misformatted.", e);
+            }
+        }
+        if (enabled) {
+            fmts.add(id);
+        } else {
+            fmts.remove(id);
+        }
+        mOutputModeManager.setDigitalAudioFormatOut(
+                OutputModeManager.DIGITAL_MANUAL, TextUtils.join(",", fmts));
+    }
+
+    public String getAudioManualFormats() {
+        String format = Settings.Global.getString(mContext.getContentResolver(),
+                OutputModeManager.DIGITAL_AUDIO_SUBFORMAT);
+        if (format == null)
+            return "";
+        else
+            return format;
     }
 
     public void enableLineOutAudio(boolean mode) {

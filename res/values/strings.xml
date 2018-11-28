@@ -103,6 +103,15 @@
     <string name="device_sound_dolby_drcline">LINE</string>
     <string name="device_sound_dolby_drcrf">RF</string>
 
+    <string name="surround_sound_format_e_ac3_joc">Dolby Atmos in Dolby Digital Plus</string>
+    <string name="surround_sound_format_ac3">Dolby Digital</string>
+    <string name="surround_sound_format_e_ac3">Dolby Digital Plus</string>
+    <string name="surround_sound_format_dts">DTS</string>
+    <string name="surround_sound_format_dts_hd">DTS-HD</string>
+    <string name="surround_sound_format_aac_lc">AAC</string>
+    <string name="surround_sound_format_truehd">Dolby TrueHD</string>
+    <string name="surround_sound_format_ac4">Dolby AC-4</string>
+
     <!--audio out switch-->
     <string name="device_box_audio_lineout">Lineout</string>
     <string name="device_box_audio_hdmi">Hdmi</string>

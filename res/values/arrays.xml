@@ -27,14 +27,31 @@
         <item>rf</item>
     </string-array>
 
-    <string-array name="digital_sounds_entries">
+    <string-array name="digital_sounds_box_entries">
         <item>PCM</item>
+        <item>SPDIF</item>
         <item>AUTO</item>
+        <item>Manual</item>
     </string-array>
 
-    <string-array name="digital_sounds_entry_values" translatable="false">
+    <string-array name="digital_sounds_box_entry_values" translatable="false">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="digital_sounds_tv_entries">
+        <item>PCM</item>
+        <item>AUTO</item>
+        <item>Manual</item>
+    </string-array>
+
+
+    <string-array name="digital_sounds_tv_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="dts_sounds_entries">

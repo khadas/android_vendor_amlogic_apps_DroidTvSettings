@@ -25,13 +25,16 @@
         android:entryValues="@array/dolby_sounds_entry_values"
         android:title="@string/device_sound_dolby"
         android:summary="%s" />
-    <ListPreference
-        android:key="digital_sound"
-        android:persistent="false"
-        android:entries="@array/digital_sounds_entries"
-        android:entryValues="@array/digital_sounds_entry_values"
-        android:title="@string/device_sound_digital"
-        android:summary="%s" />
+    <PreferenceCategory
+        android:key="surround_sound_category"
+        android:title="@string/device_sound_digital">
+        <!--android:layout="@layout/preference_category_compact_layout" -->
+        <ListPreference
+            android:key="digital_sound"
+            android:persistent="false"
+            android:title="@string/device_sound_digital"
+            android:summary="%s" />
+    </PreferenceCategory>
     <ListPreference
         android:key="dtsdrc_mode"
         android:persistent="false"
@@ -55,7 +58,7 @@
         android:persistent="false"
         android:entries="@array/tv_offon_entries"
         android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/device_sound_dts_sound"
+        android:title="@string/device_box_audio_lineout"
         android:dialogTitle="@string/device_box_audio_lineout"
         android:summary="%s" />
 
