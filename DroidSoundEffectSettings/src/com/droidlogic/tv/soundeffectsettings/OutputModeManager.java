@@ -87,6 +87,11 @@ public class OutputModeManager {
     public static final String SOUND_EFFECT_SURROUND                 = "sound_effect_surround";
     public static final String SOUND_EFFECT_BASS_BOOST             = "sound_effect_bass_boost";
     public static final String SOUND_EFFECT_SOUND_MODE            = "sound_effect_sound_mode";
+    public static final String SOUND_EFFECT_SOUND_MODE_TYPE       = "sound_effect_sound_mode_type";
+    public static final String SOUND_EFFECT_SOUND_MODE_TYPE_DAP   = "type_dap";
+    public static final String SOUND_EFFECT_SOUND_MODE_TYPE_EQ    = "type_eq";
+    public static final String SOUND_EFFECT_SOUND_MODE_DAP_VALUE  = "sound_effect_sound_mode_dap";
+    public static final String SOUND_EFFECT_SOUND_MODE_EQ_VALUE   = "sound_effect_sound_mode_eq";
     public static final String SOUND_EFFECT_BAND1       = "sound_effect_band1";
     public static final String SOUND_EFFECT_BAND2       = "sound_effect_band2";
     public static final String SOUND_EFFECT_BAND3       = "sound_effect_band3";

@@ -36,6 +36,8 @@ import android.app.AlertDialog;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 
 import com.droidlogic.tv.soundeffectsettings.R;
 
@@ -189,6 +191,12 @@ public class SoundModeFragment extends LeanbackPreferenceFragment implements Pre
         View view = inflater.inflate(R.xml.tv_sound_effect_ui, null);//tv_sound_effect_ui
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final AlertDialog mAlertDialog = builder.create();
+        mAlertDialog.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                isSeekBarInited = false;
+            }
+        });
         mAlertDialog.show();
         mAlertDialog.getWindow().setContentView(view);
         //mAlertDialog.getWindow().setLayout(150, 320);

@@ -283,6 +283,7 @@ public class SoundEffectSettingManager {
                     if (CanDebug()) Log.d(TAG, "creatEqAudioEffects enable eq");
                     mSoundMode.setParameter(PARAM_EQ_ENABLE, PARAMETERS_DAP_ENABLE);
                     mSoundModule = EQ_MODULE;
+                    Settings.Global.putString(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE, OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_EQ);
                 }
             }
             return true;
@@ -302,6 +303,7 @@ public class SoundEffectSettingManager {
                     if (CanDebug()) Log.d(TAG, "creatDapAudioEffects enable dap");
                     mSoundMode.setParameter(PARAM_EQ_ENABLE, PARAMETERS_DAP_ENABLE);
                     mSoundModule = DAP_MODULE;
+                    Settings.Global.putString(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE, OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_DAP);
                 }
             }
             return true;
@@ -575,6 +577,11 @@ public class SoundEffectSettingManager {
 
     //set sound mode except customed one
     public void setSoundMode (int mode) {
+        //need to set sound mode by observer listener
+        saveAudioParameters(SET_SOUND_MODE, mode);
+    }
+
+    public void setSoundModeByObserver (int mode) {
         if (!creatSoundModeAudioEffects()) {
             Log.e(TAG, "setSoundMode creat fail");
             return;
@@ -584,13 +591,15 @@ public class SoundEffectSettingManager {
             if (CanDebug()) Log.d(TAG, "setSoundMode = " + mode);
             if ((mSoundModule == DAP_MODULE && mode == MODE_CUSTOM) ||
                     (mSoundModule == EQ_MODULE && mode == EXTEND_MODE_CUSTOM)) {
-                for (int i = SET_EFFECT_BAND1; i <= SET_EFFECT_BAND5; i++) {
-                    setDifferentBandEffects(i, getSavedAudioParameters(i), false);
-                }
+                //for (int i = SET_EFFECT_BAND1; i <= SET_EFFECT_BAND5; i++) {
+                    //set one band, at the same time the others will be set
+                    setDifferentBandEffects(SET_EFFECT_BAND1, getSavedAudioParameters(SET_EFFECT_BAND1), false);
+                //}
             } else {
                 mSoundMode.setParameter(PARAM_EQ_EFFECT, mode);
             }
-            saveAudioParameters(SET_SOUND_MODE, mode);
+            //need to set sound mode by observer listener
+            //saveAudioParameters(SET_SOUND_MODE, mode);
         }
     }
 
@@ -874,7 +883,14 @@ public class SoundEffectSettingManager {
                 Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BASS_BOOST, value);
                 break;
             case SET_SOUND_MODE:
-                Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE, value);
+                String soundmodetype = Settings.Global.getString(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE);
+                if (soundmodetype == null || OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_EQ.equals(soundmodetype)) {
+                    Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_EQ_VALUE, value);
+                } else if ((OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_DAP.equals(soundmodetype))) {
+                    Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_DAP_VALUE, value);
+                } else {
+                    Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE, value);
+                }
                 break;
             case SET_EFFECT_BAND1:
                 Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BAND1, value);
@@ -936,7 +952,15 @@ public class SoundEffectSettingManager {
                 result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BASS_BOOST, UI_SWITCH_OFF);
                 break;
             case SET_SOUND_MODE:
-                result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE, MODE_STANDARD);
+                String soundmodetype = Settings.Global.getString(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE);
+                if (soundmodetype == null || OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_EQ.equals(soundmodetype)) {
+                    result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_EQ_VALUE, MODE_STANDARD);
+                } else if ((OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_DAP.equals(soundmodetype))) {
+                    result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_DAP_VALUE, MODE_STANDARD);
+                } else {
+                    result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE, MODE_STANDARD);
+                }
+                Log.d(TAG, "getSavedAudioParameters SET_SOUND_MODE = " + result);
                 break;
             case SET_EFFECT_BAND1:
                 result = Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BAND1, EFFECT_SOUND_BAND[MODE_STANDARD][PARAM_BAND1 - PARAM_BAND1]);
@@ -1045,7 +1069,10 @@ public class SoundEffectSettingManager {
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_DIALOG_CLARITY, DIALOG_CLARITY_OFF);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SURROUND, UI_SWITCH_OFF);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BASS_BOOST, UI_SWITCH_OFF);
+        Settings.Global.putString(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE, OutputModeManager.SOUND_EFFECT_SOUND_MODE_TYPE_EQ);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE, MODE_STANDARD);
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_DAP_VALUE, MODE_STANDARD);
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_SOUND_MODE_EQ_VALUE, MODE_STANDARD);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BAND1, EFFECT_SOUND_BAND[MODE_STANDARD][PARAM_BAND1 - PARAM_BAND1]);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BAND2, EFFECT_SOUND_BAND[MODE_STANDARD][PARAM_BAND2 - PARAM_BAND1]);
         Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.SOUND_EFFECT_BAND3, EFFECT_SOUND_BAND[MODE_STANDARD][PARAM_BAND3 - PARAM_BAND1]);

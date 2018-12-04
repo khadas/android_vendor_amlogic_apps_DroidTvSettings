@@ -16,8 +16,12 @@ import android.util.Log;
 import android.os.IBinder;
 import android.os.UserHandle;
 import android.os.Binder;
+import android.os.Handler;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
+import android.database.ContentObserver;
+import android.provider.Settings;
+import android.net.Uri;
 
 /**
  * This Service modifies Audio and Picture Quality TV Settings.
@@ -29,9 +33,18 @@ public class AudioEffectsSettingManagerService extends PersistentService {
     private MyBinder mMyBinder = new MyBinder();
     private SoundEffectSettingManager mSoundEffectSettingManager;
     private AudioEffectsSettingManagerService mAudioEffectsSettingManagerService;
+    private Context mContext = null;
 
     // Service actions
     public static final String ACTION_STARTUP = "com.droidlogic.tv.settings.AudioEffectsSettingManagerService.STARTUP";
+
+    public static final String SOUND_EFFECT_SOUND_MODE            = "sound_effect_sound_mode";
+    public static final String SOUND_EFFECT_SOUND_MODE_TYPE       = "sound_effect_sound_mode_type";
+    public static final String SOUND_EFFECT_SOUND_MODE_TYPE_DAP   = "type_dap";
+    public static final String SOUND_EFFECT_SOUND_MODE_TYPE_EQ    = "type_eq";
+    public static final String SOUND_EFFECT_SOUND_MODE_DAP_VALUE  = "sound_effect_sound_mode_dap";
+    public static final String SOUND_EFFECT_SOUND_MODE_EQ_VALUE   = "sound_effect_sound_mode_eq";
+    public static final int MODE_STANDARD = 0;
 
     public AudioEffectsSettingManagerService() {
         super("AudioEffectsSettingManagerService");
@@ -42,6 +55,7 @@ public class AudioEffectsSettingManagerService extends PersistentService {
     public void onCreate() {
         super.onCreate();
         if (DEBUG) Log.d(TAG, "onCreate");
+        mContext = this;
         mSoundEffectSettingManager = new SoundEffectSettingManager(this);
         registerCommandReceiver(this);
     }
@@ -118,11 +132,32 @@ public class AudioEffectsSettingManagerService extends PersistentService {
         intentFilter.addAction(RESET_ACTION);
         intentFilter.addAction(AVL_SOURCE_ACTION);
         context.registerReceiver(mSoundEffectSettingsReceiver, intentFilter);
+        context.getContentResolver().registerContentObserver(Settings.Global.getUriFor(SOUND_EFFECT_SOUND_MODE), false,
+                mSoundEffectParametersObserver);
+        context.getContentResolver().registerContentObserver(Settings.Global.getUriFor(SOUND_EFFECT_SOUND_MODE_EQ_VALUE), false,
+                mSoundEffectParametersObserver);
+        context.getContentResolver().registerContentObserver(Settings.Global.getUriFor(SOUND_EFFECT_SOUND_MODE_DAP_VALUE), false,
+                mSoundEffectParametersObserver);
     }
 
     private void unregisterCommandReceiver(Context context) {
         context.unregisterReceiver(mSoundEffectSettingsReceiver);
+        context.getContentResolver().unregisterContentObserver(mSoundEffectParametersObserver);
     }
+
+    private ContentObserver mSoundEffectParametersObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (mSoundEffectSettingManager != null && uri != null) {
+                if (uri.equals(Settings.Global.getUriFor(SOUND_EFFECT_SOUND_MODE)) || uri.equals(Settings.Global.getUriFor(SOUND_EFFECT_SOUND_MODE_EQ_VALUE))
+                        || uri.equals(Settings.Global.getUriFor(SOUND_EFFECT_SOUND_MODE_DAP_VALUE))) {
+                    int mode = Settings.Global.getInt(mContext.getContentResolver(), uri.getLastPathSegment(), MODE_STANDARD);
+                    Log.d(TAG, "onChange setSoundMode " + uri.getLastPathSegment() + ":" + mode);
+                    mSoundEffectSettingManager.setSoundModeByObserver(mode);
+                }
+            }
+        }
+    };
 
     private final BroadcastReceiver mSoundEffectSettingsReceiver = new BroadcastReceiver() {
         @Override
