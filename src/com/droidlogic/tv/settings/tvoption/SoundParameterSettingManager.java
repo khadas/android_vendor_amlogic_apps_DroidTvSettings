@@ -221,8 +221,16 @@ public class SoundParameterSettingManager {
     public static final String DRC_RF = "rf";
 
     public String getDrcModePassthroughSetting() {
-        final int value = Settings.Global.getInt(mContext.getContentResolver(),
+        boolean tvflag = SettingsConstant.needDroidlogicTvFeature(mContext)
+              && (!SystemProperties.getBoolean("tv.soc.as.mbox", false));
+        int value;
+        if (tvflag) {
+            value = Settings.Global.getInt(mContext.getContentResolver(),
+                OutputModeManager.DRC_MODE, OutputModeManager.IS_DRC_RF);
+        } else {
+            value = Settings.Global.getInt(mContext.getContentResolver(),
                 OutputModeManager.DRC_MODE, OutputModeManager.IS_DRC_LINE);
+        }
 
         switch (value) {
         case OutputModeManager.IS_DRC_OFF:
