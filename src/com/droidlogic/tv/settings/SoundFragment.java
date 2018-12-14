@@ -159,8 +159,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             tvarc.setVisible(false);
             boxlineout.setValueIndex(mSoundParameterSettingManager.getLineOutAudioStatus());
             boxlineout.setOnPreferenceChangeListener(this);
-            boxhdmi.setValueIndex(mSoundParameterSettingManager.getHdmiAudioStatus());
-            boxhdmi.setOnPreferenceChangeListener(this);
+            boxhdmi.setVisible(false);
             digitalsoundPref.setEntries(
                     getArrayString(R.array.digital_sounds_box_entries));
             digitalsoundPref.setEntryValues(getArrayString(
