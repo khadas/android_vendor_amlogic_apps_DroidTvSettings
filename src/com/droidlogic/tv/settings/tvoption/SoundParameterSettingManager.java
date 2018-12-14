@@ -119,7 +119,7 @@ public class SoundParameterSettingManager {
 
     public String getDigitalAudioFormat() {
         final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.DIGITAL_AUDIO_FORMAT, OutputModeManager.DIGITAL_PCM);
+                OutputModeManager.DIGITAL_AUDIO_FORMAT, OutputModeManager.DIGITAL_AUTO);
         if (CanDebug()) Log.d(TAG, "getDigitalAudioFormat value = " + value);
 
         switch (value) {
