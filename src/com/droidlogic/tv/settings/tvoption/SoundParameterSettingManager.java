@@ -45,6 +45,10 @@ import java.util.SimpleTimeZone;
 public class SoundParameterSettingManager {
 
     public static final String TAG = "SoundParameterSettingManager";
+    public static final String DIGITAL_SOUND_PCM = "pcm";
+    public static final String DIGITAL_SOUND_SPDIF = "spdif";
+    public static final String DIGITAL_SOUND_AUTO = "auto";
+    public static final String DIGITAL_SOUND_MANUAL = "manual";
 
     private Resources mResources;
     private Context mContext;
@@ -93,30 +97,42 @@ public class SoundParameterSettingManager {
                 mode == OutputModeManager.SOUND_OUTPUT_DEVICE_ARC ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);
     }
 
-    public void setDigitalAudioFormat (int mode) {
+    public void setDigitalAudioFormat (String mode) {
         if (CanDebug()) Log.d(TAG, "setDigitalAudioFormat = " + mode);
         switch (mode) {
-            case OutputModeManager.DIGITAL_PCM:
-            case OutputModeManager.DIGITAL_SPDIF:
-            case OutputModeManager.DIGITAL_AUTO:
-                mOutputModeManager.setDigitalAudioFormatOut(mode);
+            case DIGITAL_SOUND_PCM:
+                mOutputModeManager.setDigitalAudioFormatOut(OutputModeManager.DIGITAL_PCM);
                 break;
-            case OutputModeManager.DIGITAL_MANUAL:
-                mOutputModeManager.setDigitalAudioFormatOut(mode,
+            case DIGITAL_SOUND_SPDIF:
+                mOutputModeManager.setDigitalAudioFormatOut(OutputModeManager.DIGITAL_SPDIF);
+                break;
+            case DIGITAL_SOUND_MANUAL:
+                mOutputModeManager.setDigitalAudioFormatOut(OutputModeManager.DIGITAL_MANUAL,
                         getAudioManualFormats());
                 break;
+            case DIGITAL_SOUND_AUTO:
             default:
-                mOutputModeManager.setDigitalAudioFormatOut(
-                        OutputModeManager.DIGITAL_PCM);
+                mOutputModeManager.setDigitalAudioFormatOut(OutputModeManager.DIGITAL_AUTO);
                 break;
         }
     }
 
-    public int getDigitalAudioFormat() {
+    public String getDigitalAudioFormat() {
         final int value = Settings.Global.getInt(mContext.getContentResolver(),
                 OutputModeManager.DIGITAL_AUDIO_FORMAT, OutputModeManager.DIGITAL_PCM);
         if (CanDebug()) Log.d(TAG, "getDigitalAudioFormat value = " + value);
-        return value;
+
+        switch (value) {
+        case OutputModeManager.DIGITAL_PCM:
+            return DIGITAL_SOUND_PCM;
+        case OutputModeManager.DIGITAL_SPDIF:
+            return DIGITAL_SOUND_SPDIF;
+        case OutputModeManager.DIGITAL_MANUAL:
+            return DIGITAL_SOUND_MANUAL;
+        case OutputModeManager.DIGITAL_AUTO:
+        default:
+            return DIGITAL_SOUND_AUTO;
+        }
     }
 
     public void setAudioManualFormats(int id, boolean enabled) {

@@ -140,7 +140,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         }
 
         if (tvFlag) {
-            int itemToFormat[] = { 0, 0, 1, 2, };
             boxlineout.setVisible(false);
             boxhdmi.setVisible(false);
             tvspeaker.setValueIndex(mSoundParameterSettingManager.getSpeakerAudioStatus());
@@ -153,8 +152,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
                     getArrayString(R.array.digital_sounds_tv_entries));
             digitalsoundPref.setEntryValues(
                     getArrayString(R.array.digital_sounds_tv_entry_values));
-            digitalsoundPref.setValueIndex(
-                    itemToFormat[mSoundParameterSettingManager.getDigitalAudioFormat()]);
+            digitalsoundPref.setValue(mSoundParameterSettingManager.getDigitalAudioFormat());
             digitalsoundPref.setOnPreferenceChangeListener(this);
         } else {
             tvspeaker.setVisible(false);
@@ -167,8 +165,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
                     getArrayString(R.array.digital_sounds_box_entries));
             digitalsoundPref.setEntryValues(getArrayString(
                     R.array.digital_sounds_box_entry_values));
-            digitalsoundPref.setValueIndex(
-                    mSoundParameterSettingManager.getDigitalAudioFormat());
+            digitalsoundPref.setValue(mSoundParameterSettingManager.getDigitalAudioFormat());
             digitalsoundPref.setOnPreferenceChangeListener(this);
         }
 
@@ -236,8 +233,8 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
     }
 
     private void updateFormatPreferencesStates() {
-        boolean show = (mSoundParameterSettingManager.getDigitalAudioFormat()
-                == OutputModeManager.DIGITAL_MANUAL);
+        boolean show = mSoundParameterSettingManager.DIGITAL_SOUND_MANUAL.equals(
+                mSoundParameterSettingManager.getDigitalAudioFormat());
         HashSet<Integer> fmts = new HashSet<>();
         if (show) {
             String enable = mSoundParameterSettingManager.getAudioManualFormats();
@@ -302,28 +299,8 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             }
             return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DIGITALSOUND_PASSTHROUGH)) {
-            final int selection = Integer.parseInt((String)newValue);
-            boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext());
-            if (tvFlag) {
-                final int items = 3;
-                int itemToFormat[] = {OutputModeManager.DIGITAL_PCM,
-                                         OutputModeManager.DIGITAL_AUTO,
-                                         OutputModeManager.DIGITAL_MANUAL};
-                if (selection >= items)
-                    throw new IllegalArgumentException("Unknown digital audio format value");
-                else
-                    mSoundParameterSettingManager.setDigitalAudioFormat(itemToFormat[selection]);
-            } else {
-                final int items = 4;
-                int itemToFormat[] = {OutputModeManager.DIGITAL_PCM,
-                                         OutputModeManager.DIGITAL_SPDIF,
-                                         OutputModeManager.DIGITAL_AUTO,
-                                         OutputModeManager.DIGITAL_MANUAL};
-                if (selection >= items)
-                    throw new IllegalArgumentException("Unknown digital audio format value");
-                else
-                    mSoundParameterSettingManager.setDigitalAudioFormat(itemToFormat[selection]);
-            }
+            final String selection = (String)newValue;
+            mSoundParameterSettingManager.setDigitalAudioFormat(selection);
             updateFormatPreferencesStates();
             return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DTSDRCMODE_PASSTHROUGH)) {
