@@ -53,39 +53,4 @@
         android:dialogTitle="@string/device_sound_dts_drcscale"
         android:summary="%s" />
 
-    <ListPreference
-        android:key="box_lineout"
-        android:persistent="false"
-        android:entries="@array/tv_offon_entries"
-        android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/device_box_audio_lineout"
-        android:dialogTitle="@string/device_box_audio_lineout"
-        android:summary="%s" />
-
-    <ListPreference
-        android:key="box_hdmi"
-        android:persistent="false"
-        android:entries="@array/tv_offon_entries"
-        android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/device_box_audio_hdmi"
-        android:dialogTitle="@string/device_box_audio_hdmi"
-        android:summary="%s" />
-
-    <ListPreference
-        android:key="tv_speaker"
-        android:persistent="false"
-        android:entries="@array/tv_offon_entries"
-        android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/device_tv_audio_speaker"
-        android:dialogTitle="@string/device_tv_audio_speaker"
-        android:summary="%s" />
-
-    <ListPreference
-        android:key="tv_arc"
-        android:persistent="false"
-        android:entries="@array/tv_offon_entries"
-        android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/device_tv_audio_arc"
-        android:dialogTitle="@string/device_tv_audio_arc"
-        android:summary="%s" />
 </PreferenceScreen>

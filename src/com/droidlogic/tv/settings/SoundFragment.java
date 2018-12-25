@@ -54,12 +54,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
     private static final String KEY_DTSDRCMODE_PASSTHROUGH = "dtsdrc_mode";
     private static final String KEY_DTSDRCCUSTOMMODE_PASSTHROUGH = "dtsdrc_custom_mode";
 
-    //audio out switch
-    private static final String KEY_BOX_LINEOUT = "box_lineout";
-    private static final String KEY_BOX_HDMI = "box_hdmi";
-    private static final String KEY_TV_SPEAKER = "tv_speaker";
-    private static final String KEY_TV_ARC = "tv_arc";
-
     private OutputModeManager mOutputModeManager;
     private SystemControlManager mSystemControlManager;
     private SoundParameterSettingManager mSoundParameterSettingManager;
@@ -112,12 +106,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         final ListPreference dtsdrccustommodePref = (ListPreference) findPreference(KEY_DTSDRCCUSTOMMODE_PASSTHROUGH);
         final ListPreference dtsdrcmodePref = (ListPreference) findPreference(KEY_DTSDRCMODE_PASSTHROUGH);
 
-        //audio out switch
-        final ListPreference boxlineout = (ListPreference) findPreference(KEY_BOX_LINEOUT);
-        final ListPreference boxhdmi= (ListPreference) findPreference(KEY_BOX_HDMI);
-        final ListPreference tvspeaker = (ListPreference) findPreference(KEY_TV_SPEAKER);
-        final ListPreference tvarc = (ListPreference) findPreference(KEY_TV_ARC);
-
         mSystemControlManager = SystemControlManager.getInstance();
 
         drcmodePref.setValue(mSoundParameterSettingManager.getDrcModePassthroughSetting());
@@ -140,14 +128,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         }
 
         if (tvFlag) {
-            boxlineout.setVisible(false);
-            boxhdmi.setVisible(false);
-            tvspeaker.setValueIndex(mSoundParameterSettingManager.getSpeakerAudioStatus());
-            tvspeaker.setOnPreferenceChangeListener(this);
-            tvspeaker.setVisible(false);//tv hide this as setting conflict
-            tvarc.setValueIndex(mSoundParameterSettingManager.getArcAudioStatus());
-            tvarc.setOnPreferenceChangeListener(this);
-            tvarc.setVisible(false);//tv hide this as setting conflict
             digitalsoundPref.setEntries(
                     getArrayString(R.array.digital_sounds_tv_entries));
             digitalsoundPref.setEntryValues(
@@ -155,11 +135,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             digitalsoundPref.setValue(mSoundParameterSettingManager.getDigitalAudioFormat());
             digitalsoundPref.setOnPreferenceChangeListener(this);
         } else {
-            tvspeaker.setVisible(false);
-            tvarc.setVisible(false);
-            boxlineout.setValueIndex(mSoundParameterSettingManager.getLineOutAudioStatus());
-            boxlineout.setOnPreferenceChangeListener(this);
-            boxhdmi.setVisible(false);
             digitalsoundPref.setEntries(
                     getArrayString(R.array.digital_sounds_box_entries));
             digitalsoundPref.setEntryValues(getArrayString(
@@ -306,18 +281,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             final String selection = (String) newValue;
             mOutputModeManager.setDtsDrcScale(selection);
             return true;
-        } else if (TextUtils.equals(preference.getKey(), KEY_BOX_LINEOUT)) {
-            final int selection = Integer.parseInt((String)newValue);
-            mSoundParameterSettingManager.enableLineOutAudio(selection == OutputModeManager.BOX_LINE_OUT_ON);
-        } else if (TextUtils.equals(preference.getKey(), KEY_BOX_HDMI)) {
-            final int selection = Integer.parseInt((String)newValue);
-            mSoundParameterSettingManager.enableHdmiAudio(selection == OutputModeManager.BOX_HDMI_ON);
-        } else if (TextUtils.equals(preference.getKey(), KEY_TV_SPEAKER)) {
-            final int selection = Integer.parseInt((String)newValue);
-            mSoundParameterSettingManager.enableSpeakerAudio(selection == OutputModeManager.TV_SPEAKER_ON);
-        } else if (TextUtils.equals(preference.getKey(), KEY_TV_ARC)) {
-            final int selection = Integer.parseInt((String)newValue);
-            mSoundParameterSettingManager.enableArcAudio(selection == OutputModeManager.TV_ARC_ON);
         }
         return true;
     }

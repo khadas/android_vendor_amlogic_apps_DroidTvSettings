@@ -164,65 +164,6 @@ public class SoundParameterSettingManager {
             return format;
     }
 
-    public void enableLineOutAudio(boolean mode) {
-        if (CanDebug()) Log.d(TAG, "enableLineOutAudio mode = " + mode);
-        mOutputModeManager.enableBoxLineOutAudio(mode);
-        Settings.Global.putInt(mContext.getContentResolver(),
-                OutputModeManager.BOX_LINE_OUT, mode ? OutputModeManager.BOX_LINE_OUT_ON : OutputModeManager.BOX_LINE_OUT_OFF);
-    }
-
-    public int getLineOutAudioStatus() {
-        final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.BOX_LINE_OUT, OutputModeManager.BOX_LINE_OUT_OFF);
-        if (CanDebug()) Log.d(TAG, "getLineOutAudioStatus value = " + value);
-        return value;
-    }
-
-    public void enableHdmiAudio(boolean mode) {
-        if (CanDebug()) Log.d(TAG, "enableHdmiAudio mode = " + mode);
-        mOutputModeManager.enableBoxHdmiAudio(mode);
-        Settings.Global.putInt(mContext.getContentResolver(),
-                OutputModeManager.BOX_HDMI, mode ? OutputModeManager.BOX_HDMI_ON : OutputModeManager.BOX_HDMI_OFF);
-    }
-
-    public int getHdmiAudioStatus() {
-        final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.BOX_HDMI, OutputModeManager.BOX_HDMI_ON);
-        if (CanDebug()) Log.d(TAG, "getHdmiAudioStatus value = " + value);
-        return value;
-    }
-
-    public void enableSpeakerAudio(boolean mode) {
-        if (CanDebug()) Log.d(TAG, "enableSpeakerAudio mode = " + mode);
-        mOutputModeManager.enableTvSpeakerAudio(mode);
-        Settings.Global.putInt(mContext.getContentResolver(),
-                OutputModeManager.TV_SPEAKER, mode ? OutputModeManager.TV_SPEAKER_ON : OutputModeManager.TV_SPEAKER_OFF);
-    }
-
-    public int getSpeakerAudioStatus() {
-        final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.TV_SPEAKER, OutputModeManager.TV_SPEAKER_OFF);
-        if (CanDebug()) Log.d(TAG, "getSpeakerAudioStatus value = " + value);
-        return value;
-    }
-
-    public void enableArcAudio(boolean mode) {
-        if (CanDebug()) Log.d(TAG, "enableArcAudio mode = " + mode);
-        mOutputModeManager.enableTvArcAudio(mode);
-        Settings.Global.putInt(mContext.getContentResolver(),
-                OutputModeManager.TV_ARC, mode ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);
-        Settings.Global.putInt(mContext.getContentResolver(),
-                "hdmi_system_audio_status_enabled" /* Settings.Global.HDMI_SYSTEM_AUDIO_STATUS_ENABLED */,
-                mode ? OutputModeManager.TV_ARC_ON : OutputModeManager.TV_ARC_OFF);
-    }
-
-    public int getArcAudioStatus() {
-        final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.TV_ARC, OutputModeManager.TV_ARC_OFF);
-        if (CanDebug()) Log.d(TAG, "enableArcAudio value = " + value);
-        return value;
-    }
-
     public void setDrcModePassthroughSetting(int newVal) {
         Settings.Global.putInt(mContext.getContentResolver(),
                 OutputModeManager.DRC_MODE, newVal);
