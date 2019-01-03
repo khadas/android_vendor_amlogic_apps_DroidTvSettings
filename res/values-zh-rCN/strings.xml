@@ -266,4 +266,8 @@
     <string name="tv_sound_agc_max_level">"最大电平"</string>
     <string name="tv_sound_agc_attrack_time">"攻击时间"</string>
     <string name="tv_sound_agc_release_time">"释放时间"</string>
+
+    <!-- multi source backup label -->
+    <string name="input_dtv_kit">DTVKit</string>
+    <string name="input_google_channel">在线频道</string>
 </resources>

@@ -308,6 +308,8 @@
     <string name="tv_sound_mode">Sound Mode</string>
     <string name="input_atv">ATV</string>
     <string name="input_dtv">DTV</string>
+    <string name="input_dtv_kit">DTVKit</string>
+    <string name="input_google_channel">Live Channels</string>
     <string name="tv_audio_effect_band1">Band 1:</string>
     <string name="tv_audio_effect_band2">Band 2:</string>
     <string name="tv_audio_effect_band3">Band 3:</string>
