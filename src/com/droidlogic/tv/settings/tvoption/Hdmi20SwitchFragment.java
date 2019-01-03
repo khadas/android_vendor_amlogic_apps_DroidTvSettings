@@ -74,6 +74,7 @@ public class Hdmi20SwitchFragment extends LeanbackPreferenceFragment implements 
     }
 
     private void refresh() {
+        boolean is_from_live_tv = getActivity().getIntent().getIntExtra("from_live_tv", 0) == 1;
         final ListPreference hdmi1 = (ListPreference) findPreference(HDMI1_SWITCH);
         final ListPreference hdmi2 = (ListPreference) findPreference(HDMI2_SWITCH);
         final ListPreference hdmi3 = (ListPreference) findPreference(HDMI3_SWITCH);
@@ -83,6 +84,17 @@ public class Hdmi20SwitchFragment extends LeanbackPreferenceFragment implements 
         all.add(hdmi2);
         all.add(hdmi3);
         all.add(hdmi4);
+        int source = mTvOptionSettingManager.GetRelativeSourceInput();
+        for (int i = 0; i < 4; i++) {
+            if (!is_from_live_tv || all.get(i) == null) {
+                break;
+            }
+            if (source != i) {
+                all.get(i).setEnabled(false);
+            } else {
+                all.get(i).setEnabled(true);
+            }
+        }
         int no = mTvOptionSettingManager.getNumOfHdmi();
         Log.d(TAG,"refresh:"+no+",total size:"+getPreferenceScreen().getPreferenceCount());
         for (int i = no; i < getPreferenceScreen().getPreferenceCount(); i++) {

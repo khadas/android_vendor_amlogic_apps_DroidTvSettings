@@ -254,7 +254,7 @@ public class TvOptionSettingManager {
     }
 
     public int getSwitchChannelStatus () {
-        if (mTvControlManager.getBlackoutEnalbe() == 0)
+        if (mTvControlManager.getBlackoutEnable() == 0)
             return 0;
         else
             return 1;
@@ -292,6 +292,14 @@ public class TvOptionSettingManager {
         }
         Log.d(TAG,"num_hdmi:"+num_hdmi);
         return num_hdmi;
+    }
+
+    public int GetRelativeSourceInput() {
+        int result = -1;
+        //hdmi1~hdmi4 5~8 TvControlManager.SourceInput.HDMI1~TvControlManager.SourceInput.HDMI4
+        result = mTvControlManager.GetCurrentSourceInput() - TvControlManager.SourceInput.HDMI1.toInt();
+        if (CanDebug()) Log.d(TAG, "GetRelativeSourceInput = " + result);
+        return result;
     }
 
     public void setDtvType (int value) {
@@ -406,8 +414,8 @@ public class TvOptionSettingManager {
         }
     }
 
-    public void setBlackoutEnable(int status) {
-        mTvControlManager.setBlackoutEnable(status);
+    public void setBlackoutEnable(int status, int isSave) {
+        mTvControlManager.setBlackoutEnable(status, isSave);
     }
 
     public void setADMix (int step) {
