@@ -210,21 +210,25 @@ public class SoundParameterSettingManager {
     }
 
     public void setDrcModePassthrough() {
+        final boolean tuner_flag = SystemProperties.getBoolean("ro.vendor.platform.is.tv", false);
         final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.DRC_MODE, OutputModeManager.IS_DRC_LINE);
+                OutputModeManager.DRC_MODE, tuner_flag ? OutputModeManager.IS_DRC_RF : OutputModeManager.IS_DRC_LINE);
 
         switch (value) {
         case OutputModeManager.IS_DRC_OFF:
             mOutputModeManager.enableDobly_DRC(false);
             mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
+            setDrcModePassthroughSetting(OutputModeManager.IS_DRC_OFF);
             break;
         case OutputModeManager.IS_DRC_LINE:
             mOutputModeManager.enableDobly_DRC(true);
             mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
+            setDrcModePassthroughSetting(OutputModeManager.IS_DRC_LINE);
             break;
         case OutputModeManager.IS_DRC_RF:
             mOutputModeManager.enableDobly_DRC(false);
             mOutputModeManager.setDoblyMode(OutputModeManager.RF_DRCMODE);
+            setDrcModePassthroughSetting(OutputModeManager.IS_DRC_RF);
             break;
         default:
             return;
