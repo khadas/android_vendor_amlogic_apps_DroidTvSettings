@@ -146,8 +146,7 @@ public class ColorDepthFragment extends LeanbackPreferenceFragment {
             }
             filterValue += value;
         }
-
-        if (filterValue.contains(mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + ENABLE_COLOR_DEPTH_VALUE)) {
+        if (filterValue != null && filterValue.contains(mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + ENABLE_COLOR_DEPTH_VALUE)) {
             actions.add(new Action.Builder().key(ACTION_ON)
                 .title("        " + getString(R.string.on))
                 .checked(curColorDepthValue.contains(ENABLE_COLOR_DEPTH_VALUE) ? true : false)
