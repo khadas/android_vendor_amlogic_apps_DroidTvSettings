@@ -59,7 +59,7 @@ public class ColorDepthFragment extends LeanbackPreferenceFragment {
     private IntentFilter mIntentFilter;
     public boolean hpdFlag = false;
     private static final String DEFAULT_COLOR_DEPTH_VALUE = "8bit";
-    private static final String ENABLE_COLOR_DEPTH_VALUE = "12bit";
+    private String ENABLE_COLOR_DEPTH_VALUE = "12bit";
     private static final String ACTION_ON = "on";
     private static final String ACTION_OFF = "off";
 
@@ -146,12 +146,22 @@ public class ColorDepthFragment extends LeanbackPreferenceFragment {
             }
             filterValue += value;
         }
-        if (filterValue != null && filterValue.contains(mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + ENABLE_COLOR_DEPTH_VALUE)) {
-            actions.add(new Action.Builder().key(ACTION_ON)
-                .title("        " + getString(R.string.on))
-                .checked(curColorDepthValue.contains(ENABLE_COLOR_DEPTH_VALUE) ? true : false)
-                .description("")
-                .build());
+        if (filterValue != null) {
+            if (filterValue.contains(mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + "12bit")) {
+                ENABLE_COLOR_DEPTH_VALUE = "12bit";
+                actions.add(new Action.Builder().key(ACTION_ON)
+                    .title("        " + getString(R.string.on))
+                    .checked(curColorDepthValue.contains(ENABLE_COLOR_DEPTH_VALUE) ? true : false)
+                    .description("")
+                    .build());
+            } else if (filterValue.contains(mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + "10bit")) {
+                ENABLE_COLOR_DEPTH_VALUE = "10bit";
+                actions.add(new Action.Builder().key(ACTION_ON)
+                    .title("        " + getString(R.string.on))
+                    .checked(curColorDepthValue.contains(ENABLE_COLOR_DEPTH_VALUE) ? true : false)
+                    .description("")
+                    .build());
+            }
         }
 
         actions.add(new Action.Builder().key(ACTION_OFF)
