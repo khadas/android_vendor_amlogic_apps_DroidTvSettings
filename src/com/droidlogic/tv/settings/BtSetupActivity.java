@@ -52,7 +52,7 @@ public class BtSetupActivity extends Activity implements BluetoothDevicePairer.E
     private Context mContext;
     private  Handler mMsgHandler;
     private static final String NAME_NONE =  "NONE";
-    private static final String STR_TIP =  "Press the <BACK> button and the <HOME> button for 6 seconds,Go in pairing mode";
+    private static final String STR_TIP =  "Press the <BACK> button and the <HOME>/<OK> button for 6 seconds,Go in pairing mode";
     private static final String STR_TIP_EXIT = "Press the <BACK> button or the <EXIT> button exit";
     private static final String STR_BONDFAIL = "   bond fail";
     private static final String STR_CONFAIL  = "   connect fail";

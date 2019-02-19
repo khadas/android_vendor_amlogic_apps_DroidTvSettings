@@ -244,6 +244,9 @@ public class BluetoothDevicePairer {
            Log("get bd.getName fail");
            return false;
         }
+        if (bd.getBluetoothClass().getMajorDeviceClass() == Device.Major.PERIPHERAL) {
+            return true;
+        }
         return  (bd.getName().startsWith(mBtNamePrefix) || bd.getAddress().startsWith(mBtMacPrefix));
     }
 
