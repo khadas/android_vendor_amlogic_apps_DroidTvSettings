@@ -118,8 +118,8 @@ public class MainFragment extends LeanbackPreferenceFragment {
         //BluetoothRemote/HDMI cec/Playback Settings display only in Mbox
         mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
         final Preference netflixesnPref = findPreference(KEY_NETFLIX_ESN);
-
-        mUpgradeBluetoothRemote.setVisible(is_from_live_tv ? false : (SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag));
+        //hide it forcedly as new bluetooth remote upgrade application is not available now
+        mUpgradeBluetoothRemote.setVisible(false/*is_from_live_tv ? false : (SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag)*/);
         hdmicecPref.setVisible(is_from_live_tv ? false : (getContext().getPackageManager().hasSystemFeature("android.hardware.hdmi.cec")
                     && SettingsConstant.needDroidlogicHdmicecFeature(getContext())));
         playbackPref.setVisible(is_from_live_tv ? false : (SettingsConstant.needDroidlogicPlaybackSetFeature(getContext()) && !tvFlag));
