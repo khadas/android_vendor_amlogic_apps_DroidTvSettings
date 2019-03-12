@@ -33,20 +33,19 @@ public class TvSourceActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
-        return SettingsFragment.newInstance(this);
+        return new SettingsFragment(this);
     }
 
     public static class SettingsFragment extends BaseSettingsFragment {
-        private static Context mContext;
+        private Context mContext;
 
-        public static SettingsFragment newInstance(Context conetext) {
-            mContext = conetext;
-            return new SettingsFragment();
+        public SettingsFragment(Context context) {
+            mContext = context;
         }
 
         @Override
         public void onPreferenceStartInitialScreen() {
-            final TvSourceFragment fragment = TvSourceFragment.newInstance(mContext);
+            final TvSourceFragment fragment = new TvSourceFragment(mContext);
             startPreferenceFragment(fragment);
         }
     }
