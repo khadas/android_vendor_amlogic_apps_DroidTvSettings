@@ -73,10 +73,6 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
     private final InputsComparator mComparator = new InputsComparator();
     private Context mContext;
 
-    public static TvSourceFragment newInstance(Context context) {
-        return new TvSourceFragment(context);
-    }
-
     // if Fragment has no nullary constructor, it might throw InstantiationException, so add this constructor.
     // For more details, you can visit http://blog.csdn.net/xplee0576/article/details/43057633 .
     public TvSourceFragment() {}

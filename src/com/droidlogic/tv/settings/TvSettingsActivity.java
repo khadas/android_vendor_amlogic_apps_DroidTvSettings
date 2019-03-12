@@ -42,7 +42,7 @@ import android.content.ComponentName;
 import java.lang.reflect.Method;
 import com.droidlogic.tv.settings.tvoption.TvOptionSettingManager;
 
-public abstract class TvSettingsActivity extends Activity {
+public abstract class TvSettingsActivity extends Activity implements ViewTreeObserver.OnPreDrawListener {
 
     private static final String TAG = "TvSettingsActivity";
     private static final String SETTINGS_FRAGMENT_TAG =
@@ -56,37 +56,8 @@ public abstract class TvSettingsActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-
             final ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-            root.getViewTreeObserver().addOnPreDrawListener(
-                    new ViewTreeObserver.OnPreDrawListener() {
-                        @Override
-                        public boolean onPreDraw() {
-                            root.getViewTreeObserver().removeOnPreDrawListener(this);
-                            final Scene scene = new Scene(root);
-                            scene.setEnterAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    final Fragment fragment = createSettingsFragment();
-                                    if (fragment != null) {
-                                        getFragmentManager().beginTransaction()
-                                                .add(android.R.id.content, fragment,
-                                                        SETTINGS_FRAGMENT_TAG)
-                                                .commitNow();
-                                    }
-                                }
-                            });
-
-                            final Slide slide = new Slide(Gravity.END);
-                            /*slide.setSlideFraction(
-                                    getResources().getDimension(R.dimen.lb_settings_pane_width)
-                                            / root.getWidth());*/
-                            TransitionManager.go(scene, slide);
-
-                            // Skip the current draw, there's nothing in it
-                            return false;
-                        }
-                    });
+            root.getViewTreeObserver().addOnPreDrawListener(this);
         }
         mStartMode = getIntent().getIntExtra("from_live_tv", MODE_LAUNCHER);
         Log.d(TAG, "mStartMode : " + mStartMode);
@@ -95,6 +66,34 @@ public abstract class TvSettingsActivity extends Activity {
                 startShowActivityTimer();
             }
         }
+    }
+
+    @Override
+    public boolean onPreDraw() {
+        final ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        root.getViewTreeObserver().removeOnPreDrawListener(this);
+        final Scene scene = new Scene(root);
+        scene.setEnterAction(new Runnable() {
+            @Override
+            public void run() {
+                final Fragment fragment = createSettingsFragment();
+                if (fragment != null) {
+                    getFragmentManager().beginTransaction()
+                            .add(android.R.id.content, fragment,
+                                    SETTINGS_FRAGMENT_TAG)
+                            .commitNow();
+                }
+            }
+        });
+
+        final Slide slide = new Slide(Gravity.END);
+        /*slide.setSlideFraction(
+                getResources().getDimension(R.dimen.lb_settings_pane_width)
+                        / root.getWidth());*/
+        TransitionManager.go(scene, slide);
+
+        // Skip the current draw, there's nothing in it
+        return false;
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -192,6 +191,8 @@ public abstract class TvSettingsActivity extends Activity {
         super.onDestroy();
         unregisterSomeReceivers();
         Log.d(TAG, "onDestroy");
+        final ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        root.getViewTreeObserver().removeOnPreDrawListener(this);
     }
 
     @Override
