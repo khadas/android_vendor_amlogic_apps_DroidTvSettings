@@ -64,7 +64,7 @@ public class SoundParameterSettingManager {
 
     static public boolean CanDebug() {
         SystemControlManager mSystemControlManager = SystemControlManager.getInstance();
-        return mSystemControlManager.getPropertyBoolean("sys.vendor.soundparameter.debug", false);
+        return mSystemControlManager.getPropertyBoolean("vendor.soundparameter.debug", false);
     }
 
     // 0 1 ~ off on
