@@ -83,7 +83,6 @@ public class BtSetupActivity extends Activity implements BluetoothDevicePairer.E
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MSG_UPDATA_VIEW:
-                        UpdataView();
                         break;
                     case MSG_FINISH:
                         FinishActivity();
@@ -105,8 +104,9 @@ public class BtSetupActivity extends Activity implements BluetoothDevicePairer.E
 
     @Override
     public void onBackPressed() {
-         Log.d(TAG, "onBackPressed()");
-         RemoveActivity();
+        Log.d(TAG, "onBackPressed()");
+        RemoveActivity();
+        RemoveReceiver();
         super.onBackPressed();
     }
 
@@ -165,12 +165,16 @@ public class BtSetupActivity extends Activity implements BluetoothDevicePairer.E
         Log.d(TAG, "RemoveActivity SUCCESS");
     }
 
-    private void UpdataView() {
-
+    private void RemoveReceiver() {
+        PackageManager pm = mContext.getPackageManager();
+        ComponentName name = new ComponentName(mContext, BluetoothAutoPairReceiver.class);
+        pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+        PackageManager.DONT_KILL_APP);
     }
 
     private void FinishActivity(){
         RemoveActivity();
+        RemoveReceiver();
         finish();
    }
 }
