@@ -34,6 +34,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.droidlogic.tv.soundeffectsettings.R;
+import com.droidlogic.app.tv.AudioEffectManager;
 
 public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements SeekBar.OnSeekBarChangeListener {
 
@@ -49,7 +50,7 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
     private TextView text_attrack_time;
     private TextView text_release_time;
 
-    private SoundEffectSettingManager mSoundEffectSettingManager;
+    private AudioEffectManager mAudioEffectManager;
     private boolean isSeekBarInited = false;
 
     public static AgcSeekBarFragment newInstance() {
@@ -69,11 +70,11 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
 
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
-        if (mSoundEffectSettingManager == null) {
-            mSoundEffectSettingManager = ((TvSettingsActivity)getActivity()).getSoundEffectSettingManager();
+        if (mAudioEffectManager == null) {
+            mAudioEffectManager = ((TvSettingsActivity)getActivity()).getAudioEffectManager();
         }
-        if (mSoundEffectSettingManager == null) {
-            Log.e(TAG, "onViewCreated mSoundEffectSettingManager == null");
+        if (mAudioEffectManager == null) {
+            Log.e(TAG, "onViewCreated mAudioEffectManager == null");
             return;
         }
         initSeekBar(view);
@@ -95,7 +96,7 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
 
     private void initSeekBar(View view) {
         int status = -1;
-        boolean agcEnable = mSoundEffectSettingManager.getAgcEnableStatus();
+        boolean agcEnable = mAudioEffectManager.getAgcEnableStatus();
         checkbox_enable = (CheckBox) view.findViewById(R.id.checkbox_enable);
         seekbar_max_level = (SeekBar) view.findViewById(R.id.seekbar_max_level);
         text_max_level = (TextView) view.findViewById(R.id.text_max_level);
@@ -107,21 +108,21 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
         checkbox_enable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mSoundEffectSettingManager.setAgsEnable(isChecked ? 1 : 0);
+                mAudioEffectManager.setAgsEnable(isChecked ? 1 : 0);
                 enableAgcView(isChecked);
             }
         });
         enableAgcView(agcEnable);
-        status = mSoundEffectSettingManager.getAgcMaxLevelStatus();
+        status = mAudioEffectManager.getAgcMaxLevelStatus();
         seekbar_max_level.setOnSeekBarChangeListener(this);
         seekbar_max_level.setProgress(status + 30);//-30 ~ 0 --> 0 ~ 30
         setShow(R.id.seekbar_max_level, status);
         seekbar_max_level.requestFocus();
-        status = mSoundEffectSettingManager.getAgcAttrackTimeStatus();
+        status = mAudioEffectManager.getAgcAttrackTimeStatus();
         seekbar_attrack_time.setOnSeekBarChangeListener(this);
         seekbar_attrack_time.setProgress(status / 10 - 1);//10ms~200ms --> 0 ~ 19
         setShow(R.id.seekbar_attrack_time, status);
-        status = mSoundEffectSettingManager.getAgcReleaseTimeStatus();
+        status = mAudioEffectManager.getAgcReleaseTimeStatus();
         seekbar_release_time.setOnSeekBarChangeListener(this);
         seekbar_release_time.setProgress(status - 2);// 2s~8s --> 0 ~6
         setShow(R.id.seekbar_release_time, status);
@@ -136,17 +137,17 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
         switch (seekBar.getId()) {
             case R.id.seekbar_max_level:{
                 setShow(R.id.seekbar_max_level, progress - 30);
-                mSoundEffectSettingManager.setAgsMaxLevel(progress - 30); //0 ~ 30 -->-30 ~ 0
+                mAudioEffectManager.setAgsMaxLevel(progress - 30); //0 ~ 30 -->-30 ~ 0
                 break;
             }
             case R.id.seekbar_attrack_time:{
                 setShow(R.id.seekbar_attrack_time, (progress + 1) * 10);
-                mSoundEffectSettingManager.setAgsAttrackTime((progress + 1) * 10);//0 ~ 19 --> 10ms~200ms
+                mAudioEffectManager.setAgsAttrackTime((progress + 1) * 10);//0 ~ 19 --> 10ms~200ms
                 break;
             }
             case R.id.seekbar_release_time:{
                 setShow(R.id.seekbar_release_time, progress + 2);
-                mSoundEffectSettingManager.setAgsReleaseTime(progress + 2);//  0 ~6 -->2s~8s
+                mAudioEffectManager.setAgsReleaseTime(progress + 2);//  0 ~6 -->2s~8s
                 break;
             }
             default:

@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.droidlogic.tv.soundeffectsettings.R;
+import com.droidlogic.app.tv.AudioEffectManager;
 
 public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implements SeekBar.OnSeekBarChangeListener {
 
@@ -42,7 +43,7 @@ public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implem
     private TextView text_treble;
     private TextView text_bass;
 
-    private SoundEffectSettingManager mSoundEffectSettingManager;
+    private AudioEffectManager mAudioEffectManager;
     private boolean isSeekBarInited = false;
 
     public static TrebleBassSeekBarFragment newInstance() {
@@ -62,11 +63,11 @@ public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implem
 
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
-        if (mSoundEffectSettingManager == null) {
-            mSoundEffectSettingManager = ((TvSettingsActivity)getActivity()).getSoundEffectSettingManager();
+        if (mAudioEffectManager == null) {
+            mAudioEffectManager = ((TvSettingsActivity)getActivity()).getAudioEffectManager();
         }
-        if (mSoundEffectSettingManager == null) {
-            Log.e(TAG, "onViewCreated mSoundEffectSettingManager == null");
+        if (mAudioEffectManager == null) {
+            Log.e(TAG, "onViewCreated mAudioEffectManager == null");
             return;
         }
         initSeekBar(view);
@@ -83,7 +84,7 @@ public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implem
         seekbar_treble = (SeekBar) view.findViewById(R.id.seekbar_tv_treble);
         text_treble = (TextView) view.findViewById(R.id.text_tv_treble);
         if (true) {
-            status = mSoundEffectSettingManager.getTrebleStatus();
+            status = mAudioEffectManager.getTrebleStatus();
             seekbar_treble.setOnSeekBarChangeListener(this);
             seekbar_treble.setProgress(status);
             setShow(R.id.seekbar_tv_treble, status);
@@ -96,7 +97,7 @@ public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implem
         seekbar_bass = (SeekBar) view.findViewById(R.id.seekbar_tv_bass);
         text_bass = (TextView) view.findViewById(R.id.text_tv_bass);
         if (true) {
-            status = mSoundEffectSettingManager.getBassStatus();
+            status = mAudioEffectManager.getBassStatus();
             seekbar_bass.setOnSeekBarChangeListener(this);
             seekbar_bass.setProgress(status);
             setShow(R.id.seekbar_tv_bass, status);
@@ -119,12 +120,12 @@ public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implem
         switch (seekBar.getId()) {
             case R.id.seekbar_tv_treble:{
                 setShow(R.id.seekbar_tv_treble, progress);
-                mSoundEffectSettingManager.setTreble(progress/* - mTvOptionSettingManager.getTrebleStatus()*/);
+                mAudioEffectManager.setTreble(progress/* - mTvOptionSettingManager.getTrebleStatus()*/);
                 break;
             }
             case R.id.seekbar_tv_bass:{
                 setShow(R.id.seekbar_tv_bass, progress);
-                mSoundEffectSettingManager.setBass(progress/* - mTvOptionSettingManager.getBassStatus()*/);
+                mAudioEffectManager.setBass(progress/* - mTvOptionSettingManager.getBassStatus()*/);
                 break;
             }
             default:

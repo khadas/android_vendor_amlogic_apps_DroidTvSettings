@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.droidlogic.tv.soundeffectsettings.R;
+import com.droidlogic.app.tv.AudioEffectManager;
 
 public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener {
 
@@ -41,8 +42,8 @@ public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implemen
     private static final String TV_DIALOG_CLARITY = "tv_dialog_clarity";
     private static final String TV_BASS_BOOST = "tv_bass_boost";
 
-    private SoundEffectSettingManager mSoundEffectSettingManager;
     private SoundParameterSettingManager mSoundParameterSettingManager;
+    private AudioEffectManager mAudioEffectManager;
     private boolean isSeekBarInited = false;
 
     public static DtsSoundSettingFragment newInstance() {
@@ -61,24 +62,24 @@ public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implemen
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_sound_dts_setting, null);
-        if (mSoundEffectSettingManager == null) {
-            mSoundEffectSettingManager = ((TvSettingsActivity)getActivity()).getSoundEffectSettingManager();
+        if (mAudioEffectManager == null) {
+            mAudioEffectManager = ((TvSettingsActivity)getActivity()).getAudioEffectManager();
         }
         if (mSoundParameterSettingManager == null) {
             mSoundParameterSettingManager = ((TvSettingsActivity)getActivity()).getSoundParameterSettingManager();
         }
-        if (mSoundEffectSettingManager == null) {
-            Log.e(TAG, "onCreatePreferences mSoundEffectSettingManager == null");
+        if (mAudioEffectManager == null) {
+            Log.e(TAG, "onCreatePreferences mAudioEffectManager == null");
             return;
         }
         final ListPreference surround = (ListPreference) findPreference(TV_SURROUND);
-        surround.setValueIndex(mSoundEffectSettingManager.getSurroundStatus());
+        surround.setValueIndex(mAudioEffectManager.getSurroundStatus());
         surround.setOnPreferenceChangeListener(this);
         final ListPreference dialogclarity = (ListPreference) findPreference(TV_DIALOG_CLARITY);
-        dialogclarity.setValueIndex(mSoundEffectSettingManager.getDialogClarityStatus());
+        dialogclarity.setValueIndex(mAudioEffectManager.getDialogClarityStatus());
         dialogclarity.setOnPreferenceChangeListener(this);
         final ListPreference bassboost = (ListPreference) findPreference(TV_BASS_BOOST);
-        bassboost.setValueIndex(mSoundEffectSettingManager.getBassBoostStatus());
+        bassboost.setValueIndex(mAudioEffectManager.getBassBoostStatus());
         bassboost.setOnPreferenceChangeListener(this);
     }
 
@@ -93,11 +94,11 @@ public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implemen
         if (CanDebug()) Log.d(TAG, "[onPreferenceChange] preference.getKey() = " + preference.getKey() + ", newValue = " + newValue);
         final int selection = Integer.parseInt((String)newValue);
         if (TextUtils.equals(preference.getKey(), TV_SURROUND)) {
-            mSoundEffectSettingManager.setSurround(selection);
+            mAudioEffectManager.setSurround(selection);
         } else if (TextUtils.equals(preference.getKey(), TV_DIALOG_CLARITY)) {
-            mSoundEffectSettingManager.setDialogClarity(selection);
+            mAudioEffectManager.setDialogClarity(selection);
         } else if (TextUtils.equals(preference.getKey(), TV_BASS_BOOST)) {
-            mSoundEffectSettingManager.setBassBoost(selection);
+            mAudioEffectManager.setBassBoost(selection);
         }
         return true;
     }
