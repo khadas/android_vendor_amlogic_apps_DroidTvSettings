@@ -41,6 +41,7 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 
         private static final String PERSIST_HDMI_CEC_SET_MENU_LANGUAGE = "persist.vendor.sys.cec.set_menu_language";
 
+        private static final String PERSIST_HDMI_CEC_ONE_KEY_POWEROFF = "persist.vendor.sys.cec.onekeypoweroff";
 	private TwoStatePreference mCecSwitchPref;
 	private TwoStatePreference mCecOnekeyPlayPref;
 	private TwoStatePreference mCecOnekeyPoweroffPref;
@@ -95,6 +96,7 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment {
 			return true;
 		case KEY_CEC_ONEKEY_POWEROFF:
 			writeCecOption("hdmi_control_auto_device_off_enabled"/*Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED*/, mCecOnekeyPoweroffPref.isChecked());
+                        mSystemControlManager.setProperty(PERSIST_HDMI_CEC_ONE_KEY_POWEROFF, mCecOnekeyPoweroffPref.isChecked() ? "true" : "false");
 			return true;
 		case KEY_CEC_AUTO_CHANGE_LANGUAGE:
 			//writeCecOption(HdmiCecManager.HDMI_CONTROL_AUTO_CHANGE_LANGUAGE_ENABLED,
