@@ -39,6 +39,9 @@ import android.provider.Settings;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.content.ComponentName;
+import com.droidlogic.app.tv.AudioEffectManager;
+
+
 import java.lang.reflect.Method;
 
 public abstract class TvSettingsActivity extends Activity {
@@ -50,16 +53,13 @@ public abstract class TvSettingsActivity extends Activity {
     public static final int MODE_LAUNCHER = 0;
     public static final int MODE_LIVE_TV = 1;
     private int mStartMode = MODE_LAUNCHER;
-    private OutputModeManager mOutputModeManager = null;
     private SoundParameterSettingManager mSoundParameterSettingManager = null;
     private OptionParameterManager mOptionParameterManager = null;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(this);
         if (savedInstanceState == null) {
-
             final ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
             root.getViewTreeObserver().addOnPreDrawListener(
                     new ViewTreeObserver.OnPreDrawListener() {
@@ -96,8 +96,6 @@ public abstract class TvSettingsActivity extends Activity {
         if (mStartMode == MODE_LIVE_TV) {
             startShowActivityTimer();
         }
-        Intent intent = new Intent(this, AudioEffectsSettingManagerService.class);
-        bindService(intent, mConn, Context.BIND_AUTO_CREATE);
     }
 
     public BroadcastReceiver mMenuTimeReceiver = new BroadcastReceiver() {
@@ -110,41 +108,15 @@ public abstract class TvSettingsActivity extends Activity {
         }
     };
 
-    private boolean mBounded = false;
-    private AudioEffectsSettingManagerService mAudioEffectsSettingManager;
-
-    private ServiceConnection mConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(TAG, "onServiceConnected name = " + name);
-            mBounded = true;
-            AudioEffectsSettingManagerService.MyBinder myBinder = (AudioEffectsSettingManagerService.MyBinder)binder;
-            mAudioEffectsSettingManager = myBinder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected name = " + name);
-            mBounded = false;
-        }
-    };
-
     private void init(Context context) {
         mSoundParameterSettingManager = new SoundParameterSettingManager(context);
-        mOutputModeManager = new OutputModeManager(context);
         mOptionParameterManager = new OptionParameterManager(context);
+        getAudioEffectManager();
     }
 
-    public SoundEffectSettingManager getSoundEffectSettingManager() {
-        if (mBounded) {
-            return mAudioEffectsSettingManager.getSoundEffectSettingManager();
-        } else {
-            return null;
-        }
-    }
 
-    public OutputModeManager getOutputModeManager() {
-        return mOutputModeManager;
+    public AudioEffectManager getAudioEffectManager() {
+        return AudioEffectManager.getInstance(getApplicationContext());
     }
 
     public SoundParameterSettingManager getSoundParameterSettingManager() {
@@ -231,7 +203,6 @@ public abstract class TvSettingsActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         unregisterMenuTimeReceiver();
-        unbindService(mConn);
         Log.d(TAG, "onDestroy");
     }
 

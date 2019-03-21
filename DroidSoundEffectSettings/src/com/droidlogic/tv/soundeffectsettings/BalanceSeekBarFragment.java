@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 
 import com.droidlogic.tv.soundeffectsettings.R;
+import com.droidlogic.app.tv.AudioEffectManager;
 
 public class BalanceSeekBarFragment extends LeanbackPreferenceFragment implements SeekBar.OnSeekBarChangeListener {
 
@@ -40,7 +41,7 @@ public class BalanceSeekBarFragment extends LeanbackPreferenceFragment implement
     private SeekBar seekbar_balance;
     private TextView text_balance;
 
-    private SoundEffectSettingManager mSoundEffectSettingManager;
+    private AudioEffectManager mAudioEffectManager;
     private boolean isSeekBarInited = false;
 
     public static BalanceSeekBarFragment newInstance() {
@@ -60,11 +61,11 @@ public class BalanceSeekBarFragment extends LeanbackPreferenceFragment implement
 
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
-        if (mSoundEffectSettingManager == null) {
-            mSoundEffectSettingManager = ((TvSettingsActivity)getActivity()).getSoundEffectSettingManager();
+        if (mAudioEffectManager == null) {
+            mAudioEffectManager = ((TvSettingsActivity)getActivity()).getAudioEffectManager();
         }
-        if (mSoundEffectSettingManager == null) {
-            Log.e(TAG, "onViewCreated mSoundEffectSettingManager == null");
+        if (mAudioEffectManager == null) {
+            Log.e(TAG, "onViewCreated mAudioEffectManager == null");
             return;
         }
         initSeekBar(view);
@@ -81,7 +82,7 @@ public class BalanceSeekBarFragment extends LeanbackPreferenceFragment implement
         seekbar_balance= (SeekBar) view.findViewById(R.id.seekbar_tv_balance);
         text_balance = (TextView) view.findViewById(R.id.text_tv_balance);
         if (true) {
-            status = mSoundEffectSettingManager.getBalanceStatus();
+            status = mAudioEffectManager.getBalanceStatus();
             seekbar_balance.setOnSeekBarChangeListener(this);
             seekbar_balance.setProgress(status);
             setShow(R.id.seekbar_tv_balance, status);
@@ -104,7 +105,7 @@ public class BalanceSeekBarFragment extends LeanbackPreferenceFragment implement
         switch (seekBar.getId()) {
             case R.id.seekbar_tv_balance:{
                 setShow(R.id.seekbar_tv_balance, progress);
-                mSoundEffectSettingManager.setBalance(progress/* - mTvOptionSettingManager.getBalanceStatus()*/);
+                mAudioEffectManager.setBalance(progress/* - mTvOptionSettingManager.getBalanceStatus()*/);
                 break;
             }
             default:

@@ -18,11 +18,13 @@ import android.util.Log;
 import android.widget.Toast;
 import android.util.Log;
 import android.content.ContentResolver;
+import com.droidlogic.app.AudioOutputManager;
 
 public class SetEffectReceiver extends BroadcastReceiver {
     static final String TAG = "SetEffectReceiver";
     static final String ACTION = "android.intent.action.BOOT_COMPLETED";
 
+    private AudioOutputManager mAudioOutputManager;
     @Override
     public void onReceive (Context context, Intent intent) {
         Log.d(TAG, "onReceive = " + intent);
@@ -36,7 +38,8 @@ public class SetEffectReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 Log.d(TAG, "initAudioEffectService = " + context);
-                AudioEffectsSettingManagerService.startActionStartup(context);
+                mAudioOutputManager = new AudioOutputManager(context);
+                mAudioOutputManager.initSoundParametersAfterBoot();
             }
         }).start();
     }
