@@ -103,6 +103,7 @@
     <string name="device_sound_dolby_drcoff">OFF</string>
     <string name="device_sound_dolby_drcline">LINE</string>
     <string name="device_sound_dolby_drcrf">RF</string>
+    <string name="device_sound_ad_surport">"Associate Audio"</string>
 
     <string name="surround_sound_format_e_ac3_joc">Dolby Atmos in Dolby Digital Plus</string>
     <string name="surround_sound_format_ac3">Dolby Digital</string>

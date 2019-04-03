@@ -49,6 +49,7 @@ public class SoundParameterSettingManager {
     public static final String DIGITAL_SOUND_SPDIF = "spdif";
     public static final String DIGITAL_SOUND_AUTO = "auto";
     public static final String DIGITAL_SOUND_MANUAL = "manual";
+    public static final String TV_KEY_AD_SWITCH = "ad_switch";
 
     private Resources mResources;
     private Context mContext;
@@ -167,6 +168,17 @@ public class SoundParameterSettingManager {
     public void setDrcModePassthroughSetting(int newVal) {
         Settings.Global.putInt(mContext.getContentResolver(),
                 OutputModeManager.DRC_MODE, newVal);
+    }
+
+    public boolean getAdSurportStatus() {
+        int result = Settings.System.getInt(mContext.getContentResolver(),
+                TV_KEY_AD_SWITCH, 0);
+        return result > 0;
+    }
+
+    public void setAdSurportStatus(boolean newVal) {
+        Settings.System.putInt(mContext.getContentResolver(),
+                TV_KEY_AD_SWITCH, newVal ? 1 : 0);
     }
 
     public static boolean getSoundEffectsEnabled(ContentResolver contentResolver) {
