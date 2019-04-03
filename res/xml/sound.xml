@@ -53,4 +53,9 @@
         android:dialogTitle="@string/device_sound_dts_drcscale"
         android:summary="%s" />
 
+     <SwitchPreference
+        android:key="ad_surport"
+        android:persistent="false"
+        android:title="@string/device_sound_ad_surport" />
+
 </PreferenceScreen>

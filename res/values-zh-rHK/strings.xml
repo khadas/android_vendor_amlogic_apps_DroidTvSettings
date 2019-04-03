@@ -48,6 +48,7 @@
     <string name="device_sound_dolby">"杜比音頻"</string>
     <string name="device_sound_dolby_drcmode">"杜比模式"</string>
     <string name="device_sound_dolby_drcoff">"關閉"</string>
+    <string name="device_sound_ad_surport">"輔助音"</string>
 
     <string name="power_key_action">"電源"</string>
     <string name="power_action_suspend">"休眠"</string>
