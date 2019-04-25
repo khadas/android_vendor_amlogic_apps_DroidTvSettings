@@ -155,8 +155,15 @@ public class OutputUiManager {
          "DV_RGB_444_8BIT",
 //         "DV_YCbCr_422_12BIT",
          "LL_YCbCr_422_12BIT",
-         "LL_RGB_444_12BIT"
+         "LL_RGB_444_12BIT",
+         "LL_RGB_444_10BIT"
     };
+
+    private static final int DV_LL_RGB            = 3;
+    private static final int DV_LL_YUV            = 2;
+    private static final int DV_ENABLE            = 1;
+    private static final int DV_DISABLE           = 0;
+
     private static final int DEFAULT_HDMI_MODE = 0;
     private static final int DEFAULT_CVBS_MODE = 1;
     private static String[] mHdmiValueList;
@@ -358,6 +365,12 @@ public class OutputUiManager {
         return mOutputModeManager.isBestOutputmode();
     }
 
+    public void setBestDolbyVision(boolean enable) {
+        mOutputModeManager.setBestDolbyVision(enable);
+    }
+    public boolean isBestDolbyVsion(){
+        return mOutputModeManager.isBestDolbyVsion();
+    }
     public void change2DeepColorMode() {
         mOutputModeManager.setDeepColorMode();
     }
@@ -421,8 +434,37 @@ public class OutputUiManager {
                             > resolveResolutionValue(tvSupportDolbyVisionMode)) {
                         Log.e(TAG, "This TV not Support Dolby Vision in " + listHdmiMode.get(i));
                     } else {
-                        listHdmiMode_tmp.add(listHdmiMode.get(i));
-                        listHdmiTitle_tmp.add(listHdmiTitle.get(i));
+                        if (isDolbyVisionEnable() && isTvSupportDolbyVision()) {
+                            if (listHdmiMode.get(i).contains("smpte")) {
+                                continue;
+                            }
+                            int type = mDolbyVisionSettingManager.getDolbyVisionType();
+                            switch (type) {
+                                case DV_ENABLE:
+                                    if (isModeSupportColor(listHdmiMode.get(i), "444,8bit")) {
+                                        listHdmiMode_tmp.add(listHdmiMode.get(i));
+                                        listHdmiTitle_tmp.add(listHdmiTitle.get(i));
+                                    }
+                                    break;
+                                case DV_LL_YUV:
+                                    if (isModeSupportColor(listHdmiMode.get(i), "422,12bit")
+                                            || isModeSupportColor(listHdmiMode.get(i), "422,10bit")) {
+                                        listHdmiMode_tmp.add(listHdmiMode.get(i));
+                                        listHdmiTitle_tmp.add(listHdmiTitle.get(i));
+                                    }
+                                    break;
+                                case DV_LL_RGB:
+                                    if (isModeSupportColor(listHdmiMode.get(i), "444,12bit")
+                                            || isModeSupportColor(listHdmiMode.get(i), "444,10bit")) {
+                                        listHdmiMode_tmp.add(listHdmiMode.get(i));
+                                        listHdmiTitle_tmp.add(listHdmiTitle.get(i));
+                                    }
+                                    break;
+                            }
+                        } else {
+                            listHdmiMode_tmp.add(listHdmiMode.get(i));
+                            listHdmiTitle_tmp.add(listHdmiTitle.get(i));
+                        }
                     }
                 }
                 mHdmiValueList = listHdmiMode_tmp.toArray(new String[listValue.size()]);

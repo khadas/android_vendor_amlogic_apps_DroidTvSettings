@@ -57,9 +57,15 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private static final String KEY_COLORDEPTH = "colordepth_setting";
     private static final String KEY_DISPLAYMODE = "displaymode_setting";
     private static final String KEY_BEST_RESOLUTION = "best_resolution";
+    private static final String KEY_BEST_DOLBYVISION = "best_dolbyvision";
     private static final String KEY_DOLBYVISION = "dolby_vision";
     private static final String KEY_DOLBYVISION_PRIORITY = "dolby_vision_graphics_priority";
     private static final String DEFAULT_VALUE = "444,8bit";
+
+    private static final int DV_LL_RGB            = 3;
+    private static final int DV_LL_YUV            = 2;
+    private static final int DV_ENABLE            = 1;
+    private static final int DV_DISABLE           = 0;
 
     private String preMode;
     private String preDeepColor;
@@ -77,6 +83,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
 
     private DolbyVisionSettingManager mDolbyVisionSettingManager;
     private Preference mBestResolutionPref;
+    private Preference mBestDolbyVisionPref;
     private Preference mDisplayModePref;
     private Preference mDeepColorPref;
     private Preference mColorDepthPref;
@@ -132,7 +139,9 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
 
         mDolbyVisionSettingManager = new DolbyVisionSettingManager((Context) getActivity());
         mBestResolutionPref = findPreference(KEY_BEST_RESOLUTION);
+        mBestDolbyVisionPref = findPreference(KEY_BEST_DOLBYVISION);
         mBestResolutionPref.setOnPreferenceChangeListener(this);
+        mBestDolbyVisionPref.setOnPreferenceChangeListener(this);
         mDisplayModePref = findPreference(KEY_DISPLAYMODE);
         mDeepColorPref = findPreference(KEY_COLORSPACE);
         mColorDepthPref = findPreference(KEY_COLORDEPTH);
@@ -167,6 +176,14 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
            mBestResolutionPref.setSummary(R.string.captions_display_on);
         }else {
            mBestResolutionPref.setSummary(R.string.captions_display_off);
+        }
+
+        ((SwitchPreference)mBestDolbyVisionPref).setChecked(isBestDolbyVsion());
+        // set best dolby vision summary.
+        if (isBestDolbyVsion()) {
+           mBestDolbyVisionPref.setSummary(R.string.captions_display_on);
+        }else {
+           mBestDolbyVisionPref.setSummary(R.string.captions_display_off);
         }
 
         // set dolby vision summary.
@@ -219,6 +236,8 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
                 mDolbyVisionPref.setVisible(true);
                 mGraphicsPriorityPref.setVisible(
                     mDolbyVisionSettingManager.isDolbyVisionEnable() ? true:false);
+                if (mOutputUiManager.isTvSupportDolbyVision()) {
+                }
             } else {
                 mDolbyVisionPref.setVisible(false);
                 mGraphicsPriorityPref.setVisible(false);
@@ -226,6 +245,12 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         } else {
             mDolbyVisionPref.setVisible(false);
             mGraphicsPriorityPref.setVisible(false);
+        }
+        if (isHdmiMode() && (SystemProperties.getBoolean("ro.vendor.platform.support.dolbyvision", false) == true)
+                && mOutputUiManager.isTvSupportDolbyVision()) {
+            mBestDolbyVisionPref.setVisible(true);
+        } else {
+            mBestDolbyVisionPref.setVisible(false);
         }
     }
 
@@ -251,11 +276,33 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
             if (isBestResolution()) {
                 showDialog();
             }
+        } else if (TextUtils.equals(preference.getKey(), KEY_BEST_DOLBYVISION)) {
+            int type = mDolbyVisionSettingManager.getDolbyVisionType();
+            String mode = mDolbyVisionSettingManager.isTvSupportDolbyVision();
+            if (!isBestDolbyVsion()) {
+                if (!mode.equals("")) {
+                    if (mode.contains("LL_YCbCr_422_12BIT")) {
+                        mDolbyVisionSettingManager.setDolbyVisionEnable(DV_LL_YUV);
+                    } else if (mode.contains("DV_RGB_444_8BIT")) {
+                        mDolbyVisionSettingManager.setDolbyVisionEnable(DV_ENABLE);
+                    } else if ((mode.contains("LL_RGB_444_12BIT") || mode.contains("LL_RGB_444_10BIT"))) {
+                        mDolbyVisionSettingManager.setDolbyVisionEnable(DV_LL_RGB);
+                    }
+                }
+                setBestDolbyVision(true);
+            } else {
+                setBestDolbyVision(false);
+            }
+
+            mHandler.sendEmptyMessage(MSG_FRESH_UI);
         }
         return true;
     }
     private boolean isBestResolution() {
         return mOutputUiManager.isBestOutputmode();
+    }
+    private boolean isBestDolbyVsion() {
+        return mOutputUiManager.isBestDolbyVsion();
     }
 
     /**
@@ -265,6 +312,9 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
      */
     private void setBestResolution() {
         mOutputUiManager.change2BestMode();
+    }
+    private void setBestDolbyVision(boolean enable) {
+        mOutputUiManager.setBestDolbyVision(enable);
     }
     private String getCurrentDisplayMode() {
         return mOutputUiManager.getCurrentMode().trim();

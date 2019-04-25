@@ -20,6 +20,7 @@
     <string name="device_outputmode_color_depth">"色深设置"</string>
     <string name="device_position">"屏幕缩放"</string>
     <string name="device_outputmode_auto">"自动切换到最佳分辨率"</string>
+    <string name="device_dolbyvision_auto">"自动切换到最佳杜比视界模式"</string>
     <string name="device_outputmode_deepcolor">"深色模式"</string>
     <string name="device_outputmode_confirm_mode">"确认关闭深色模式"</string>
     <string name="device_outputmode_confirm_deepcolor">"确认打开深色模式"</string>
