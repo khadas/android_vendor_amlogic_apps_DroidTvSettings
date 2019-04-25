@@ -34,6 +34,10 @@
         android:key="colorspace_setting"
         android:title="@string/device_outputmode_color_space"
         android:fragment="com.droidlogic.tv.settings.display.outputmode.ColorAttributeFragment"/>
+    <SwitchPreference
+        android:key="best_dolbyvision"
+        android:persistent="false"
+        android:title="@string/device_dolbyvision_auto"/>
     <Preference
         android:key="dolby_vision"
         android:title="@string/dolby_vision"
