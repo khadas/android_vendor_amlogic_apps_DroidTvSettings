@@ -41,7 +41,7 @@ import com.droidlogic.app.tv.TvInSignalInfo;
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
 import com.droidlogic.app.SystemControlManager;
-import vendor.amlogic.hardware.tvserver.V1_0.FreqList;
+import com.droidlogic.app.tv.TvControlManager.FreqList;
 import com.droidlogic.app.tv.TvChannelParams;
 import com.droidlogic.app.DaylightSavingTime;
 import com.droidlogic.app.OutputModeManager;
