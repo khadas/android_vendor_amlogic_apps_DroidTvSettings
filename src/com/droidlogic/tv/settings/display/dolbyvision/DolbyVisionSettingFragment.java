@@ -80,7 +80,9 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
                     getPreferenceManager().getContext().stopService(serviceIntent);
                 }
             }
-            mOutputModeManager.setBestDolbyVision(false);
+            if (!mDolbyVisionSettingManager.isTvSupportDolbyVision().equals("")) {
+                mOutputModeManager.setBestDolbyVision(false);
+            }
         }
     };
 
