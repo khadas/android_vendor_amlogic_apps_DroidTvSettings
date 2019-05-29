@@ -33,6 +33,7 @@ public class BluetoothAutoPairReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        /*
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             Log("Received ACTION_BOOT_COMPLETED");
             if (!isAvilible(context,"com.google.android.tungsten.setupwraith")) {
@@ -44,6 +45,7 @@ public class BluetoothAutoPairReceiver extends BroadcastReceiver {
                 Log("gms no need autoconnectBT from receive!");
             }
         }
+        */
     }
 
     private boolean isAvilible( Context context, String packageName ){
