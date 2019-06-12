@@ -213,7 +213,7 @@ public abstract class TvSettingsActivity extends Activity implements ViewTreeObs
                 public void run() {
                     getFragmentManager().beginTransaction()
                             .remove(fragment)
-                            .commitNow();
+                            .commitNowAllowingStateLoss();
                 }
             });
             final Slide slide = new Slide(Gravity.END);

@@ -225,8 +225,11 @@ public class MainFragment extends LeanbackPreferenceFragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
+        if (esnReceiver != null) {
+            getActivity().getApplicationContext().unregisterReceiver(esnReceiver);
+        }
     }
 
     private void updateSounds() {
