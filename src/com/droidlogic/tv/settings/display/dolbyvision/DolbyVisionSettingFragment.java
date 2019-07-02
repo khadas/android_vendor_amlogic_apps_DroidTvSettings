@@ -62,6 +62,9 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
     private final Runnable mSetDvRunnable = new Runnable() {
         @Override
         public void run() {
+            if (!mDolbyVisionSettingManager.isTvSupportDolbyVision().equals("")) {
+                mOutputModeManager.setBestDolbyVision(false);
+            }
             if (DOLBY_VISION_DEFAULT.equals(mNewDvMode)) {
                 mDolbyVisionSettingManager.setDolbyVisionEnable(DV_ENABLE);
                 serviceIntent = new Intent(getPreferenceManager().getContext(), DolbyVisionService.class);
@@ -79,9 +82,6 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
                 if (serviceIntent != null) {
                     getPreferenceManager().getContext().stopService(serviceIntent);
                 }
-            }
-            if (!mDolbyVisionSettingManager.isTvSupportDolbyVision().equals("")) {
-                mOutputModeManager.setBestDolbyVision(false);
             }
         }
     };
