@@ -56,6 +56,7 @@ import com.droidlogic.app.tv.DroidLogicTvUtils;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.List;
 
 public class MainFragment extends LeanbackPreferenceFragment {
     private static final String TAG = "MainFragment";
@@ -103,6 +104,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.main_prefs, null);
         boolean is_from_live_tv = getActivity().getIntent().getIntExtra("from_live_tv", 0) == 1;
+        String inputId = getActivity().getIntent().getStringExtra("current_tvinputinfo_id");
         mTvUiMode = DroidUtils.hasTvUiMode();
         //tvFlag, is true when TV and T962E as TV, false when Mbox and T962E as Mbox.
         boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext())
@@ -153,17 +155,9 @@ public class MainFragment extends LeanbackPreferenceFragment {
             powerKeyPref.setVisible(false);
             mTvOption.setVisible(false);
             moreSettingsPref.setVisible(false);
-            TvControlManager tvControlManager = TvControlManager.getInstance();
-            int deviceId = Settings.System.getInt(getContext().getContentResolver(),
-                    DroidLogicTvUtils.TV_CURRENT_DEVICE_ID, 0);
-            if (deviceId != DroidLogicTvUtils.DEVICE_ID_ADTV
-                && deviceId != DroidLogicTvUtils.DEVICE_ID_ATV
-                && deviceId != DroidLogicTvUtils.DEVICE_ID_DTV) {
-                if (deviceId == -1) {
-                    channelPref.setVisible(true);
-                } else {
-                    channelPref.setVisible(false);
-                }
+            boolean isPassthrough = isPassthroughInput(inputId);
+            if (isPassthrough) {
+                channelPref.setVisible(false);
             } else {
                 channelPref.setVisible(true);
             }
@@ -270,5 +264,22 @@ public class MainFragment extends LeanbackPreferenceFragment {
             }
         }
         return null;
+    }
+
+    public boolean isPassthroughInput(String inputId) {
+        boolean result = false;
+        try {
+            TvInputManager tvInputManager = (TvInputManager)getActivity().getSystemService(Context.TV_INPUT_SERVICE);
+            List<TvInputInfo> inputList = tvInputManager.getTvInputList();
+            for (TvInputInfo input : inputList) {
+                if (input.isPassthroughInput() && TextUtils.equals(inputId, input.getId())) {
+                    result = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "isPassthroughInput Exception = " + e.getMessage());
+        }
+        return result;
     }
 }
