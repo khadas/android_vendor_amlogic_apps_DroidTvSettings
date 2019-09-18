@@ -48,6 +48,7 @@ import java.util.TimerTask;
 import android.util.Log;
 import com.droidlogic.tv.settings.R;
 import com.droidlogic.app.DolbyVisionSettingManager;
+import com.droidlogic.app.OutputModeManager;
 
 
 
@@ -61,6 +62,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private static final String KEY_BEST_DOLBYVISION = "best_dolbyvision";
     private static final String KEY_DOLBYVISION = "dolby_vision";
     private static final String KEY_HDR_POLICY = "hdr_policy";
+    private static final String KEY_HDR_PRIORITY = "hdr_priority";
     private static final String KEY_DOLBYVISION_PRIORITY = "dolby_vision_graphics_priority";
     private static final String DEFAULT_VALUE = "444,8bit";
 
@@ -83,6 +85,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private static final int MSG_COUNT_DOWN = 1;
     private static final int MSG_PLUG_FRESH_UI = 2;
 
+    private OutputModeManager mOutputModeManager;
     private DolbyVisionSettingManager mDolbyVisionSettingManager;
     private Preference mBestResolutionPref;
     private Preference mBestDolbyVisionPref;
@@ -91,6 +94,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private Preference mColorDepthPref;
     private Preference mDolbyVisionPref;
     private Preference mHdrPolicyPref;
+    private Preference mHdrPriorityPref;
     private Preference mGraphicsPriorityPref;
     private OutputUiManager mOutputUiManager;
     private IntentFilter mIntentFilter;
@@ -140,6 +144,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.screen_resolution, null);
 
+        mOutputModeManager = new OutputModeManager((Context) getActivity());
         mDolbyVisionSettingManager = new DolbyVisionSettingManager((Context) getActivity());
         mBestResolutionPref = findPreference(KEY_BEST_RESOLUTION);
         mBestDolbyVisionPref = findPreference(KEY_BEST_DOLBYVISION);
@@ -150,6 +155,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         mColorDepthPref = findPreference(KEY_COLORDEPTH);
         mDolbyVisionPref = findPreference(KEY_DOLBYVISION);
         mHdrPolicyPref = findPreference(KEY_HDR_POLICY);
+        mHdrPriorityPref = findPreference(KEY_HDR_PRIORITY);
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         mGraphicsPriorityPref = findPreference(KEY_DOLBYVISION_PRIORITY);
@@ -189,6 +195,12 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
            mBestDolbyVisionPref.setSummary(R.string.captions_display_off);
         }
 
+        // set hdr priority summary
+        if (mOutputModeManager.getHdrPriority() == 1) {
+           mHdrPriorityPref.setSummary(R.string.hdr10);
+        }else {
+           mHdrPriorityPref.setSummary(R.string.dolby_vision);
+        }
         // set dolby vision summary.
         if (true == mDolbyVisionSettingManager.isDolbyVisionEnable()) {
             if (mDolbyVisionSettingManager.getDolbyVisionType() == 2) {
