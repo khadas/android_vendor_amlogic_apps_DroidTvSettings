@@ -20,6 +20,10 @@
     <string name="device_outputmode_color_depth">Color Depth Settings</string>
     <string name="device_outputmode_auto">Auto switch to best resolution</string>
     <string name="device_dolbyvision_auto">Auto switch to best dolby vision</string>
+    <string name="hdr_priority">HDR Priority</string>
+    <string name="hdr10">HDR10</string>
+    <string name="hdr_priority_change">Confirm change HDR Priority to:</string>
+    <string name="hdr_priority_countdown"> seconds later restore old HDR Priority</string>
     <string name="device_outputmode_deepcolor">deep color mode</string>
     <string name="device_hdr_policy">HDR policy</string>
     <string name="device_outputmode_confirm_mode">Confirm turn off deep color mode</string>

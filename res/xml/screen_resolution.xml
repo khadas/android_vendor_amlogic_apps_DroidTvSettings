@@ -50,5 +50,8 @@
         android:key="dolby_vision_graphics_priority"
         android:title="@string/dolby_vision_graphics_priority"
         android:fragment="com.droidlogic.tv.settings.display.dolbyvision.GraphicsPrioritySettingFragment"/>
-
+    <Preference
+        android:key="hdr_priority"
+        android:title="@string/hdr_priority"
+        android:fragment="com.droidlogic.tv.settings.display.dolbyvision.HdrPriorityFragment"/>
 </PreferenceScreen>
