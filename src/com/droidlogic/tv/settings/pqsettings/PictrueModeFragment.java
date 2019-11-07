@@ -146,14 +146,7 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_aspect_ratio)) ||
                 (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_aspect_ratio))) {
             if (is_from_live_tv == 1) {
-                TvControlManager mTvControlManager = TvControlManager.getInstance();
-                int mSourceInputType = mTvControlManager.GetCurrentSourceInput();
-                //int mDeviceId = Settings.System.getInt(getActivity().getContentResolver(), TV_CURRENT_DEVICE_ID, DroidLogicTvUtils.DEVICE_ID_ADTV);
-                if (mSourceInputType == -1) {
-                    aspectratioPref.setEnabled(false);
-                } else {
-                    aspectratioPref.setValueIndex(mPQSettingsManager.getAspectRatioStatus());
-                }
+				aspectratioPref.setValueIndex(mPQSettingsManager.getAspectRatioStatus());
             } else {
                 aspectratioPref.setVisible(false);
             }

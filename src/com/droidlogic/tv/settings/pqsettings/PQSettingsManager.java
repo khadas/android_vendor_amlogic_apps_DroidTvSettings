@@ -213,7 +213,7 @@ public class PQSettingsManager {
     }
 
     public int getAspectRatioStatus () {
-        int itemPosition = mSystemControlManager.GetDisplayMode(mTvSourceInput.toInt());
+        int itemPosition = mSystemControlManager.GetDisplayMode(TvControlManager.SourceInput.XXXX.toInt());
         if (CanDebug()) Log.d(TAG, "getAspectRatioStatus:" + itemPosition);
         if (itemPosition == SystemControlManager.Display_Mode.DISPLAY_MODE_MODE43.toInt())
             return 1;
@@ -366,14 +366,15 @@ public class PQSettingsManager {
 
     public void setAspectRatio(int mode) {
         if (CanDebug()) Log.d(TAG, "setAspectRatio:" + mode);
+		int source = TvControlManager.SourceInput.XXXX.toInt();
         if (mode == 0) {
-            mSystemControlManager.SetDisplayMode(mTvSourceInput.toInt(), SystemControlManager.Display_Mode.DISPLAY_MODE_NORMAL, 1);
+            mSystemControlManager.SetDisplayMode(source, SystemControlManager.Display_Mode.DISPLAY_MODE_NORMAL, 1);
         } else if (mode == 1) {
-            mSystemControlManager.SetDisplayMode(mTvSourceInput.toInt(), SystemControlManager.Display_Mode.DISPLAY_MODE_MODE43, 1);
+            mSystemControlManager.SetDisplayMode(source, SystemControlManager.Display_Mode.DISPLAY_MODE_MODE43, 1);
         } else if (mode == 2) {
-            mSystemControlManager.SetDisplayMode(mTvSourceInput.toInt(), SystemControlManager.Display_Mode.DISPLAY_MODE_FULL, 1);
+            mSystemControlManager.SetDisplayMode(source, SystemControlManager.Display_Mode.DISPLAY_MODE_FULL, 1);
         } else if (mode == 3) {
-            mSystemControlManager.SetDisplayMode(mTvSourceInput.toInt(), SystemControlManager.Display_Mode.DISPLAY_MODE_169, 1);
+            mSystemControlManager.SetDisplayMode(source, SystemControlManager.Display_Mode.DISPLAY_MODE_169, 1);
         }
     }
 
