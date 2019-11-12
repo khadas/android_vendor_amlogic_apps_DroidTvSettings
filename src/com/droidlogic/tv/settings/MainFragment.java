@@ -76,6 +76,7 @@ public class MainFragment extends LeanbackPreferenceFragment {
     private static final String KEY_TV_OPTION = "tv_option";
     private static final String KEY_TV_CHANNEL = "channel";
     private static final String KEY_TV_SETTINGS = "tv_settings";
+	private static final String DTVKIT_PACKAGE = "org.dtvkit.inputsource";
     private boolean mTvUiMode;
 
     private Preference mUpgradeBluetoothRemote;
@@ -161,12 +162,18 @@ public class MainFragment extends LeanbackPreferenceFragment {
             } else {
                 channelPref.setVisible(true);
             }
+		    if (inputId != null && inputId.startsWith(DTVKIT_PACKAGE)) {
+				DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_HIDE_STARTUP);
+			} else {
+				DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_SHOW_STARTUP);
+			}
         } else {
             picturePref.setVisible(!SettingsConstant.needDroidlogicTvFeature(getContext()));
             mTvOption.setVisible(SettingsConstant.needDroidlogicTvFeature(getContext()));
             mSoundsPref.setVisible(false);
             channelPref.setVisible(false);
             settingsPref.setVisible(false);
+			DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_HIDE_STARTUP);
         }
     }
 
