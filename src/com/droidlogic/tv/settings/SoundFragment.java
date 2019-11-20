@@ -166,7 +166,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
                     getArrayString(R.array.digital_sounds_tv_entry_values));
             digitalsoundPref.setValue(mSoundParameterSettingManager.getDigitalAudioFormat());
             digitalsoundPref.setOnPreferenceChangeListener(this);
-            adsurport.setVisible(true);
+            //adsurport.setVisible(true);
         } else {
             digitalsoundPref.setEntries(
                     getArrayString(R.array.digital_sounds_box_entries));
@@ -174,7 +174,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
                     R.array.digital_sounds_box_entry_values));
             digitalsoundPref.setValue(mSoundParameterSettingManager.getDigitalAudioFormat());
             digitalsoundPref.setOnPreferenceChangeListener(this);
-            adsurport.setVisible(false);
+            //adsurport.setVisible(false);
         }
 
         mCategoryPref = (PreferenceCategory) findPreference(KEY_DIGITALSOUND_CATEGORY);
