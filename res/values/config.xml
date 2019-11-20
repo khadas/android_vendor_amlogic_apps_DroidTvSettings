@@ -49,7 +49,7 @@
     <bool name="box_pq_need_color">true</bool>
     <bool name="box_pq_need_sharpness">false</bool>
     <bool name="box_pq_need_tone">true</bool>
-    <bool name="box_pq_need_aspect_ratio">false</bool>
+    <bool name="box_pq_need_aspect_ratio">true</bool>
     <bool name="box_pq_need_color_temprature">false</bool>
     <bool name="box_pq_need_dnr">true</bool>
     <bool name="box_pq_need_saturation">true</bool>
