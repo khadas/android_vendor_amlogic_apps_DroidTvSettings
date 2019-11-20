@@ -67,6 +67,7 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
 
     private static final String CURRENT_DEVICE_ID = "current_device_id";
     private static final String TV_CURRENT_DEVICE_ID = "tv_current_device_id";
+    private static final String DTVKIT_PACKAGE = "org.dtvkit.inputsource";
 
     private PQSettingsManager mPQSettingsManager;
 
@@ -100,12 +101,14 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         picturemodePref.setValue(mPQSettingsManager.getPictureModeStatus());
 
         int is_from_live_tv = getActivity().getIntent().getIntExtra("from_live_tv", 0);
+        String currentInputInfoId = getActivity().getIntent().getStringExtra("current_tvinputinfo_id");
         boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
         boolean hasMboxFeature = SettingsConstant.hasMboxFeature(getActivity());
         String curPictureMode = mPQSettingsManager.getPictureModeStatus();
         final Preference backlightPref = (Preference) findPreference(PQ_BACKLIGHT);
         if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_backlight)) ||
-                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_backlight))) {
+                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_backlight)) ||
+                (isTv && isDtvKitInput(currentInputInfoId))) {
             backlightPref.setSummary(mPQSettingsManager.getBacklightStatus() + "%");
         } else {
             backlightPref.setVisible(false);
@@ -294,4 +297,14 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
 
         return temp;
     }
+
+    private static boolean isDtvKitInput(String inputId) {
+        boolean result = false;
+        if (inputId != null && inputId.startsWith(DTVKIT_PACKAGE)) {
+            result = true;
+        }
+        Log.d(TAG, "isDtvKitInput result = " + result);
+        return result;
+    }
+
 }
