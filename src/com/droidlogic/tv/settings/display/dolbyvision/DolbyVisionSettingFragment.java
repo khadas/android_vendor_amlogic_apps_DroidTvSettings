@@ -129,10 +129,17 @@ public class DolbyVisionSettingFragment extends LeanbackPreferenceFragment {
         String mode = mDolbyVisionSettingManager.isTvSupportDolbyVision();
         String curMode = mOutputModeManager.getCurrentOutputMode();
         ArrayList<Action> actions = new ArrayList<Action>();
-        if ((!mode.equals("") && mode.contains("DV_RGB_444_8BIT")) || mode.equals("")) {
+        if (mode.equals("")) {
             actions.add(new Action.Builder()
                 .key(DOLBY_VISION_DEFAULT)
                 .title(getString(R.string.dolby_vision_default_enable))
+                .checked((enable == true) && (type == DV_ENABLE))
+                .build());
+        }
+        if (!mode.equals("") && mode.contains("DV_RGB_444_8BIT")) {
+            actions.add(new Action.Builder()
+                .key(DOLBY_VISION_DEFAULT)
+                .title(getString(R.string.dolby_vision_sink_led))
                 .checked((enable == true) && (type == DV_ENABLE))
                 .build());
         }
