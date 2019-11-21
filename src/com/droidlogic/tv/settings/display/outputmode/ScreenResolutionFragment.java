@@ -196,7 +196,11 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
             } else if (mDolbyVisionSettingManager.getDolbyVisionType() == 3) {
                 mDolbyVisionPref.setSummary(R.string.dolby_vision_low_latency_rgb);
             } else {
-                mDolbyVisionPref.setSummary(R.string.dolby_vision_default_enable);
+                if (mOutputUiManager.isTvSupportDolbyVision()) {
+                    mDolbyVisionPref.setSummary(R.string.dolby_vision_sink_led);
+                } else {
+                    mDolbyVisionPref.setSummary(R.string.dolby_vision_default_enable);
+                }
             }
         } else {
             mDolbyVisionPref.setSummary(R.string.dolby_vision_off);

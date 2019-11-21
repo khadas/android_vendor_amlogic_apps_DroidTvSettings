@@ -74,8 +74,9 @@
     <string name="dolby_vision_tv">TV Dolby Vision</string>
     <string name="dolby_vision_tv_set">TV Dolby Vision Set</string>
     <string name="dolby_vision_default_enable">Dolby vision enable</string>
-    <string name="dolby_vision_low_latency_yuv">Dolby vision enable with low latency (YUV)</string>
-    <string name="dolby_vision_low_latency_rgb">Dolby vision enable with low latency (RGB)</string>
+    <string name="dolby_vision_sink_led">Dolby vision sink-led</string>
+    <string name="dolby_vision_low_latency_yuv">Dolby vision source-led</string>
+    <string name="dolby_vision_low_latency_rgb">Dolby vision source-led (RGB)</string>
     <string name="dolby_vision_off">Dolby vision disable</string>
     <string name="dolby_vision_graphics_priority">Dolby Vision Graphics Priority</string>
     <string name="graphics_priority">Graphics Priority</string>
