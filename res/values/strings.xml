@@ -121,6 +121,8 @@
     <string name="device_tv_audio_arc">Arc</string>
     <string name="device_audio_spdif">Spdif</string>
 
+    <string name="screen_brightness">Screen brightness</string>
+
     <!-- Image description for the sync failed icon. -->
     <string name="sync_failed">Sync failed</string>
     <!-- Animation description for the sync active icon. -->
