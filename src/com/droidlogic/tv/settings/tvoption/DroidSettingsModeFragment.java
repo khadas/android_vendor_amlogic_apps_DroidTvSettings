@@ -104,7 +104,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         if (mTvInputManager == null) {
             mTvInputManager = (TvInputManager)getActivity().getSystemService(Context.TV_INPUT_SERVICE);
         }
-
+        boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
         boolean hideStartUp = DroidUtils.VALUE_HIDE_STARTUP.equals(DroidUtils.read(getActivity(), DroidUtils.KEY_HIDE_STARTUP));
 
         final Preference pip = (Preference) findPreference(PIP);
@@ -126,7 +126,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
             && deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI2
             && deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI3
             && deviceId != DroidLogicTvUtils.DEVICE_ID_HDMI4) {
-            hdmiSwitch.setEnabled(false);
+            hdmiSwitch.setVisible(false);
         }
         if (isParentControlEnabled) {
             avParentalControls.setSummary(AV_PARENTAL_CONTROLS_ON);
@@ -163,6 +163,12 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         } else {
             daylightSavingTime.setVisible(false);
         }
+        final Preference hdmiCec = (Preference) findPreference(KEY_HDMI_CEC_CONTROL);
+        if (!isTv) {
+            hdmiCec.setVisible(false);
+        }
+        final Preference factoryRestore = (Preference) findPreference(RESTORE_FACTORY);
+        factoryRestore.setVisible(false);
     }
 
     @Override

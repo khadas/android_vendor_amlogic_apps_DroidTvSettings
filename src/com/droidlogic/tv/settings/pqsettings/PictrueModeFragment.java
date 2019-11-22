@@ -171,13 +171,9 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
             picturemodePref.setVisible(false);
         }
         final ListPreference aspectratioPref = (ListPreference) findPreference(PQ_ASPECT_RATIO);
-        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_aspect_ratio)) ||
+        if (is_from_live_tv == 1 || (isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_aspect_ratio)) ||
                 (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_aspect_ratio))) {
-            if (is_from_live_tv == 1) {
-                aspectratioPref.setValueIndex(mPQSettingsManager.getAspectRatioStatus());
-            } else {
-                aspectratioPref.setVisible(false);
-            }
+            aspectratioPref.setValueIndex(mPQSettingsManager.getAspectRatioStatus());
             aspectratioPref.setOnPreferenceChangeListener(this);
         } else {
             aspectratioPref.setVisible(false);
