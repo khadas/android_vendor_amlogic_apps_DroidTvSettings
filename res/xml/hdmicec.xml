@@ -19,20 +19,40 @@
     android:title="@string/cec_control" >
 
     <SwitchPreference
-        android:key="cec_switch"
+        android:key="key_cec_switch"
         android:persistent="false"
-        android:title="@string/cec_switch" />
+        android:title="@string/title_cec_switch" />
     <SwitchPreference
-        android:key="cec_onekey_play"
+        android:key="key_cec_one_key_play"
         android:persistent="false"
-        android:title="@string/cec_one_key_play" />
+        android:title="@string/title_cec_one_key_play" />
     <SwitchPreference
-        android:key="cec_onekey_poweroff"
+        android:key="key_cec_auto_power_off"
         android:persistent="false"
-        android:title="@string/cec_one_key_power_off" />
+        android:title="@string/title_cec_auto_power_off" />
     <SwitchPreference
-        android:key="cec_auto_change_language"
+        android:key="key_cec_auto_wake_up"
         android:persistent="false"
-        android:title="@string/cec_auto_change_language" />
-
+        android:title="@string/title_cec_auto_wake_up" />
+    <SwitchPreference
+        android:key="key_cec_auto_change_language"
+        android:persistent="false"
+        android:title="@string/title_cec_auto_change_language" />
+    <SwitchPreference
+        android:key="key_cec_arc_switch"
+        android:persistent="false"
+        android:title="@string/title_cec_arc_switch" />
+    <Preference
+        android:fragment="com.droidlogic.tv.settings.tvoption.HdmiCecDeviceSelectFragment"
+        android:key="key_cec_device_list"
+        android:title="@string/title_cec_device_list" />
+    <ListPreference
+        android:key="digital_sound"
+        android:persistent="false"
+        android:title="@string/device_sound_digital"
+        android:summary="%s" />
+    <SeekBarPreference
+        android:key="key_audio_output_latency"
+        android:persistent="false"
+        android:title="@string/audio_output_latency" />
 </PreferenceScreen>

@@ -199,6 +199,7 @@ public class OutputUiManager {
 
     public String getUiMode(){
         String currentMode = mOutputModeManager.getCurrentOutputMode();
+        Log.d(TAG,"getUiMode currentMode = " + currentMode);
         if (currentMode.contains(CVBS_MODE)) {
             mUiMode = CVBS_MODE;
         } else {
@@ -236,6 +237,13 @@ public class OutputUiManager {
         return "default";
     }
 
+    public void setHdrStrategy(String type){
+        mOutputModeManager.setHdrStrategy(type);
+    }
+
+    public String getHdrStrategy() {
+        return mOutputModeManager.getHdrStrategy();
+    }
     public String getCurrentColorSpaceTitle() {
         for (int i = 0; i < COLOR_SPACE_LIST.length; i++) {
             if (getCurrentColorAttribute().contains(COLOR_SPACE_LIST[i])) {
@@ -429,13 +437,14 @@ public class OutputUiManager {
             List<String> listHdmiMode_tmp = new ArrayList<String>();
             List<String> listHdmiTitle_tmp = new ArrayList<String>();
             if (isDolbyVisionEnable() && isTvSupportDolbyVision()) {
+                Log.d(TAG,"zzy filter isDolbyVisionEnable");
                 for (int i = 0; i < listHdmiMode.size(); i++) {
                     if (resolveResolutionValue(listHdmiMode.get(i))
                             > resolveResolutionValue(tvSupportDolbyVisionMode)) {
                         Log.e(TAG, "This TV not Support Dolby Vision in " + listHdmiMode.get(i));
                     } else {
                         if (isDolbyVisionEnable() && isTvSupportDolbyVision()) {
-                            if (listHdmiMode.get(i).contains("smpte")) {
+                            if (listHdmiMode.get(i).contains("smpte") || listHdmiMode.get(i).contains("i")) {
                                 continue;
                             }
                             int type = mDolbyVisionSettingManager.getDolbyVisionType();
@@ -454,6 +463,11 @@ public class OutputUiManager {
                                     }
                                     break;
                                 case DV_LL_RGB:
+                                    if (resolveResolutionValue(listHdmiMode.get(i))
+                                            > resolveResolutionValue("1080p60hz")) {
+                                        continue;
+                                    }
+
                                     if (isModeSupportColor(listHdmiMode.get(i), "444,12bit")
                                             || isModeSupportColor(listHdmiMode.get(i), "444,10bit")) {
                                         listHdmiMode_tmp.add(listHdmiMode.get(i));

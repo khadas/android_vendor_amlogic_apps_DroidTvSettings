@@ -61,6 +61,8 @@ public abstract class TvSettingsActivity extends Activity implements ViewTreeObs
         }
         mStartMode = getIntent().getIntExtra("from_live_tv", MODE_LAUNCHER);
         Log.d(TAG, "mStartMode : " + mStartMode);
+        // DolbyAudioEffectManager may take some time to bindservice
+        DolbyAudioEffectManager.getInstance(getApplicationContext());
         if (SettingsConstant.needDroidlogicCustomization(this)) {
             if (mStartMode == MODE_LIVE_TV) {
                 startShowActivityTimer();

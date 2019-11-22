@@ -25,6 +25,9 @@
         android:title="@string/tv_sound_mode"
         android:summary="%s" />
     <Preference
+        android:key="dap_sound"
+        android:title="@string/dap_sound"/>
+    <Preference
         android:fragment="com.droidlogic.tv.soundeffectsettings.TrebleBassSeekBarFragment"
         android:key="treble_bass_effect_settings"
         android:title="@string/tv_treble_bass_effect" />
@@ -37,9 +40,17 @@
         android:key="effect_agc"
         android:title="@string/tv_sound_agc" />
     <Preference
+        android:fragment="com.droidlogic.tv.soundeffectsettings.DbxSettingFragment"
+        android:key="key_tv_dbx_effect"
+        android:title="@string/title_tv_dbx" />
+    <Preference
         android:fragment="com.droidlogic.tv.soundeffectsettings.DtsSoundSettingFragment"
-        android:key="dts_effect_settings"
-        android:title="@string/tv_dts_effect" />
+        android:key="key_dts_effect_settings"
+        android:title="@string/title_tv_dts_srs_effect" />
+    <Preference
+        android:fragment="com.droidlogic.tv.soundeffectsettings.DtsVirualXSettingFragment"
+        android:key="key_dts_virtualx_settings"
+        android:title="@string/title_tv_dts_virtualx" />
      <ListPreference
         android:key="tv_sound_virtual_surround"
         android:persistent="false"
@@ -47,6 +58,10 @@
         android:entryValues="@array/tv_offon_entry_values"
         android:title="@string/tv_virtual_surround"
         android:summary="%s" />
+    <Preference
+        android:fragment="com.droidlogic.tv.soundeffectsettings.AudioSettingsFragment"
+        android:key="key_tv_sound_audio_settings"
+        android:title="@string/title_tv_sound_audio_settings" />
      <ListPreference
         android:key="tv_sound_output_device"
         android:persistent="false"

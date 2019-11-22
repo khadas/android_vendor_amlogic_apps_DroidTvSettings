@@ -58,11 +58,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HdmiCecActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation"
-            android:excludeFromRecents="true"
-            android:exported="true" />
-        <activity
             android:name=".PlaybackActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
@@ -74,6 +69,11 @@
             android:theme="@style/Theme.Settings.Transparent" />
         <activity
             android:name=".PowerKeyActionDefinitionActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+        <activity
+            android:name=".PowerOnModeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="false" />
@@ -153,6 +153,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".DolbyAudioEffectActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:exported="true"
+            android:theme="@style/Theme.Settings.Transparent" />
+        <activity
             android:name=".TvSourceActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
@@ -195,10 +200,12 @@
             android:excludeFromRecents="true"
             android:exported="false" />
         <activity
-            android:name="tvoption.Hdmi20SwitchActivity"
+            android:name=".tvoption.HdmiCecActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
-            android:exported="false" />
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Settings.Transparent" />
         <receiver
             android:exported="true"
             android:name=".BluetoothAutoPairReceiver"

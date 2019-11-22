@@ -40,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.view.ViewGroup;
 
+import com.droidlogic.app.HdmiCecManager;
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
 import com.droidlogic.tv.settings.MainFragment;
@@ -64,6 +65,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     private static final String DAYLIGHT_SAVING_TIME = "tv_daylight_saving_time";
     private static final String FACTORY_MENU =  "tv_factory_menu";
     private static final String HDMI_SWITCH =  "tv_hdmi_switch";
+    private static final String KEY_HDMI_CEC_CONTROL = "hdmicec";
 
     private static final String AV_PARENTAL_CONTROLS_ON = "On";
     private static final String AV_PARENTAL_CONTROLS_OFF = "Off";
@@ -102,7 +104,9 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         if (mTvInputManager == null) {
             mTvInputManager = (TvInputManager)getActivity().getSystemService(Context.TV_INPUT_SERVICE);
         }
+
         boolean hideStartUp = DroidUtils.VALUE_HIDE_STARTUP.equals(DroidUtils.read(getActivity(), DroidUtils.KEY_HIDE_STARTUP));
+
         final Preference pip = (Preference) findPreference(PIP);
         pip.setVisible(false);
 
@@ -130,12 +134,12 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
             avParentalControls.setSummary(AV_PARENTAL_CONTROLS_OFF);
         }
         final ListPreference startupseting = (ListPreference) findPreference(STARTUP_SETTING);
-		if (!DroidUtils.hasGtvsUiMode() && !hideStartUp) {
-			startupseting.setValueIndex(mTvOptionSettingManager.getStartupSettingStatus());
-			startupseting.setOnPreferenceChangeListener(this);
-		} else {
-			startupseting.setVisible(false);
-		}
+        if (!DroidUtils.hasGtvsUiMode() && !hideStartUp) {
+            startupseting.setValueIndex(mTvOptionSettingManager.getStartupSettingStatus());
+            startupseting.setOnPreferenceChangeListener(this);
+        } else {
+            startupseting.setVisible(false);
+        }
         final ListPreference menutime = (ListPreference) findPreference(MENU_TIME);
         menutime.setValueIndex(mTvOptionSettingManager.getMenuTimeStatus());
         menutime.setOnPreferenceChangeListener(this);
@@ -253,7 +257,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
                         mTvOptionSettingManager.doFbcUpgrade();
                     }
                     dialog.dismiss();
-                    ((PowerManager) context.getSystemService(Context.POWER_SERVICE)).reboot("");
+                    ((PowerManager) context.getSystemService(Context.POWER_SERVICE)).reboot(null);
                 }
             });
         uiDialog.setNegativeButton(getString(R.string.tv_cancel)

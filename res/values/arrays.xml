@@ -27,6 +27,40 @@
         <item>rf</item>
     </string-array>
 
+    <string-array name="dap_mode_entries">
+        <item>off</item>
+        <item>movie</item>
+        <item>music</item>
+        <item>night</item>
+        <item>user</item>
+    </string-array>
+
+    <string-array name="dap_mode_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="dap_geq_entries">
+        <item>off</item>
+        <item>default</item>
+        <item>open</item>
+        <item>rich</item>
+        <item>focused</item>
+        <item>user</item>
+    </string-array>
+
+    <string-array name="dap_geq_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
     <string-array name="digital_sounds_box_entries">
         <item>PCM</item>
         <item>SPDIF</item>

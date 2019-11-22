@@ -120,11 +120,21 @@ public class TrebleBassSeekBarFragment extends LeanbackPreferenceFragment implem
         switch (seekBar.getId()) {
             case R.id.seekbar_tv_treble:{
                 setShow(R.id.seekbar_tv_treble, progress);
+                int soundMode = mAudioEffectManager.getSoundModeStatus();
+                if (soundMode != AudioEffectManager.EQ_SOUND_MODE_CUSTOM) {
+                    mAudioEffectManager.setSoundMode(AudioEffectManager.EQ_SOUND_MODE_CUSTOM);
+                    mAudioEffectManager.setBass(AudioEffectManager.EFFECT_BASS_DEFAULT);
+                }
                 mAudioEffectManager.setTreble(progress/* - mTvOptionSettingManager.getTrebleStatus()*/);
                 break;
             }
             case R.id.seekbar_tv_bass:{
                 setShow(R.id.seekbar_tv_bass, progress);
+                int soundMode = mAudioEffectManager.getSoundModeStatus();
+                if (soundMode != AudioEffectManager.EQ_SOUND_MODE_CUSTOM) {
+                    mAudioEffectManager.setSoundMode(AudioEffectManager.EQ_SOUND_MODE_CUSTOM);
+                    mAudioEffectManager.setTreble(AudioEffectManager.EFFECT_TREBLE_DEFAULT);
+                }
                 mAudioEffectManager.setBass(progress/* - mTvOptionSettingManager.getBassStatus()*/);
                 break;
             }

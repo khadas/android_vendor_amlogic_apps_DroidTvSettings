@@ -16,26 +16,20 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:title="@string/tv_dts_effect">
+    android:title="@string/title_tv_dts_srs_effect">
     <ListPreference
-        android:key="tv_surround"
-        android:persistent="false"
-        android:entries="@array/tv_offon_entries"
-        android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/tv_surround"
-        android:summary="%s" />
-    <ListPreference
-        android:key="tv_dialog_clarity"
+        android:key="key_tv_dts_dialog_clarity"
         android:persistent="false"
         android:entries="@array/tv_dialogcharity_entries"
         android:entryValues="@array/tv_dialogcharity_entry_values"
-        android:title="@string/tv_dialog_clarity"
+        android:title="@string/title_tv_dts_dialog_clarity"
         android:summary="%s" />
-    <ListPreference
-        android:key="tv_bass_boost"
+    <SwitchPreference
+        android:key="key_tv_dts_tru_surround"
         android:persistent="false"
-        android:entries="@array/tv_offon_entries"
-        android:entryValues="@array/tv_offon_entry_values"
-        android:title="@string/tv_bass_boost"
-        android:summary="%s" />
+        android:title="@string/title_tv_dts_tru_surround" />
+    <SwitchPreference
+        android:key="key_tv_dts_tru_bass"
+        android:persistent="false"
+        android:title="@string/title_tv_dts_tru_bass" />
 </PreferenceScreen>

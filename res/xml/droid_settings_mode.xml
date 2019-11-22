@@ -59,6 +59,10 @@
         android:fragment="com.droidlogic.tv.settings.tvoption.Hdmi20SwitchFragment"
         android:key="tv_hdmi_switch"
         android:title="@string/tv_hdmi_switch" />
+    <Preference
+        android:fragment="com.droidlogic.tv.settings.tvoption.HdmiCecFragment"
+        android:key="hdmicec"
+        android:title="@string/system_cec" />
     <ListPreference
         android:key="tv_daylight_saving_time"
         android:persistent="false"

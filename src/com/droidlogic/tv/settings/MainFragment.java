@@ -49,6 +49,7 @@ import android.content.ActivityNotFoundException;
 
 import com.droidlogic.tv.settings.util.DroidUtils;
 import com.droidlogic.tv.settings.SettingsConstant;
+import com.droidlogic.tv.settings.tvoption.DroidSettingsModeFragment;
 import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 
 import com.droidlogic.app.tv.TvControlManager;
@@ -65,18 +66,20 @@ public class MainFragment extends LeanbackPreferenceFragment {
     private static final String KEY_DISPLAY = "display";
     private static final String KEY_MBOX_SOUNDS = "mbox_sound";
     private static final String KEY_POWERKEY = "powerkey_action";
+    private static final String KEY_POWERONMODE = "poweronmode_action";
     private static final String MORE_SETTINGS_APP_PACKAGE = "com.android.settings";
     private static final String KEY_UPGRADE_BLUTOOTH_REMOTE = "upgrade_bluetooth_remote";
-    private static final String KEY_HDMICEC = "hdmicec";
     private static final String KEY_PLAYBACK_SETTINGS = "playback_settings";
     private static final String KEY_SOUNDS = "sound_effects";
+    private static final String KEY_KEYSTONE = "keyStone";
     private static final String KEY_NETFLIX_ESN = "netflix_esn";
     private static final String KEY_MORE_SETTINGS = "more";
     private static final String KEY_PICTURE = "pictrue_mode";
     private static final String KEY_TV_OPTION = "tv_option";
     private static final String KEY_TV_CHANNEL = "channel";
     private static final String KEY_TV_SETTINGS = "tv_settings";
-	private static final String DTVKIT_PACKAGE = "org.dtvkit.inputsource";
+    private static final String KEY_HDMI_CEC_CONTROL = "hdmicec";
+    private static final String DTVKIT_PACKAGE = "org.dtvkit.inputsource";
     private boolean mTvUiMode;
 
     private Preference mUpgradeBluetoothRemote;
@@ -113,18 +116,20 @@ public class MainFragment extends LeanbackPreferenceFragment {
 
         final Preference mainPref = findPreference(KEY_MAIN_MENU);
         final Preference displayPref = findPreference(KEY_DISPLAY);
-        final Preference hdmicecPref = findPreference(KEY_HDMICEC);
+        final Preference hdmicecPref = findPreference(KEY_HDMI_CEC_CONTROL);
         final Preference playbackPref = findPreference(KEY_PLAYBACK_SETTINGS);
         mSoundsPref = findPreference(KEY_SOUNDS);
         final Preference mboxSoundsPref = findPreference(KEY_MBOX_SOUNDS);
         final Preference powerKeyPref = findPreference(KEY_POWERKEY);
+        final Preference powerKeyOnModePref = findPreference(KEY_POWERONMODE);
+        final Preference keyStone = findPreference(KEY_KEYSTONE);
         //BluetoothRemote/HDMI cec/Playback Settings display only in Mbox
         mUpgradeBluetoothRemote = findPreference(KEY_UPGRADE_BLUTOOTH_REMOTE);
         final Preference netflixesnPref = findPreference(KEY_NETFLIX_ESN);
         //hide it forcedly as new bluetooth remote upgrade application is not available now
         mUpgradeBluetoothRemote.setVisible(false/*is_from_live_tv ? false : (SettingsConstant.needDroidlogicBluetoothRemoteFeature(getContext()) && !tvFlag)*/);
-        hdmicecPref.setVisible(is_from_live_tv ? false : (getContext().getPackageManager().hasSystemFeature("android.hardware.hdmi.cec")
-                    && SettingsConstant.needDroidlogicHdmicecFeature(getContext())));
+        hdmicecPref.setVisible((getContext().getPackageManager().hasSystemFeature("android.hardware.hdmi.cec")
+                && SettingsConstant.needDroidlogicHdmicecFeature(getContext())) && !is_from_live_tv);
         playbackPref.setVisible(false);
         if (netflixesnPref != null) {
             if (is_from_live_tv) {
@@ -154,26 +159,34 @@ public class MainFragment extends LeanbackPreferenceFragment {
             displayPref.setVisible(false);
             mboxSoundsPref.setVisible(false);
             powerKeyPref.setVisible(false);
+            powerKeyOnModePref.setVisible(false);
             mTvOption.setVisible(false);
             moreSettingsPref.setVisible(false);
+            keyStone.setVisible(false);
             boolean isPassthrough = isPassthroughInput(inputId);
             if (isPassthrough) {
                 channelPref.setVisible(false);
             } else {
                 channelPref.setVisible(true);
             }
-		    if (inputId != null && inputId.startsWith(DTVKIT_PACKAGE)) {
-				DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_HIDE_STARTUP);
-			} else {
-				DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_SHOW_STARTUP);
-			}
+            if (!SettingsConstant.needDroidlogicTvFeature(getContext())) {
+                mSoundsPref.setVisible(false);//mbox doesn't surport sound effect
+            }
+            if (inputId != null && inputId.startsWith(DTVKIT_PACKAGE)) {
+                DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_HIDE_STARTUP);
+            } else {
+                DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_SHOW_STARTUP);
+            }
         } else {
             picturePref.setVisible(!SettingsConstant.needDroidlogicTvFeature(getContext()));
             mTvOption.setVisible(SettingsConstant.needDroidlogicTvFeature(getContext()));
             mSoundsPref.setVisible(false);
             channelPref.setVisible(false);
             settingsPref.setVisible(false);
-			DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_HIDE_STARTUP);
+            if (!mTvUiMode) {
+                powerKeyOnModePref.setVisible(false);
+            }
+            DroidUtils.store(getActivity(), DroidUtils.KEY_HIDE_STARTUP, DroidUtils.VALUE_HIDE_STARTUP);
         }
     }
 
@@ -184,6 +197,8 @@ public class MainFragment extends LeanbackPreferenceFragment {
             startUiInLiveTv(KEY_TV_CHANNEL);
         } else if (TextUtils.equals(preference.getKey(), KEY_SOUNDS)) {
             startSoundEffectSettings(getActivity());
+        } else if (TextUtils.equals(preference.getKey(), KEY_KEYSTONE)) {
+            startKeyStoneCorrectionActivity(getActivity());
         }
         return false;
     }
@@ -203,6 +218,17 @@ public class MainFragment extends LeanbackPreferenceFragment {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.d(TAG, "startSoundEffectSettings not found!");
+            return;
+        }
+    }
+
+    public static void startKeyStoneCorrectionActivity(Context context){
+        try {
+            Intent intent = new Intent();
+            intent.setClassName("com.droidlogic.keystone", "com.droidlogic.keystone.keyStoneCorrectionActivity");
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.d(TAG, "startKeyStoneCorrectionActivity not found!");
             return;
         }
     }

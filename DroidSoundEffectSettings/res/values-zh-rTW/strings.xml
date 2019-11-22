@@ -20,6 +20,8 @@
     <!-- Title for a status description saying that a feature is off [CHAR LIMIT=30] -->
     <string name="action_off_description">"關閉"</string>
 
+    <string name="dap_sound">杜比音效</string>
+
     <string name="tv_sound_agc">"自動增益控制"</string>
     <string name="tv_sound_agc_enable">"自動增益控制"</string>
     <string name="tv_sound_agc_max_level">"最大電平"</string>

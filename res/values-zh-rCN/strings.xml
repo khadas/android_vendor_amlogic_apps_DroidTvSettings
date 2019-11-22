@@ -30,6 +30,24 @@
     <string name="device_position_zoomin">"放大屏幕"</string>
     <string name="device_position_description">"当前缩放比例是"</string>
     <string name="device_sound">"声音"</string>
+    <string name="audio_mixing">"音频混合"</string>
+    <string name="audio_mixing_summary_on">支持杜比5.1声道</string>
+    <string name="audio_mixing_summary_off">支持杜比7.1声道</string>
+    <string name="dolby_audio_processing">杜比音效</string>
+    <string name="sound_mode">音效</string>
+    <string name="dap_detail">用户调整</string>
+    <string name="dap_volume_leveler">音量调整</string>
+    <string name="dap_dialog_enhancer">对白增强</string>
+    <string name="dap_surround_boost">环绕音增强</string>
+    <string name="dap_geq_gains">均衡器</string>
+    <string name="dap_geq_band1">低频</string>
+    <string name="dap_geq_band2">中低频</string>
+    <string name="dap_geq_band3">中频</string>
+    <string name="dap_geq_band4">高频</string>
+    <string name="dap_geq_band5">超高频</string>
+    <string name="arc_latency">HDMI/ARC 延时</string>
+    <string name="audio_output_latency">音频输出延时</string>
+
     <string name="device_rotation_land">"横屏拉伸"</string>
     <string name="device_sound_digital">"数字音频"</string>
     <string name="device_sound_digital_auto">"自动检测"</string>
@@ -52,16 +70,17 @@
     <string name="device_sound_ad_surport">"辅助音"</string>
 
     <string name="power_key_action">"电源"</string>
-    <string name="power_action_suspend">"休眠"</string>
+    <string name="power_action_suspend">"待机"</string>
     <string name="power_action_restart">"重启"</string>
     <string name="power_action_shutdown">"关机"</string>
 
     <string name="system_cec">"HDMI CEC"</string>
-    <string name="cec_control">"CEC 控制"</string>
-    <string name="cec_switch">"CEC 开关"</string>
-    <string name="cec_one_key_play">"单键播放"</string>
-    <string name="cec_one_key_power_off">"单键关机"</string>
-    <string name="cec_auto_change_language">"语言切换"</string>
+    <string name="title_cec_control">"CEC 控制"</string>
+    <string name="title_cec_switch">"CEC 开关"</string>
+    <string name="title_cec_one_key_play">"单键播放"</string>
+    <string name="title_cec_auto_power_off">"单键关机"</string>
+    <string name="title_cec_auto_change_language">"语言切换"</string>
+    <string name="title_cec_arc_switch">"ARC 开关"</string>
     <string name="playback_settings">"播放设置"</string>
 
     <!-- Hdmi self-adaption switch -->
@@ -77,6 +96,11 @@
     <string name="power_key_definition">"电源键定义"</string>
     <string name="power_key_shutdown">"关机"</string>
     <string name="power_key_suspend">"休眠"</string>
+
+    <string name="power_on_mode">上电模式</string>
+    <string name="power_on">开机</string>
+    <string name="power_on_standby">待机</string>
+    <string name="power_on_last">记忆</string>
 
     <!-- Title for OK [CHAR LIMIT=50] -->
     <string name="title_ok">"确定"</string>
@@ -243,6 +267,9 @@
     <string name="pq_monitor">显示器</string>
     <string name="pq_game">游戏</string>
     <string name="pq_user">用户</string>
+
+    <!-- keystone correction. -->
+    <string name="keystone">keyStone校正</string>
 
     <string name="tv_channel">频道</string>
     <string name="system_setting">设置</string>

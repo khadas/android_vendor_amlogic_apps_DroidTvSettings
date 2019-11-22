@@ -56,4 +56,5 @@
     <bool name="box_pq_need_hue">false</bool>
     <bool name="box_pq_need_hdmicolor">false</bool>
     <bool name="box_pq_need_backlight">true</bool>
+    <bool name="display_need_dolby_vision_function">true</bool>
 </resources>

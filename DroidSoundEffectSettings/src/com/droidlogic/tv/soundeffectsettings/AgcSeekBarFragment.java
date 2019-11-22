@@ -108,7 +108,7 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
         checkbox_enable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mAudioEffectManager.setAgsEnable(isChecked ? 1 : 0);
+                mAudioEffectManager.setAgcEnable(isChecked);
                 enableAgcView(isChecked);
             }
         });
@@ -137,17 +137,17 @@ public class AgcSeekBarFragment extends LeanbackPreferenceFragment implements Se
         switch (seekBar.getId()) {
             case R.id.seekbar_max_level:{
                 setShow(R.id.seekbar_max_level, progress - 30);
-                mAudioEffectManager.setAgsMaxLevel(progress - 30); //0 ~ 30 -->-30 ~ 0
+                mAudioEffectManager.setAgcMaxLevel(progress - 30); //0 ~ 30 -->-30 ~ 0
                 break;
             }
             case R.id.seekbar_attrack_time:{
                 setShow(R.id.seekbar_attrack_time, (progress + 1) * 10);
-                mAudioEffectManager.setAgsAttrackTime((progress + 1) * 10);//0 ~ 19 --> 10ms~200ms
+                mAudioEffectManager.setAgcAttrackTime((progress + 1) * 10);//0 ~ 19 --> 10ms~200ms
                 break;
             }
             case R.id.seekbar_release_time:{
                 setShow(R.id.seekbar_release_time, progress + 2);
-                mAudioEffectManager.setAgsReleaseTime(progress + 2);//  0 ~6 -->2s~8s
+                mAudioEffectManager.setAgcReleaseTime(progress + 2);//  0 ~6 -->2s~8s
                 break;
             }
             default:

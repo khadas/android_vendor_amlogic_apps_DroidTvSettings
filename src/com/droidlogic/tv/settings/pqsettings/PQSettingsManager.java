@@ -366,7 +366,7 @@ public class PQSettingsManager {
 
     public void setAspectRatio(int mode) {
         if (CanDebug()) Log.d(TAG, "setAspectRatio:" + mode);
-		int source = TvControlManager.SourceInput.XXXX.toInt();
+        int source = TvControlManager.SourceInput.XXXX.toInt();
         if (mode == 0) {
             mSystemControlManager.SetDisplayMode(source, SystemControlManager.Display_Mode.DISPLAY_MODE_NORMAL, 1);
         } else if (mode == 1) {

@@ -165,6 +165,37 @@ public class SoundParameterSettingManager {
             return format;
     }
 
+    public void setAudioMixingEnable(boolean newVal) {
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.AUDIO_MIXING,
+                (newVal?OutputModeManager.AUDIO_MIXING_ON:OutputModeManager.AUDIO_MIXING_OFF));
+        mOutputModeManager.setAudioMixingEnable(newVal);
+    }
+
+    public boolean getAudioMixingEnable() {
+        return (Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.AUDIO_MIXING,
+                OutputModeManager.AUDIO_MIXING_DEFAULT) == OutputModeManager.AUDIO_MIXING_ON);
+    }
+
+    public void setARCLatency(int newVal) {
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.TV_ARC_LATENCY, newVal);
+        mOutputModeManager.setARCLatency(newVal);
+    }
+
+    public int getARCLatency() {
+        return Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.TV_ARC_LATENCY,
+                OutputModeManager.TV_ARC_LATENCY_DEFAULT);
+    }
+
+    public void setAudioOutputLatency(int newVal) {
+        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.DB_FIELD_AUDIO_OUTPUT_LATENCY, newVal);
+        mOutputModeManager.setAudioOutputLatency(newVal);
+    }
+
+    public int getAudioOutputLatency() {
+        return Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.DB_FIELD_AUDIO_OUTPUT_LATENCY,
+                OutputModeManager.AUDIO_OUTPUT_LATENCY_DEFAULT);
+    }
+
     public void setDrcModePassthroughSetting(int newVal) {
         Settings.Global.putInt(mContext.getContentResolver(),
                 OutputModeManager.DRC_MODE, newVal);
@@ -218,6 +249,8 @@ public class SoundParameterSettingManager {
         if (!SettingsConstant.needDroidlogicTvFeature(mContext)) {
             setDrcModePassthrough();
         }
+        setAudioMixingEnable(getAudioMixingEnable());
+        setARCLatency(getARCLatency());
         mOutputModeManager.initSoundParametersAfterBoot();
     }
 

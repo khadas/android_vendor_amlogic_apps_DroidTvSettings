@@ -24,6 +24,7 @@ import android.hardware.hdmi.HdmiDeviceInfo;
 import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.provider.Settings;
 import android.support.v17.preference.LeanbackPreferenceFragment;
@@ -45,6 +46,8 @@ import java.util.List;
 import com.droidlogic.app.tv.TvControlManager;
 import com.droidlogic.app.tv.DroidLogicTvUtils;
 import com.droidlogic.app.tv.TvScanConfig;
+import com.droidlogic.app.tv.ChannelInfo;
+import com.droidlogic.app.tv.DroidLogicHdmiCecManager;
 import android.hardware.hdmi.HdmiControlManager;
 import android.hardware.hdmi.HdmiTvClient;
 import android.media.tv.TvInputHardwareInfo;
@@ -73,7 +76,9 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
     private HdmiTvClient mTvClient;
     private final InputsComparator mComparator = new InputsComparator();
     private Context mContext;
-	private final String DTVKITSOURCE = "org.dtvkit.inputsource/.DtvkitTvInput/HW19";
+    private String mPreSource = null;
+    private String mCurSource = null;
+    private final String DTVKITSOURCE = "org.dtvkit.inputsource/.DtvkitTvInput/HW19";
 
     // if Fragment has no nullary constructor, it might throw InstantiationException, so add this constructor.
     // For more details, you can visit http://blog.csdn.net/xplee0576/article/details/43057633 .
@@ -112,9 +117,37 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
         }
         updatePreferenceFragment();
     }
+    public void calculatePreSrcToCurSrc(Preference preference) {
+        if (DroidLogicTvUtils.getCurrentInputId(mContext).contains("ADTV")) {
+            if (DroidLogicTvUtils.isATV(mContext)) {
+                mPreSource = "ATV";
+            } else {
+                mPreSource = "DTV";
+            }
 
+        } else if (DroidLogicTvUtils.getCurrentInputId(mContext).contains("AV")){
+            mPreSource = "AV";
+        } else if (DroidLogicTvUtils.getCurrentInputId(mContext).contains("Hdmi")) {
+            mPreSource = "HDMI";
+        }
+
+        String inputId = preference.getKey();
+         if (!TextUtils.isEmpty(inputId) && inputId.contains("Hdmi")) {
+            mCurSource = "HDMI";
+        } else if (TextUtils.regionMatches(preference.getTitle(), 0, "AV", 0, 2)) {
+            mCurSource = "AV";
+        } else if (TextUtils.regionMatches(preference.getTitle(), 0, "ATV", 0, 3)) {
+            mCurSource = "ATV";
+        } else if (TextUtils.regionMatches(preference.getTitle(), 0, "DTV", 0, 3)) {
+            mCurSource = "DTV";
+        }
+        Log.d(TAG, "onPreferenceTreeClick SwitchSourceTime PreSource - CurSource " + mPreSource + "-" + mCurSource);
+    }
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
+            calculatePreSrcToCurSrc(preference);
+            float Time= (float) SystemClock.uptimeMillis() / 1000;
+            Log.d(TAG, "onPreferenceTreeClick SwitchSourceTime = " + Time);
             final Preference sourcePreference = preference;
             List<TvInputInfo> inputList = mTvInputManager.getTvInputList();
             for (TvInputInfo input : inputList) {
@@ -138,14 +171,15 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
                     Settings.System.putInt(mContext.getContentResolver(), DroidLogicTvUtils.TV_CURRENT_DEVICE_ID,
                             DroidLogicTvUtils.getHardwareDeviceId(input));
 
-					SystemControlManager mSystemControlManager = SystemControlManager.getInstance();
-					if (DTVKITSOURCE.equals(input.getId())) {//DTVKIT SOURCE
-						if (DEBUG) Log.d(TAG, "DtvKit source");
-						mSystemControlManager.SetDtvKitSourceEnable(1);
-				    } else {
-						if (DEBUG) Log.d(TAG, "Not DtvKit source");
-						mSystemControlManager.SetDtvKitSourceEnable(0);
-					}
+                    SystemControlManager mSystemControlManager = SystemControlManager.getInstance();
+                    if (DTVKITSOURCE.equals(input.getId())) {//DTVKIT SOURCE
+                        if (DEBUG) Log.d(TAG, "DtvKit source");
+                        mSystemControlManager.SetDtvKitSourceEnable(1);
+                    } else {
+                        if (DEBUG) Log.d(TAG, "Not DtvKit source");
+                        mSystemControlManager.SetDtvKitSourceEnable(0);
+                    }
+
                     if (mStartMode == 1) {
                         Intent intent = new Intent();
                         intent.setAction(COMMANDACTION);
@@ -170,9 +204,43 @@ public class TvSourceFragment extends LeanbackPreferenceFragment {
                     }*/
                     // getPreferenceManager().getContext().startActivity(intent);
                    ((Activity)mContext).finish();
-                    break;
-                }
-            }
+                   int currentDeviceId = 0;
+                   if (input != null) {
+                       HdmiDeviceInfo info = input.getHdmiDeviceInfo();
+                       if (info == null)
+                           currentDeviceId = DroidLogicTvUtils.getHardwareDeviceId(input);
+                   }
+                   if ((currentDeviceId == DroidLogicTvUtils.DEVICE_ID_ATV)
+                       ||(currentDeviceId == DroidLogicTvUtils.DEVICE_ID_AV1)
+                       ||(currentDeviceId == DroidLogicTvUtils.DEVICE_ID_AV2)
+                       ||(currentDeviceId == DroidLogicTvUtils.DEVICE_ID_DTV)
+                       ||(currentDeviceId == DroidLogicTvUtils.DEVICE_ID_ADTV)) {
+                       String label = null;
+                       switch (currentDeviceId) {
+                       case DroidLogicTvUtils.DEVICE_ID_ATV:
+                           label = ChannelInfo.LABEL_ATV;
+                           break;
+                       case DroidLogicTvUtils.DEVICE_ID_DTV:
+                           label = ChannelInfo.LABEL_DTV;
+                           break;
+                       case DroidLogicTvUtils.DEVICE_ID_ADTV:
+                           label = ChannelInfo.LABEL_ATV + ChannelInfo.LABEL_DTV;
+                           break;
+                       case DroidLogicTvUtils.DEVICE_ID_AV1:
+                           label = ChannelInfo.LABEL_AV1;
+                           break;
+                       case DroidLogicTvUtils.DEVICE_ID_AV2:
+                           label = ChannelInfo.LABEL_AV2;
+                           break;
+                       }
+                       Log.d(TAG, "Change to Non-Hdmi channel " +
+                           "and CEC selectHdmiDevice to inner source: " + label);
+                       DroidLogicHdmiCecManager hdmi_cec = DroidLogicHdmiCecManager.getInstance((Activity)mContext);
+                       hdmi_cec.selectHdmiDevice(0, 0, 0);
+                   }
+                   break;
+               }
+        }
         return super.onPreferenceTreeClick(preference);
     }
 
