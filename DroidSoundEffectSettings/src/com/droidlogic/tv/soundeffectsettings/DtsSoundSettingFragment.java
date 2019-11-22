@@ -17,19 +17,14 @@
 package com.droidlogic.tv.soundeffectsettings;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v17.preference.LeanbackPreferenceFragment;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
-import android.support.v7.preference.ListPreference;
-import android.util.Log;
+import android.support.v7.preference.TwoStatePreference;
 import android.text.TextUtils;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.util.Log;
+
 
 import com.droidlogic.tv.soundeffectsettings.R;
 import com.droidlogic.app.tv.AudioEffectManager;
@@ -38,13 +33,16 @@ public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implemen
 
     private static final String TAG = "DtsSoundSettingFragment";
 
-    private static final String TV_SURROUND = "tv_surround";
-    private static final String TV_DIALOG_CLARITY = "tv_dialog_clarity";
-    private static final String TV_BASS_BOOST = "tv_bass_boost";
+    private static final String KEY_TV_DTS_TRU_SURROUND         = "key_tv_dts_tru_surround";
+    private static final String KEY_TV_DTS_DIALOG_CLARITY       = "key_tv_dts_dialog_clarity";
+    private static final String KEY_TV_DTS_TRU_BASS             = "key_tv_dts_tru_bass";
 
     private SoundParameterSettingManager mSoundParameterSettingManager;
     private AudioEffectManager mAudioEffectManager;
-    private boolean isSeekBarInited = false;
+
+    private ListPreference mDialogClarityPref;
+    private TwoStatePreference mTruSurroundPref;
+    private TwoStatePreference mTruBassPref;
 
     public static DtsSoundSettingFragment newInstance() {
         return new DtsSoundSettingFragment();
@@ -60,6 +58,14 @@ public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implemen
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mDialogClarityPref.setValueIndex(mAudioEffectManager.getDialogClarityMode());
+        mTruSurroundPref.setChecked(mAudioEffectManager.getSurroundEnable());
+        mTruBassPref.setChecked(mAudioEffectManager.getTruBassEnable());
+    }
+
+    @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.tv_sound_dts_setting, null);
         if (mAudioEffectManager == null) {
@@ -72,34 +78,45 @@ public class DtsSoundSettingFragment extends LeanbackPreferenceFragment implemen
             Log.e(TAG, "onCreatePreferences mAudioEffectManager == null");
             return;
         }
-        final ListPreference surround = (ListPreference) findPreference(TV_SURROUND);
-        surround.setValueIndex(mAudioEffectManager.getSurroundStatus());
-        surround.setOnPreferenceChangeListener(this);
-        final ListPreference dialogclarity = (ListPreference) findPreference(TV_DIALOG_CLARITY);
-        dialogclarity.setValueIndex(mAudioEffectManager.getDialogClarityStatus());
-        dialogclarity.setOnPreferenceChangeListener(this);
-        final ListPreference bassboost = (ListPreference) findPreference(TV_BASS_BOOST);
-        bassboost.setValueIndex(mAudioEffectManager.getBassBoostStatus());
-        bassboost.setOnPreferenceChangeListener(this);
-    }
 
-    @Override
-    public boolean onPreferenceTreeClick(Preference preference) {
-        if (CanDebug()) Log.d(TAG, "[onPreferenceTreeClick] preference.getKey() = " + preference.getKey());
-        return super.onPreferenceTreeClick(preference);
+        mDialogClarityPref = (ListPreference) findPreference(KEY_TV_DTS_DIALOG_CLARITY);
+        mDialogClarityPref.setValueIndex(mAudioEffectManager.getDialogClarityMode());
+        mDialogClarityPref.setOnPreferenceChangeListener(this);
+
+        mTruSurroundPref = (TwoStatePreference) findPreference(KEY_TV_DTS_TRU_SURROUND);
+        mTruSurroundPref.setChecked(mAudioEffectManager.getSurroundEnable());
+
+        mTruBassPref = (TwoStatePreference) findPreference(KEY_TV_DTS_TRU_BASS);
+        mTruBassPref.setChecked(mAudioEffectManager.getTruBassEnable());
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (CanDebug()) Log.d(TAG, "[onPreferenceChange] preference.getKey() = " + preference.getKey() + ", newValue = " + newValue);
+
         final int selection = Integer.parseInt((String)newValue);
-        if (TextUtils.equals(preference.getKey(), TV_SURROUND)) {
-            mAudioEffectManager.setSurround(selection);
-        } else if (TextUtils.equals(preference.getKey(), TV_DIALOG_CLARITY)) {
-            mAudioEffectManager.setDialogClarity(selection);
-        } else if (TextUtils.equals(preference.getKey(), TV_BASS_BOOST)) {
-            mAudioEffectManager.setBassBoost(selection);
+        if (TextUtils.equals(preference.getKey(), KEY_TV_DTS_DIALOG_CLARITY)) {
+            mAudioEffectManager.setDialogClarityMode(selection);
         }
         return true;
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (CanDebug()) Log.d(TAG, "[onPreferenceTreeClick] preference.getKey() = " + preference.getKey());
+        final String key = preference.getKey();
+        if (key != null) {
+            switch (key) {
+                case KEY_TV_DTS_TRU_SURROUND:
+                    mAudioEffectManager.setSurroundEnable(mTruSurroundPref.isChecked());
+                    mTruSurroundPref.setChecked(mAudioEffectManager.getSurroundEnable());
+                    break;
+                case KEY_TV_DTS_TRU_BASS:
+                    mAudioEffectManager.setTruBassEnable(mTruBassPref.isChecked());
+                    mTruBassPref.setChecked(mAudioEffectManager.getTruBassEnable());
+                    break;
+            }
+        }
+        return super.onPreferenceTreeClick(preference);
     }
 }

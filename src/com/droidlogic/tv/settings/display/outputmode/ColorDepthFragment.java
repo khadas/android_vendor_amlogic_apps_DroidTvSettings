@@ -99,6 +99,7 @@ public class ColorDepthFragment extends LeanbackPreferenceFragment {
         final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(
                 themedContext);
         screen.setTitle(R.string.device_outputmode_color_depth);
+        //R.string.device_outputmode_color_depth
         setPreferenceScreen(screen);
         if (!isHdmiMode()) {
             curValueList.clear();
@@ -163,13 +164,11 @@ public class ColorDepthFragment extends LeanbackPreferenceFragment {
                     .build());
             }
         }
-
         actions.add(new Action.Builder().key(ACTION_OFF)
-            .title("        " + getString(R.string.off))
-            .checked(curColorDepthValue.contains(DEFAULT_COLOR_DEPTH_VALUE) ? true : false)
-            .description("")
-            .build());
-
+                .title("        " + getString(R.string.off))
+                .checked(curColorDepthValue.contains(DEFAULT_COLOR_DEPTH_VALUE) ? true : false)
+                .description("")
+                .build());
         return actions;
     }
     @Override
@@ -207,7 +206,7 @@ public class ColorDepthFragment extends LeanbackPreferenceFragment {
         if (saveValue.equals("default"))
             saveValue = DEFAULT_COLOR_DEPTH_VALUE;
         curMode = mOutputUiManager.getCurrentMode().trim();
-        Log.i(LOG_TAG,"Set Color Depth Value: "+curValue + "CurValue: "+saveValue);
+        Log.i(LOG_TAG,"Set Color Depth CurValue: "+curValue + "PreValue: "+saveValue);
 
         if (!curValue.equals(saveValue)) {
             curValue = mOutputUiManager.getCurrentColorSpaceAttr().trim() + "," + curValue;

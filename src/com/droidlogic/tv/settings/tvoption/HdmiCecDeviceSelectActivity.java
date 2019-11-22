@@ -4,11 +4,9 @@
  * This source code is subject to the terms and conditions defined in the
  * file 'LICENSE' which is part of this source code package.
  *
- * Description:
- *     AMLOGIC HdmiCecActivity
+ * Description: JAVA file
  */
-
-package com.droidlogic.tv.settings;
+package com.droidlogic.tv.settings.tvoption;
 
 import com.droidlogic.tv.settings.BaseSettingsFragment;
 import com.droidlogic.tv.settings.TvSettingsActivity;
@@ -18,7 +16,7 @@ import android.app.Fragment;
 /**
  * Activity to control HDMI CEC settings.
  */
-public class HdmiCecActivity extends TvSettingsActivity {
+public class HdmiCecDeviceSelectActivity extends TvSettingsActivity {
 
     @Override
     protected Fragment createSettingsFragment() {
@@ -33,7 +31,7 @@ public class HdmiCecActivity extends TvSettingsActivity {
 
         @Override
         public void onPreferenceStartInitialScreen() {
-            final HdmiCecFragment fragment = HdmiCecFragment.newInstance();
+            final HdmiCecDeviceSelectFragment fragment = HdmiCecDeviceSelectFragment.newInstance();
             startPreferenceFragment(fragment);
         }
     }

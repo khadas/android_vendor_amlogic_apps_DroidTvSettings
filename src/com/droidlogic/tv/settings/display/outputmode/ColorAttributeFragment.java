@@ -119,9 +119,7 @@ public class ColorAttributeFragment extends LeanbackPreferenceFragment {
         }
     }
     private boolean isModeSupportColor(final String curMode, final String curValue){
-        boolean  ret = false;
-        ret = mOutputUiManager.isModeSupportColor(curMode, curValue);
-        return ret;
+        return mOutputUiManager.isModeSupportColor(curMode, curValue);
     }
 
     private ArrayList<Action> getMainActions() {

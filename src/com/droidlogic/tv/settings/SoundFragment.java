@@ -30,6 +30,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.PreferenceViewHolder;
+import android.support.v7.preference.SeekBarPreference;
 import android.support.v7.preference.TwoStatePreference;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,13 +48,20 @@ import com.droidlogic.tv.settings.tvoption.SoundParameterSettingManager;
 
 public class SoundFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener {
     public static final String TAG = "SoundFragment";
-    private static final String KEY_DRCMODE_PASSTHROUGH = "drc_mode";
-    private static final String KEY_DIGITALSOUND_CATEGORY = "surround_sound_category";
-    private static final String KEY_DIGITALSOUND_PREFIX = "digital_subformat_";
-    private static final String KEY_DIGITALSOUND_PASSTHROUGH = "digital_sound";
-    private static final String KEY_DTSDRCMODE_PASSTHROUGH = "dtsdrc_mode";
-    private static final String KEY_DTSDRCCUSTOMMODE_PASSTHROUGH = "dtsdrc_custom_mode";
-    private static final String KEY_AD_SURPORT = "ad_surport";
+
+    private static final String KEY_DRCMODE_PASSTHROUGH                     = "drc_mode";
+    private static final String KEY_AUDIO_MIXING                            = "audio_mixing";
+    private static final String KEY_DIGITALSOUND_CATEGORY                   = "surround_sound_category";
+    private static final String KEY_DIGITALSOUND_PREFIX                     = "digital_subformat_";
+    public static final String KEY_DIGITALSOUND_PASSTHROUGH                 = "digital_sound";
+    private static final String KEY_DTSDRCMODE_PASSTHROUGH                  = "dtsdrc_mode";
+    private static final String KEY_DTSDRCCUSTOMMODE_PASSTHROUGH            = "dtsdrc_custom_mode";
+    private static final String KEY_AD_SURPORT                              = "ad_surport";
+    private static final String KEY_DAP                                     = "dolby_audio_processing";
+    private static final String KEY_ARC_LATENCY                             = "arc_latency";
+    public static final String KEY_AUDIO_OUTPUT_LATENCY                     = "key_audio_output_latency";
+
+    public static final int KEY_AUDIO_OUTPUT_LATENCY_STEP                   = 10; // 10ms
 
     private OutputModeManager mOutputModeManager;
     private SystemControlManager mSystemControlManager;
@@ -88,7 +96,6 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOutputModeManager = new OutputModeManager(getActivity());
         if (mSoundParameterSettingManager == null) {
             mSoundParameterSettingManager = new SoundParameterSettingManager(getActivity());
         }
@@ -103,21 +110,43 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
         }
 
         final ListPreference drcmodePref = (ListPreference) findPreference(KEY_DRCMODE_PASSTHROUGH);
+        final TwoStatePreference mixingPref = (TwoStatePreference) findPreference(KEY_AUDIO_MIXING);
         final ListPreference digitalsoundPref = (ListPreference) findPreference(KEY_DIGITALSOUND_PASSTHROUGH);
         final ListPreference dtsdrccustommodePref = (ListPreference) findPreference(KEY_DTSDRCCUSTOMMODE_PASSTHROUGH);
         final ListPreference dtsdrcmodePref = (ListPreference) findPreference(KEY_DTSDRCMODE_PASSTHROUGH);
         final TwoStatePreference adsurport = (TwoStatePreference) findPreference(KEY_AD_SURPORT);
+        final Preference dapPref = (Preference) findPreference(KEY_DAP);
+        final SeekBarPreference arcPref = (SeekBarPreference) findPreference(KEY_ARC_LATENCY);
+        final SeekBarPreference audioOutputLatencyPref = (SeekBarPreference) findPreference(KEY_AUDIO_OUTPUT_LATENCY);
 
         mSystemControlManager = SystemControlManager.getInstance();
 
+        mOutputModeManager = new OutputModeManager(getActivity());
+        if (!mOutputModeManager.isDapValid())
+            dapPref.setVisible(false);
+
         drcmodePref.setValue(mSoundParameterSettingManager.getDrcModePassthroughSetting());
         drcmodePref.setOnPreferenceChangeListener(this);
+        mixingPref.setChecked(mSoundParameterSettingManager.getAudioMixingEnable());
         dtsdrcmodePref.setValue(mSystemControlManager.getPropertyString("persist.vendor.sys.dtsdrcscale", OutputModeManager.DEFAULT_DRC_SCALE));
         dtsdrcmodePref.setOnPreferenceChangeListener(this);
         adsurport.setChecked(mSoundParameterSettingManager.getAdSurportStatus());
+        arcPref.setOnPreferenceChangeListener(this);
+        arcPref.setMax(OutputModeManager.TV_ARC_LATENCY_MAX);
+        arcPref.setMin(OutputModeManager.TV_ARC_LATENCY_MIN);
+        arcPref.setSeekBarIncrement(10);
+        arcPref.setValue(mSoundParameterSettingManager.getARCLatency());
+
+        audioOutputLatencyPref.setOnPreferenceChangeListener(this);
+        audioOutputLatencyPref.setMax(OutputModeManager.AUDIO_OUTPUT_LATENCY_MAX);
+        audioOutputLatencyPref.setMin(OutputModeManager.AUDIO_OUTPUT_LATENCY_MIN);
+        audioOutputLatencyPref.setSeekBarIncrement(KEY_AUDIO_OUTPUT_LATENCY_STEP);
+        audioOutputLatencyPref.setValue(mSoundParameterSettingManager.getAudioOutputLatency());
+
         boolean tvFlag = SettingsConstant.needDroidlogicTvFeature(getContext());
         if (!mSystemControlManager.getPropertyBoolean("ro.vendor.platform.support.dolby", false)) {
             drcmodePref.setVisible(false);
+            mixingPref.setVisible(false);
             Log.d(TAG, "platform doesn't support dolby");
         }
         if (!mSystemControlManager.getPropertyBoolean("ro.vendor.platform.support.dts", false)) {
@@ -148,8 +177,7 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             adsurport.setVisible(false);
         }
 
-        mCategoryPref =
-            (PreferenceCategory) findPreference(KEY_DIGITALSOUND_CATEGORY);
+        mCategoryPref = (PreferenceCategory) findPreference(KEY_DIGITALSOUND_CATEGORY);
         createFormatPreferences();
         updateFormatPreferencesStates();
     }
@@ -249,6 +277,9 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             mSoundParameterSettingManager.setAudioManualFormats(
                     Integer.parseInt(key.substring(KEY_DIGITALSOUND_PREFIX.length())),
                     ((SwitchPreference) preference).isChecked());
+        } else if (KEY_AUDIO_MIXING.equals(key)) {
+            TwoStatePreference pref = (TwoStatePreference)preference;
+            mSoundParameterSettingManager.setAudioMixingEnable(pref.isChecked());
         } else if (KEY_AD_SURPORT.equals(key)) {
             final TwoStatePreference adsurport = (TwoStatePreference) findPreference(KEY_AD_SURPORT);
             mSoundParameterSettingManager.setAdSurportStatus(adsurport.isChecked());
@@ -279,16 +310,17 @@ public class SoundFragment extends LeanbackPreferenceFragment implements Prefere
             default:
                 throw new IllegalArgumentException("Unknown drc mode pref value");
             }
-            return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DIGITALSOUND_PASSTHROUGH)) {
             final String selection = (String)newValue;
             mSoundParameterSettingManager.setDigitalAudioFormat(selection);
             updateFormatPreferencesStates();
-            return true;
         } else if (TextUtils.equals(preference.getKey(), KEY_DTSDRCMODE_PASSTHROUGH)) {
             final String selection = (String) newValue;
             mOutputModeManager.setDtsDrcScale(selection);
-            return true;
+        } else if (TextUtils.equals(preference.getKey(), KEY_ARC_LATENCY)) {
+            mSoundParameterSettingManager.setARCLatency((int)newValue);
+        } else if (TextUtils.equals(preference.getKey(), KEY_AUDIO_OUTPUT_LATENCY)) {
+            mSoundParameterSettingManager.setAudioOutputLatency((int)newValue);
         }
         return true;
     }

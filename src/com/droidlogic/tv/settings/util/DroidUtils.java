@@ -30,48 +30,49 @@ import android.util.Log;
 public final class DroidUtils {
     private static final String TAG = "DroidUtils";
 
-	public static final String KEY_HIDE_STARTUP = "hide_startup";
-	public static final String VALUE_HIDE_STARTUP = "1";
-	public static final String VALUE_SHOW_STARTUP = "0";
-	/**
-	 * Non instantiable.
-	 */
-	private DroidUtils() {
-	}
+    public static final String KEY_HIDE_STARTUP = "hide_startup";
+    public static final String VALUE_HIDE_STARTUP = "1";
+    public static final String VALUE_SHOW_STARTUP = "0";
+    /**
+    * Non instantiable.
+    */
+    private DroidUtils() {
+    }
 
-	public static boolean hasTvUiMode() {
-		return SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false);
-	}
+    public static boolean hasTvUiMode() {
+        return SystemProperties.getBoolean("ro.vendor.platform.has.tvuimode", false);
+    }
 
-	public static boolean hasMboxUiMode() {
-		return SystemProperties.getBoolean("ro.vendor.platform.has.mboxuimode", false);
-	}
-	
-	public static boolean hasGtvsUiMode() {
-		return !TextUtils.isEmpty(SystemProperties.get("ro.com.google.gmsversion", ""));
-	}
-	public static void invisiblePreference(Preference preference, boolean tvUiMode) {
-		if (preference == null) {
-			return;
-		}
-		if (tvUiMode) {
-			preference.setVisible(false);
-		} else {
-			preference.setVisible(true);
-		}
-	}
+    public static boolean hasMboxUiMode() {
+        return SystemProperties.getBoolean("ro.vendor.platform.has.mboxuimode", false);
+    }
+
+    public static boolean hasGtvsUiMode() {
+        return !TextUtils.isEmpty(SystemProperties.get("ro.com.google.gmsversion", ""));
+    }
+
+    public static void invisiblePreference(Preference preference, boolean tvUiMode) {
+        if (preference == null) {
+            return;
+        }
+        if (tvUiMode) {
+            preference.setVisible(false);
+        } else {
+            preference.setVisible(true);
+        }
+    }
 
     public static void store(Context context, String keyword, String content) {
-		SharedPreferences DealData = context.getSharedPreferences("record_value", 0);
-		Editor editor = DealData.edit();
-		editor.putString(keyword, content);
-		editor.commit();
-		Log.d(TAG, "store keyword: " + keyword + ",content: " + content);
-	}
+        SharedPreferences DealData = context.getSharedPreferences("record_value", 0);
+        Editor editor = DealData.edit();
+        editor.putString(keyword, content);
+        editor.commit();
+        Log.d(TAG, "store keyword: " + keyword + ",content: " + content);
+    }
 
     public static String read(Context context, String keyword) {
-		SharedPreferences DealData = context.getSharedPreferences("record_value", 0);
-		Log.d(TAG, "read keyword: " + keyword + ",value: " + DealData.getString(keyword, null));
-		return DealData.getString(keyword, null);
-	}
+        SharedPreferences DealData = context.getSharedPreferences("record_value", 0);
+        Log.d(TAG, "read keyword: " + keyword + ",value: " + DealData.getString(keyword, null));
+        return DealData.getString(keyword, null);
+    }
 }

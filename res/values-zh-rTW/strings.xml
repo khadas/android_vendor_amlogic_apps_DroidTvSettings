@@ -29,6 +29,23 @@
     <string name="device_position_zoomin">"放大屏幕"</string>
     <string name="device_position_description">"當前縮放比例是"</string>
     <string name="device_sound">"聲音"</string>
+    <string name="audio_mixing">"音頻混合"</string>
+    <string name="audio_mixing_summary_on">支持杜比5.1聲道</string>
+    <string name="audio_mixing_summary_off">支持杜比7.1聲道</string>
+    <string name="dolby_audio_processing">杜比音效</string>
+    <string name="sound_mode">音效</string>
+    <string name="dap_detail">用戶調整</string>
+    <string name="dap_volume_leveler">音量調整</string>
+    <string name="dap_dialog_enhancer">對白增強</string>
+    <string name="dap_geq_gains">均衡器</string>
+    <string name="dap_geq_band1">低頻</string>
+    <string name="dap_geq_band2">中低頻</string>
+    <string name="dap_geq_band3">中頻</string>
+    <string name="dap_geq_band4">高頻</string>
+    <string name="dap_geq_band5">超高頻</string>
+    <string name="arc_latency">HDMI/ARC 延時</string>
+    <string name="audio_output_latency">音頻輸出延時</string>
+
     <string name="device_rotation_land">"橫屏拉伸"</string>
     <string name="device_sound_digital">"數字音頻"</string>
     <string name="device_sound_digital_auto">"自動檢測"</string>
@@ -57,10 +74,11 @@
 
     <string name="system_cec">"HDMI CEC"</string>
     <string name="cec_control">"CEC 控制"</string>
-    <string name="cec_switch">"CEC 開關"</string>
-    <string name="cec_one_key_play">"單鍵播放"</string>
-    <string name="cec_one_key_power_off">"單鍵開關"</string>
-    <string name="cec_auto_change_language">"語言切換"</string>
+    <string name="title_cec_switch">"CEC 開關"</string>
+    <string name="title_cec_one_key_play">"單鍵播放"</string>
+    <string name="title_cec_auto_power_off">"單鍵開關"</string>
+    <string name="title_cec_auto_change_language">"語言切換"</string>
+    <string name="title_cec_arc_switch">"ARC 開關"</string>
     <string name="playback_settings">"播放設置"</string>
 
     <!-- Hdmi self-adaption switch -->

@@ -50,15 +50,17 @@ import com.droidlogic.tv.settings.R;
 import com.droidlogic.app.DolbyVisionSettingManager;
 
 
+
 public class ScreenResolutionFragment extends LeanbackPreferenceFragment implements
         Preference.OnPreferenceChangeListener, OnClickListener {
-
+    private static final String LOG_TAG = "ScreenResolutionFragment";
     private static final String KEY_COLORSPACE = "colorspace_setting";
     private static final String KEY_COLORDEPTH = "colordepth_setting";
     private static final String KEY_DISPLAYMODE = "displaymode_setting";
     private static final String KEY_BEST_RESOLUTION = "best_resolution";
     private static final String KEY_BEST_DOLBYVISION = "best_dolbyvision";
     private static final String KEY_DOLBYVISION = "dolby_vision";
+    private static final String KEY_HDR_POLICY = "hdr_policy";
     private static final String KEY_DOLBYVISION_PRIORITY = "dolby_vision_graphics_priority";
     private static final String DEFAULT_VALUE = "444,8bit";
 
@@ -88,6 +90,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     private Preference mDeepColorPref;
     private Preference mColorDepthPref;
     private Preference mDolbyVisionPref;
+    private Preference mHdrPolicyPref;
     private Preference mGraphicsPriorityPref;
     private OutputUiManager mOutputUiManager;
     private IntentFilter mIntentFilter;
@@ -146,6 +149,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         mDeepColorPref = findPreference(KEY_COLORSPACE);
         mColorDepthPref = findPreference(KEY_COLORDEPTH);
         mDolbyVisionPref = findPreference(KEY_DOLBYVISION);
+        mHdrPolicyPref = findPreference(KEY_HDR_POLICY);
         mIntentFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
         mIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         mGraphicsPriorityPref = findPreference(KEY_DOLBYVISION_PRIORITY);
@@ -177,7 +181,6 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         }else {
            mBestResolutionPref.setSummary(R.string.captions_display_off);
         }
-
         ((SwitchPreference)mBestDolbyVisionPref).setChecked(isBestDolbyVsion());
         // set best dolby vision summary.
         if (isBestDolbyVsion()) {
@@ -204,6 +207,11 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
             mGraphicsPriorityPref.setSummary(R.string.video_priority);
         }
         mDisplayModePref.setSummary(getCurrentDisplayMode());
+        if (mOutputUiManager.getHdrStrategy().equals("0")) {
+            mHdrPolicyPref.setSummary(R.string.hdr_policy_sink);
+        } else if (mOutputUiManager.getHdrStrategy().equals("1")) {
+            mHdrPolicyPref.setSummary(R.string.hdr_policy_source);
+        }
         if (isHdmiMode()) {
             mBestResolutionPref.setVisible(true);
             mDeepColorPref.setVisible(true);
@@ -211,6 +219,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
             mColorDepthPref.setVisible(true);
             mColorDepthPref.setSummary(
                 mOutputUiManager.getCurrentColorDepthAttr().contains("8bit") ? "off":"on");
+
         } else {
             mBestResolutionPref.setVisible(false);
             mDeepColorPref.setVisible(false);
@@ -232,25 +241,29 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
         if ((SystemProperties.getBoolean("ro.vendor.platform.support.dolbyvision", false) == true) &&
                 (!SettingsConstant.needDroidlogicTvFeature(getContext())
                      || (SystemProperties.getBoolean("tv.soc.as.mbox", false) == true))) {
-            if (isHdmiMode()) {
+            if (isHdmiMode() && (SystemProperties.getBoolean("vendor.system.support.dolbyvision", false) == true)) {
                 mDolbyVisionPref.setVisible(true);
                 mGraphicsPriorityPref.setVisible(
                     mDolbyVisionSettingManager.isDolbyVisionEnable() ? true:false);
-                if (mOutputUiManager.isTvSupportDolbyVision()) {
-                }
             } else {
                 mDolbyVisionPref.setVisible(false);
                 mGraphicsPriorityPref.setVisible(false);
             }
+            mHdrPolicyPref.setVisible(true);
         } else {
             mDolbyVisionPref.setVisible(false);
             mGraphicsPriorityPref.setVisible(false);
+            mHdrPolicyPref.setVisible(false);
         }
-        if (isHdmiMode() && (SystemProperties.getBoolean("ro.vendor.platform.support.dolbyvision", false) == true)
-                && mOutputUiManager.isTvSupportDolbyVision()) {
+        if (isHdmiMode() && (SystemProperties.getBoolean("vendor.system.support.dolbyvision", false) == true)
+                && mOutputUiManager.isTvSupportDolbyVision() && SettingsConstant.needDroidlogicBestDolbyVision(getContext())) {
             mBestDolbyVisionPref.setVisible(true);
         } else {
             mBestDolbyVisionPref.setVisible(false);
+        }
+        if (!SettingsConstant.needDroidlogicBestDolbyVision(getContext())) {
+            mDolbyVisionPref.setEnabled(false);
+            mGraphicsPriorityPref.setVisible(false);
         }
     }
 
@@ -293,7 +306,6 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
             } else {
                 setBestDolbyVision(false);
             }
-
             mHandler.sendEmptyMessage(MSG_FRESH_UI);
         }
         return true;

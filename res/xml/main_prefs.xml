@@ -25,7 +25,7 @@
         android:key="display"
         android:title="@string/device_display" />
     <Preference
-        android:fragment="com.droidlogic.tv.settings.HdmiCecFragment"
+        android:fragment="com.droidlogic.tv.settings.tvoption.HdmiCecFragment"
         android:icon="@drawable/ic_settings_outputs"
         android:key="hdmicec"
         android:title="@string/system_cec" />
@@ -49,6 +49,11 @@
         android:key="powerkey_action"
         android:title="@string/system_powerkeyaction" />
     <Preference
+        android:fragment="com.droidlogic.tv.settings.PowerOnModeFragment"
+        android:icon="@drawable/ic_settings_power"
+        android:key="poweronmode_action"
+        android:title="@string/power_on_mode" />
+    <Preference
         android:icon="@drawable/ic_bluetooth"
         android:key="upgrade_bluetooth_remote"
         android:title="@string/upgrade_bluetooth_remote" >
@@ -65,6 +70,10 @@
         android:icon="@drawable/ic_settings_display"
         android:key="pictrue_mode"
         android:title="@string/pq_pictrue" />
+    <Preference
+        android:icon="@drawable/ic_settings_display"
+        android:key="keyStone"
+        android:title="@string/keystone" />
     <Preference
         android:fragment="com.droidlogic.tv.settings.tvoption.TvOptionFragment"
         android:icon="@drawable/ic_settings_tv"

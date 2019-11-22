@@ -93,19 +93,44 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         if (mPQSettingsManager == null) {
             mPQSettingsManager = new PQSettingsManager(getActivity());
         }
-        if (mPQSettingsManager.isHdmiSource() || mPQSettingsManager.isAvSource()) {
+        if (mPQSettingsManager.isHdmiSource()) {
             picturemodePref.setEntries(setHdmiPicEntries());
             picturemodePref.setEntryValues(setHdmiPicEntryValues());
         }
         picturemodePref.setValue(mPQSettingsManager.getPictureModeStatus());
 
-        final Preference backlightPref = (Preference) findPreference(PQ_BACKLIGHT);
+        int is_from_live_tv = getActivity().getIntent().getIntExtra("from_live_tv", 0);
         boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
+        boolean hasMboxFeature = SettingsConstant.hasMboxFeature(getActivity());
+        String curPictureMode = mPQSettingsManager.getPictureModeStatus();
+        final Preference backlightPref = (Preference) findPreference(PQ_BACKLIGHT);
         if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_backlight)) ||
                 (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_backlight))) {
             backlightPref.setSummary(mPQSettingsManager.getBacklightStatus() + "%");
         } else {
             backlightPref.setVisible(false);
+        }
+
+        final ListPreference dnrPref = (ListPreference) findPreference(PQ_DNR);
+        if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_dnr)) ||
+                (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_dnr))) {
+            if (curPictureMode.equals(PQSettingsManager.STATUS_MONITOR) ||
+                curPictureMode.equals(PQSettingsManager.STATUS_GAME)) {
+                dnrPref.setVisible(false);
+            } else {
+                dnrPref.setVisible(true);
+                dnrPref.setValueIndex(mPQSettingsManager.getDnrStatus());
+            }
+        } else {
+            dnrPref.setVisible(false);
+        }
+
+        final Preference pictureCustomerPref = (Preference) findPreference(PQ_CUSTOM);
+        if (curPictureMode.equals(PQSettingsManager.STATUS_MONITOR) ||
+            curPictureMode.equals(PQSettingsManager.STATUS_GAME)) {
+            pictureCustomerPref.setVisible(false);
+        } else {
+            pictureCustomerPref.setVisible(true);
         }
     }
 
@@ -122,6 +147,7 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        Log.d(TAG, "onCreatePreferences");
         setPreferencesFromResource(R.xml.pq_pictrue_mode, null);
         if (mPQSettingsManager == null) {
             mPQSettingsManager = new PQSettingsManager(getActivity());
@@ -130,14 +156,16 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         int is_from_live_tv = getActivity().getIntent().getIntExtra("from_live_tv", 0);
         boolean isTv = SettingsConstant.needDroidlogicTvFeature(getActivity());
         boolean hasMboxFeature = SettingsConstant.hasMboxFeature(getActivity());
+        String curPictureMode = mPQSettingsManager.getPictureModeStatus();
         final ListPreference picturemodePref = (ListPreference) findPreference(PQ_PICTRUE_MODE);
-        if (mPQSettingsManager.isHdmiSource() || mPQSettingsManager.isAvSource()) {
+        Log.d(TAG, "curPictureMode: " + curPictureMode + "isTv: " + isTv + "isLiveTv: " + is_from_live_tv);
+        if (mPQSettingsManager.isHdmiSource()) {
             picturemodePref.setEntries(setHdmiPicEntries());
             picturemodePref.setEntryValues(setHdmiPicEntryValues());
         }
         if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_pictrue_mode)) ||
                 (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_pictrue_mode))) {
-            picturemodePref.setValue(mPQSettingsManager.getPictureModeStatus());
+            picturemodePref.setValue(curPictureMode);
             picturemodePref.setOnPreferenceChangeListener(this);
         } else {
             picturemodePref.setVisible(false);
@@ -146,7 +174,7 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_aspect_ratio)) ||
                 (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_aspect_ratio))) {
             if (is_from_live_tv == 1) {
-				aspectratioPref.setValueIndex(mPQSettingsManager.getAspectRatioStatus());
+                aspectratioPref.setValueIndex(mPQSettingsManager.getAspectRatioStatus());
             } else {
                 aspectratioPref.setVisible(false);
             }
@@ -173,8 +201,13 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         final ListPreference dnrPref = (ListPreference) findPreference(PQ_DNR);
         if ((isTv && getActivity().getResources().getBoolean(R.bool.tv_pq_need_dnr)) ||
                 (!isTv && getActivity().getResources().getBoolean(R.bool.box_pq_need_dnr))) {
-            dnrPref.setValueIndex(mPQSettingsManager.getDnrStatus());
-            dnrPref.setOnPreferenceChangeListener(this);
+            if (curPictureMode.equals(PQSettingsManager.STATUS_MONITOR) ||
+                curPictureMode.equals(PQSettingsManager.STATUS_GAME)) {
+                dnrPref.setVisible(false);
+            } else {
+                dnrPref.setValueIndex(mPQSettingsManager.getDnrStatus());
+                dnrPref.setOnPreferenceChangeListener(this);
+            }
         } else {
             dnrPref.setVisible(false);
         }
@@ -192,6 +225,13 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
             hdmicolorPref.setOnPreferenceChangeListener(this);
         } else {
             hdmicolorPref.setVisible(false);
+        }
+        final Preference pictureCustomerPref = (Preference) findPreference(PQ_CUSTOM);
+        if (curPictureMode.equals(PQSettingsManager.STATUS_MONITOR) ||
+            curPictureMode.equals(PQSettingsManager.STATUS_GAME)) {
+            pictureCustomerPref.setVisible(false);
+        } else {
+            pictureCustomerPref.setVisible(true);
         }
     }
 
@@ -233,11 +273,8 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         if (mPQSettingsManager == null) {
             mPQSettingsManager = new PQSettingsManager(getActivity());
         }
-        if (mPQSettingsManager.isHdmiSource() || mPQSettingsManager.isAvSource()) {
+        if (mPQSettingsManager.isHdmiSource()) {
             for (int i = 0; i < HDMI_PIC_RES.length; i++) {
-                if (mPQSettingsManager.isAvSource() && PQSettingsManager.STATUS_MONITOR.equals(HDMI_PIC_MODE[i])) {
-                    continue;
-                }
                 list.add(getString(HDMI_PIC_RES[i]));
             }
         }
@@ -252,11 +289,8 @@ public class PictrueModeFragment extends LeanbackPreferenceFragment implements P
         if (mPQSettingsManager == null) {
             mPQSettingsManager = new PQSettingsManager(getActivity());
         }
-        if (mPQSettingsManager.isHdmiSource() || mPQSettingsManager.isAvSource()) {
+        if (mPQSettingsManager.isHdmiSource()) {
             for (int i = 0; i < HDMI_PIC_MODE.length; i++) {
-                if (mPQSettingsManager.isAvSource() && PQSettingsManager.STATUS_MONITOR.equals(HDMI_PIC_MODE[i])) {
-                    continue;
-                }
                 list.add(HDMI_PIC_MODE[i]);
             }
         }

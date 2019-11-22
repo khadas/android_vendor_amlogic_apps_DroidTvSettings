@@ -73,8 +73,12 @@ public class SettingsModeFragment extends LeanbackPreferenceFragment implements 
             mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
         }
         final ListPreference startupseting = (ListPreference) findPreference(SRATUP_SETTING);
-        startupseting.setValueIndex(mTvOptionSettingManager.getStartupSettingStatus());
-        startupseting.setOnPreferenceChangeListener(this);
+        if (!DroidUtils.hasGtvsUiMode()) {
+            startupseting.setValueIndex(mTvOptionSettingManager.getStartupSettingStatus());
+            startupseting.setOnPreferenceChangeListener(this);
+        } else {
+            startupseting.setVisible(false);
+        }
         final ListPreference dynamicbacklight = (ListPreference) findPreference(DYNAMIC_BACKLIGHT);
         dynamicbacklight.setEntries(initswitchEntries());
         dynamicbacklight.setEntryValues(initSwitchEntryValue());
