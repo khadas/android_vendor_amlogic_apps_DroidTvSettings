@@ -206,6 +206,11 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Settings.Transparent" />
+        <activity
+            android:name=".tvoption.AdjustHdmiAudioLatencyActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation"
+            android:excludeFromRecents="true"
+            android:exported="false" />
         <receiver
             android:exported="true"
             android:name=".BluetoothAutoPairReceiver"
@@ -217,13 +222,13 @@
         <service
             android:name = ".BluetoothAutoPairService" >
         </service>
-	<activity
-	    android:name = ".BtSetupActivity"
-	    android:excludeFromRecents="true"
-	    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"     >
-	    <intent-filter  >
-		<action android:name="com.android.setupwizard.action.HOOK_BEGIN" />
-	        <category android:name="android.intent.category.DEFAULT" />
+        <activity
+            android:name = ".BtSetupActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"     >
+            <intent-filter  >
+                <action android:name="com.android.setupwizard.action.HOOK_BEGIN" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <provider
