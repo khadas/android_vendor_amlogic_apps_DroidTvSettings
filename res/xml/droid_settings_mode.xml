@@ -63,6 +63,10 @@
         android:fragment="com.droidlogic.tv.settings.tvoption.HdmiCecFragment"
         android:key="hdmicec"
         android:title="@string/system_cec" />
+    <Preference
+        android:fragment="com.droidlogic.tv.settings.tvoption.AdjustHdmiAudioLatencyFragment"
+        android:key="box_hdmi_audio_latency"
+        android:title="@string/hdmi_audio_latency" />
     <ListPreference
         android:key="tv_daylight_saving_time"
         android:persistent="false"

@@ -67,8 +67,9 @@ public class TvOptionSettingManager {
     public static final int SET_ATSC_C= 5;
     public static final int SET_ISDB_T = 6;
 
-    public static final String KEY_MENU_TIME = DroidLogicTvUtils.KEY_MENU_TIME;;
-    public static final int DEFUALT_MENU_TIME = DroidLogicTvUtils.DEFUALT_MENU_TIME;;
+    public static final String KEY_MENU_TIME = DroidLogicTvUtils.KEY_MENU_TIME;
+    public static final int DEFUALT_MENU_TIME = DroidLogicTvUtils.DEFUALT_MENU_TIME;
+    public static final String AUDIO_LATENCY = "media.dtv.passthrough.latencyms";
 
     public static final String STRING_NAME = "name";
     public static final String STRING_STATUS = "status";
@@ -557,5 +558,16 @@ public class TvOptionSettingManager {
 
     public int getDaylightSavingTime() {
         return mDaylightSavingTime.getDaylightSavingTime();
+    }
+
+    public void setHdmiAudioLatency(String value) {
+        if (CanDebug()) Log.d(TAG, "setHdmiAudioLatency = " + value);
+        mSystemControlManager.setProperty(AUDIO_LATENCY, value);
+    }
+
+    public int getHdmiAudioLatency() {
+        int result = mSystemControlManager.getPropertyInt(AUDIO_LATENCY, 0);
+        if (CanDebug()) Log.d(TAG, "getHdmiAudioLatency = " + result);
+        return result;
     }
 }

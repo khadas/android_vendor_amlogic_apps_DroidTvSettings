@@ -66,6 +66,7 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     private static final String FACTORY_MENU =  "tv_factory_menu";
     private static final String HDMI_SWITCH =  "tv_hdmi_switch";
     private static final String KEY_HDMI_CEC_CONTROL = "hdmicec";
+    private static final String KEY_HDMI_AUDIO_LATENCY = "box_hdmi_audio_latency";
 
     private static final String AV_PARENTAL_CONTROLS_ON = "On";
     private static final String AV_PARENTAL_CONTROLS_OFF = "Off";
@@ -90,6 +91,16 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mTvOptionSettingManager == null) {
+            mTvOptionSettingManager = new TvOptionSettingManager(getActivity(), false);
+        }
+        final Preference hdmiAudioLatency = (Preference) findPreference(KEY_HDMI_AUDIO_LATENCY);
+        hdmiAudioLatency.setSummary(mTvOptionSettingManager.getHdmiAudioLatency() + "ms");
     }
 
     @Override
@@ -169,6 +180,11 @@ public class DroidSettingsModeFragment extends LeanbackPreferenceFragment implem
         }
         final Preference factoryRestore = (Preference) findPreference(RESTORE_FACTORY);
         factoryRestore.setVisible(false);
+        final Preference hdmiAudioLatency = (Preference) findPreference(KEY_HDMI_AUDIO_LATENCY);
+        if (isTv) {
+            hdmiAudioLatency.setTitle(getActivity().getResources().getString(R.string.arc_hdmi_audio_latency));
+        }
+        hdmiAudioLatency.setSummary(mTvOptionSettingManager.getHdmiAudioLatency() + "ms");
     }
 
     @Override

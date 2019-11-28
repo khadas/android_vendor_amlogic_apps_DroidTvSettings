@@ -421,4 +421,6 @@
     <string name="tv_cancel">Cancel</string>
     <string name="tv_ensure_fbc_update">Ensure FBC Update</string>
     <string name="tv_fbc_upgrade_detail">Please make sure to upgrade now.</string>
+    <string name="hdmi_audio_latency">HDMI Audio Latency</string>
+    <string name="arc_hdmi_audio_latency">HDMI ARC Audio Latency</string>
 </resources>
