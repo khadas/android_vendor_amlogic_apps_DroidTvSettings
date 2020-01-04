@@ -122,6 +122,11 @@
     <string name="device_audio_spdif">Spdif</string>
 
     <string name="screen_brightness">Screen brightness</string>
+    <string name="screen_rotation">Screen rotation</string>
+    <string name="screen_rotation_0">0</string>
+    <string name="screen_rotation_90">90</string>
+    <string name="screen_rotation_180">180</string>
+    <string name="screen_rotation_270">270</string>
 
     <!-- Image description for the sync failed icon. -->
     <string name="sync_failed">Sync failed</string>
