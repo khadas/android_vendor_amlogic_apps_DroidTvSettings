@@ -12,6 +12,8 @@ package com.droidlogic.tv.settings.tvoption;
 
 import android.content.Context;
 import android.content.ContentResolver;
+import android.hardware.hdmi.HdmiControlManager;
+import android.hardware.hdmi.HdmiTvClient;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +27,7 @@ import android.support.v7.preference.SeekBarPreference;
 import android.support.v7.preference.TwoStatePreference;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.droidlogic.app.HdmiCecManager;
 import com.droidlogic.app.OutputModeManager;
@@ -64,6 +67,24 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment implements Prefe
     private HdmiCecManager mHdmiCecManager;
     private static long lastObserveredTime = 0;
 
+    private HdmiControlManager mHdmiControlManager;
+    private HdmiTvClient mHdmiTvClient;
+    private HdmiControlManager.VendorCommandListener mVendorCommandListener;
+
+    class SettingsVendorCommandListener implements HdmiControlManager.VendorCommandListener {
+        @Override
+        public void onReceived(int srcAddress, int destAddress, byte[] params, boolean hasVendorId) {
+        }
+
+        @Override
+        public void onControlStateChanged(boolean enabled, int reason) {
+            if (HdmiControlManager.CONTROL_STATE_CHANGED_REASON_SETTING == reason) {
+                Log.d(TAG, "onControlStateChanged hdmi cec settings " + enabled);
+                mHandler.sendMessage(Message.obtain(mHandler, MSG_ENABLE_CEC_SWITCH, enabled));
+            }
+        }
+    }
+
     public static HdmiCecFragment newInstance() {
         if (mHdmiCecFragment == null) {
             mHdmiCecFragment = new HdmiCecFragment();
@@ -75,6 +96,15 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment implements Prefe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHdmiCecManager = new HdmiCecManager(getContext());
+        mHdmiControlManager = (HdmiControlManager)getContext().getSystemService(Context.HDMI_CONTROL_SERVICE);
+        if (mHdmiControlManager != null) {
+            mHdmiTvClient = mHdmiControlManager.getTvClient();
+        }
+        if (mHdmiTvClient != null) {
+            // it means the device is tv.
+            mVendorCommandListener = new SettingsVendorCommandListener();
+            mHdmiTvClient.setVendorCommandListener(mVendorCommandListener);
+        }
     }
 
     @Override
@@ -88,6 +118,13 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment implements Prefe
         super.onPause();
         mHandler.removeCallbacksAndMessages(null);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // When exit need to make sure the hdmi listener could be removed normally.
+    }
+
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -138,14 +175,11 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment implements Prefe
         if (key == null) {
             return super.onPreferenceTreeClick(preference);
         }
+
         switch (key) {
         case KEY_CEC_SWITCH:
-            long curtime = System.currentTimeMillis();
-            long timeDiff = curtime - lastObserveredTime;
-            lastObserveredTime = curtime;
-            Message cecEnabled = mHandler.obtainMessage(MSG_ENABLE_CEC_SWITCH, 0, 0);
-            mHandler.removeMessages(MSG_ENABLE_CEC_SWITCH);
-            mHandler.sendMessageDelayed(cecEnabled, ((timeDiff > TIME_DELAYED) ? 0 : TIME_DELAYED));
+            Log.d(TAG, "onPreferenceTreeClick cec switch " + mCecSwitchPref.isChecked());
+            mHdmiCecManager.enableHdmiControl(mCecSwitchPref.isChecked());
             mCecSwitchPref.setEnabled(false);
             mCecOnekeyPlayPref.setEnabled(false);
             mCecDeviceAutoPoweroffPref.setEnabled(false);
@@ -210,9 +244,14 @@ public class HdmiCecFragment extends LeanbackPreferenceFragment implements Prefe
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_ENABLE_CEC_SWITCH:
+                    boolean enable = (boolean)msg.obj;
+                    boolean hdmiControlEnabled = mCecSwitchPref.isChecked();
+                    if (enable != hdmiControlEnabled) {
+                        Log.e(TAG, "enable cec switch encounters confusion!");
+                    }
+                    // If the cec switch is on, then all the sub switches are enabled.
+                    // If the cec switch is closed, then all the sub switches are disabled.
                     mCecSwitchPref.setEnabled(true);
-                    mHdmiCecManager.enableHdmiControl(mCecSwitchPref.isChecked());
-                    boolean hdmiControlEnabled = mHdmiCecManager.isHdmiControlEnabled();
                     mCecOnekeyPlayPref.setEnabled(hdmiControlEnabled);
                     mCecDeviceAutoPoweroffPref.setEnabled(hdmiControlEnabled);
                     mCecAutoWakeupPref.setEnabled(hdmiControlEnabled);
