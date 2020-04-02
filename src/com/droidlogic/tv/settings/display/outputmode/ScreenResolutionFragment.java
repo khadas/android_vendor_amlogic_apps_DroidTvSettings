@@ -169,6 +169,7 @@ public class ScreenResolutionFragment extends LeanbackPreferenceFragment impleme
     }
     @Override
     public void onDestroy() {
+        mHandler.removeMessages(MSG_FRESH_UI);
         super.onDestroy();
     }
     @Override
