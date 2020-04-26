@@ -263,14 +263,6 @@
         <grant-uri-permission android:pathPattern="/tv_control_pppoe" />
         <grant-uri-permission android:pathPattern="/tv_control_others" />
         </provider>
-        <receiver
-            android:exported="true"
-            android:name=".tvoption.SoundSetReceiver"
-            android:enabled="true" >
-            <intent-filter android:priority="1000" >
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

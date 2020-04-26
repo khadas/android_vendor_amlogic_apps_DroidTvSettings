@@ -31,6 +31,7 @@ import android.content.ContentResolver;
 import com.droidlogic.tv.settings.R;
 import com.droidlogic.app.SystemControlManager;
 import com.droidlogic.app.OutputModeManager;
+import com.droidlogic.app.AudioSettingManager;
 
 import com.droidlogic.tv.settings.SettingsConstant;
 
@@ -55,12 +56,14 @@ public class SoundParameterSettingManager {
     private Context mContext;
     private AudioManager mAudioManager;
     private OutputModeManager mOutputModeManager;
+    private AudioSettingManager mAudioSettingManager;
 
     public SoundParameterSettingManager (Context context) {
         mContext = context;
         mResources = mContext.getResources();
         mAudioManager = (AudioManager) context.getSystemService(context.AUDIO_SERVICE);
         mOutputModeManager = new OutputModeManager(context);
+        mAudioSettingManager = new AudioSettingManager(context);
     }
 
     static public boolean CanDebug() {
@@ -157,33 +160,23 @@ public class SoundParameterSettingManager {
     }
 
     public String getAudioManualFormats() {
-        String format = Settings.Global.getString(mContext.getContentResolver(),
-                OutputModeManager.DIGITAL_AUDIO_SUBFORMAT);
-        if (format == null)
-            return "";
-        else
-            return format;
+        return mAudioSettingManager.getAudioManualFormats();
     }
 
     public void setAudioMixingEnable(boolean newVal) {
-        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.AUDIO_MIXING,
-                (newVal?OutputModeManager.AUDIO_MIXING_ON:OutputModeManager.AUDIO_MIXING_OFF));
-        mOutputModeManager.setAudioMixingEnable(newVal);
+        mAudioSettingManager.setAudioMixingEnable(newVal);
     }
 
     public boolean getAudioMixingEnable() {
-        return (Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.AUDIO_MIXING,
-                OutputModeManager.AUDIO_MIXING_DEFAULT) == OutputModeManager.AUDIO_MIXING_ON);
+        return mAudioSettingManager.getAudioMixingEnable();
     }
 
     public void setARCLatency(int newVal) {
-        Settings.Global.putInt(mContext.getContentResolver(), OutputModeManager.TV_ARC_LATENCY, newVal);
-        mOutputModeManager.setARCLatency(newVal);
+        mAudioSettingManager.setARCLatency(newVal);
     }
 
     public int getARCLatency() {
-        return Settings.Global.getInt(mContext.getContentResolver(), OutputModeManager.TV_ARC_LATENCY,
-                OutputModeManager.TV_ARC_LATENCY_DEFAULT);
+        return mAudioSettingManager.getARCLatency();
     }
 
     public void setAudioOutputLatency(int newVal) {
@@ -197,8 +190,7 @@ public class SoundParameterSettingManager {
     }
 
     public void setDrcModePassthroughSetting(int newVal) {
-        Settings.Global.putInt(mContext.getContentResolver(),
-                OutputModeManager.DRC_MODE, newVal);
+        mAudioSettingManager.setDrcModePassthroughSetting(newVal);
     }
 
     public boolean getAdSurportStatus() {
@@ -243,42 +235,6 @@ public class SoundParameterSettingManager {
         }
     }
 
-    public void initParameterAfterBoot() {
-        Log.d(TAG, "initParameterAfterBoot");
-        setDigitalAudioFormat(getDigitalAudioFormat());
-        if (!SettingsConstant.needDroidlogicTvFeature(mContext)) {
-            setDrcModePassthrough();
-        }
-        setAudioMixingEnable(getAudioMixingEnable());
-        setARCLatency(getARCLatency());
-        mOutputModeManager.initSoundParametersAfterBoot();
-    }
-
-    public void setDrcModePassthrough() {
-        final boolean tuner_flag = SystemProperties.getBoolean("ro.vendor.platform.is.tv", false);
-        final int value = Settings.Global.getInt(mContext.getContentResolver(),
-                OutputModeManager.DRC_MODE, tuner_flag ? OutputModeManager.IS_DRC_RF : OutputModeManager.IS_DRC_LINE);
-
-        switch (value) {
-        case OutputModeManager.IS_DRC_OFF:
-            mOutputModeManager.enableDobly_DRC(false);
-            mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
-            setDrcModePassthroughSetting(OutputModeManager.IS_DRC_OFF);
-            break;
-        case OutputModeManager.IS_DRC_LINE:
-            mOutputModeManager.enableDobly_DRC(true);
-            mOutputModeManager.setDoblyMode(OutputModeManager.LINE_DRCMODE);
-            setDrcModePassthroughSetting(OutputModeManager.IS_DRC_LINE);
-            break;
-        case OutputModeManager.IS_DRC_RF:
-            mOutputModeManager.enableDobly_DRC(false);
-            mOutputModeManager.setDoblyMode(OutputModeManager.RF_DRCMODE);
-            setDrcModePassthroughSetting(OutputModeManager.IS_DRC_RF);
-            break;
-        default:
-            return;
-        }
-    }
     public void resetParameter() {
         Log.d(TAG, "resetParameter");
         mOutputModeManager.resetSoundParameters();
