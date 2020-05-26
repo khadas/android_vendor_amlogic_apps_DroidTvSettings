@@ -65,11 +65,9 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 		String status = SystemProperties.get("sys.lcd.exist", "0");
 		if (status.equals("1")) {
 			brightnessPref.setVisible(true);
-			rotationPref.setVisible(false);
 			screenPositionPref.setVisible(false);
 		} else {
 			brightnessPref.setVisible(false);
-			rotationPref.setVisible(true);
 			screenPositionPref.setVisible(true);
 		}
 

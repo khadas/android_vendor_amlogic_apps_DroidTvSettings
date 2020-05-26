@@ -12,11 +12,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.SystemProperties;
+import android.os.Looper;
 import android.provider.Settings;
+import android.provider.Settings.System;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.content.ContentResolver;
+import android.database.ContentObserver;
 import android.view.Display;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -37,10 +41,21 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 	private static final String ACTION_ROTATION_90 = "90";
 	private static final String ACTION_ROTATION_180 = "180";
 	private static final String ACTION_ROTATION_270 = "270";
+        private static final String KEY_AUTO_ROTATE = "auto-rotate";
 
 
+	private SwitchPreference mAutoRotatePre;
+	private ContentResolver mContentResolver;
 	private Context mContext;
 	private static int degree;
+
+	private ContentObserver mAutoRotationObserver =
+		new ContentObserver(new Handler(Looper.getMainLooper())) {
+		@Override
+		public void onChange(boolean selfChange) {
+			updateAutoRotation();
+		}
+	};
 
 
 	public static RotationFragment newInstance() {
@@ -56,6 +71,11 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 		final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(mContext);
 		screen.setTitle(R.string.screen_rotation);
 		Preference activePref = null;
+
+                mAutoRotatePre = new SwitchPreference(getPreferenceManager().getContext());
+                mAutoRotatePre.setTitle("Auto-rotate");
+                mAutoRotatePre.setKey(KEY_AUTO_ROTATE);
+                screen.addPreference(mAutoRotatePre);
 
 		final List<Action> InfoList = getActions();
 		for (final Action info : InfoList) {
@@ -79,6 +99,20 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 		}
 
 		setPreferenceScreen(screen);
+		mContentResolver = mContext.getContentResolver();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		updateAutoRotation();
+		mContentResolver.registerContentObserver(System.getUriFor(Settings.System.ACCELEROMETER_ROTATION), false, mAutoRotationObserver);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		mContentResolver.unregisterContentObserver(mAutoRotationObserver);
 	}
 
 	private ArrayList<Action> getActions() {
@@ -95,10 +129,34 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 	}
 
 	private void setRotation(int val) {
-		android.provider.Settings.System.putInt(mContext.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
 		android.provider.Settings.System.putInt(mContext.getContentResolver(), Settings.System.USER_ROTATION, val);
 		SystemProperties.set("persist.sys.rotation", String.valueOf(val));
 		degree = val;
+	}
+
+	private void setAutoRotation(int enabled) {
+		android.provider.Settings.System.putInt(mContext.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, enabled);
+        }
+
+	private int getAutoRotaion() {
+		return  android.provider.Settings.System.getInt(mContext.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+	}
+
+	private void updateAutoRotation() {
+		boolean enabled = getAutoRotaion() == 1 ? true:false;
+		if (mAutoRotatePre != null) {
+			mAutoRotatePre.setChecked(enabled);
+		}
+		updateRotation(enabled);
+	}
+
+	private void updateRotation(boolean isAuto) {
+		final List<Action> InfoList = getActions();
+		for (final Action info : InfoList) {
+			final String tag = info.getKey();
+			RadioPreference radio = (RadioPreference) findPreference(tag);
+			radio.setEnabled(!isAuto);
+		}
 	}
 
 	@Override
@@ -123,7 +181,15 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 			} else {
 				radioPreference.setChecked(true);
 			}
+			return super.onPreferenceTreeClick(preference);
 		}
+		if (preference.getKey().equals(KEY_AUTO_ROTATE)) {
+			final SwitchPreference pref = (SwitchPreference) preference;
+			boolean enabled = pref.isChecked();
+			setAutoRotation(enabled?1:0);
+			updateRotation(enabled);
+		}
+
 		return super.onPreferenceTreeClick(preference);
 	}
 }

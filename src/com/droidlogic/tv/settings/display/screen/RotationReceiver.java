@@ -28,19 +28,16 @@ public class RotationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-             int rotation = SystemProperties.getInt("persist.sys.rotation", 0);
-             //int rotation = Integer.parseInt(rotate);
-		Log.d("yangjinqing", " rotation= "+rotation);
-             String status = SystemProperties.get("sys.lcd.exist", "0");
-             if (status.equals("1")) {
+             int isAuto = android.provider.Settings.System.getInt(context.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+             if (isAuto == 1) {
                  setRotation(context, 0);
              } else {
+                 int rotation = SystemProperties.getInt("persist.sys.rotation", 0);
                  setRotation(context, rotation);
              }
         }
     }
     private void setRotation(Context context, int val) {
-        android.provider.Settings.System.putInt(context.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
         android.provider.Settings.System.putInt(context.getContentResolver(), Settings.System.USER_ROTATION, val);
 	SystemProperties.set("persist.sys.rotation", String.valueOf(val));
     }
