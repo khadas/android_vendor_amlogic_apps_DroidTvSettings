@@ -42,9 +42,11 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 	private static final String ACTION_ROTATION_180 = "180";
 	private static final String ACTION_ROTATION_270 = "270";
         private static final String KEY_AUTO_ROTATE = "auto-rotate";
+        private static final String KEY_APP_FORCE_LAND = "force_land";
 
 
 	private SwitchPreference mAutoRotatePre;
+	private SwitchPreference mAppForceLandPre;
 	private ContentResolver mContentResolver;
 	private Context mContext;
 	private static int degree;
@@ -71,6 +73,11 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 		final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(mContext);
 		screen.setTitle(R.string.screen_rotation);
 		Preference activePref = null;
+
+                mAppForceLandPre = new SwitchPreference(getPreferenceManager().getContext());
+                mAppForceLandPre.setTitle("Force land for application");
+                mAppForceLandPre.setKey(KEY_APP_FORCE_LAND);
+                screen.addPreference(mAppForceLandPre);
 
                 mAutoRotatePre = new SwitchPreference(getPreferenceManager().getContext());
                 mAutoRotatePre.setTitle("Auto-rotate");
@@ -143,6 +150,10 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 	}
 
 	private void updateAutoRotation() {
+                if (SystemProperties.get("persist.sys.app.rotation", "original").equals("force_land")) {
+                    updateForceLand(true);
+                    return;
+                }
 		boolean enabled = getAutoRotaion() == 1 ? true:false;
 		if (mAutoRotatePre != null) {
 			mAutoRotatePre.setChecked(enabled);
@@ -158,6 +169,26 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 			radio.setEnabled(!isAuto);
 		}
 	}
+
+
+        private void updateForceLand(boolean force) {
+                if (force) {
+                     SystemProperties.set("persist.sys.app.rotation", "force_land");
+                     setRotation(0);
+                     setAutoRotation(0);
+                     if (mAutoRotatePre != null) {
+                         mAutoRotatePre.setChecked(false);
+                         mAutoRotatePre.setEnabled(false);
+                     }
+                     updateRotation(true);
+                } else {
+                     SystemProperties.set("persist.sys.app.rotation", "original");
+                     updateRotation(false);
+                     if (mAutoRotatePre != null) {
+                         mAutoRotatePre.setEnabled(true);
+                     }
+                }
+        }
 
 	@Override
 	public boolean onPreferenceTreeClick(Preference preference) {
@@ -189,6 +220,11 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 			setAutoRotation(enabled?1:0);
 			updateRotation(enabled);
 		}
+                if (preference.getKey().equals(KEY_APP_FORCE_LAND)) {
+                        final SwitchPreference pref = (SwitchPreference) preference;
+                        boolean enabled = pref.isChecked();
+                        updateForceLand(enabled);
+                }
 
 		return super.onPreferenceTreeClick(preference);
 	}
