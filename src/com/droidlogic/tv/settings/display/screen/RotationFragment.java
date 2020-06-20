@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.os.Looper;
+import android.os.Build;
 import android.provider.Settings;
 import android.provider.Settings.System;
 import android.support.v14.preference.SwitchPreference;
@@ -64,6 +65,13 @@ public class RotationFragment extends LeanbackPreferenceFragment {
 		return new RotationFragment();
 	}
 
+	private boolean hasAutoRotate() {
+		if (Build.MODEL.equals("VIM3") || Build.MODEL.equals("VIM3L"))
+			return true;
+		else
+			return false;
+	}
+
 	@Override
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -79,11 +87,12 @@ public class RotationFragment extends LeanbackPreferenceFragment {
                 mAppForceLandPre.setKey(KEY_APP_FORCE_LAND);
                 screen.addPreference(mAppForceLandPre);
 
-                mAutoRotatePre = new SwitchPreference(getPreferenceManager().getContext());
-                mAutoRotatePre.setTitle("Auto-rotate");
-                mAutoRotatePre.setKey(KEY_AUTO_ROTATE);
-                screen.addPreference(mAutoRotatePre);
-
+                if (hasAutoRotate()) {
+                    mAutoRotatePre = new SwitchPreference(getPreferenceManager().getContext());
+                    mAutoRotatePre.setTitle("Auto-rotate");
+                    mAutoRotatePre.setKey(KEY_AUTO_ROTATE);
+                    screen.addPreference(mAutoRotatePre);
+                }
 		final List<Action> InfoList = getActions();
 		for (final Action info : InfoList) {
 			final String tag = info.getKey();
