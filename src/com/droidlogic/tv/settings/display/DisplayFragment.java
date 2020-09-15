@@ -66,8 +66,10 @@ public class DisplayFragment extends LeanbackPreferenceFragment {
 		if (status.equals("1")) {
 			brightnessPref.setVisible(true);
 			screenPositionPref.setVisible(false);
+			outputmodePref.setVisible(false);
 		} else {
 			brightnessPref.setVisible(false);
+			screenPositionPref.setVisible(true);
 			screenPositionPref.setVisible(true);
 		}
 
