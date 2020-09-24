@@ -96,4 +96,9 @@
         android:key="tv_settings"
         android:title="@string/system_setting"
         android:fragment="com.droidlogic.tv.settings.tvoption.DroidSettingsModeFragment" />
+    <Preference
+        android:fragment="com.droidlogic.tv.settings.PanelOutputFragment"
+        android:icon="@drawable/ic_settings_display"
+        android:key="panel_output"
+        android:title="@string/panel_output" />
 </PreferenceScreen>
