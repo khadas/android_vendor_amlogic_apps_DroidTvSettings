@@ -426,12 +426,14 @@ public class OutputUiManager {
         if (strEdid != null && strEdid.length() != 0 && !strEdid.contains("null")) {
             List<String> listHdmiMode = new ArrayList<String>();
             List<String> listHdmiTitle = new ArrayList<String>();
+            String[] array_edid_mode = strEdid.split(",");
             for (int i = 0; i < listValue.size(); i++) {
-                if (strEdid.contains(listValue.get(i))) {
-                    listHdmiMode.add(listValue.get(i));
-                    listHdmiTitle.add(listTitle.get(i));
+                for (int j = 0; j < array_edid_mode.length; j++) {
+                    if ((listValue.get(i).toString()).equals(array_edid_mode[j])) {
+                        listHdmiMode.add(listValue.get(i));
+                        listHdmiTitle.add(listTitle.get(i));
+                    }
                 }
-
             }
 
             List<String> listHdmiMode_tmp = new ArrayList<String>();
