@@ -427,6 +427,13 @@
     <string name="tv_fbc_upgrade_detail">Please make sure to upgrade now.</string>
     <string name="hdmi_audio_latency">HDMI Audio Latency</string>
     <string name="arc_hdmi_audio_latency">HDMI ARC Audio Latency</string>
+    <string name="screen_density">Screen density control</string>
+    <string name="screen_density_120">120</string>
+    <string name="screen_density_160">160</string>
+    <string name="screen_density_200">200</string>
+    <string name="screen_density_240">240</string>
+    <string name="screen_density_280">280</string>
+    <string name="screen_density_320">320</string>
     
     <string name="panel_output">Panel Output</string>
     <string name="panel600">1024X600</string>

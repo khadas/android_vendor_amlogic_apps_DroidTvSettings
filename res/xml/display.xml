@@ -33,6 +33,10 @@
             android:key="screen_rotation"
             android:title="@string/screen_rotation"
             android:fragment="com.droidlogic.tv.settings.display.screen.RotationFragment"/>
+	<Preference
+            android:key="screen_density"
+            android:title="@string/screen_density"
+            android:fragment="com.droidlogic.tv.settings.display.screen.DensityFragment"/>
         <Preference
             android:key="hdr"
             android:title="@string/device_hdr"
